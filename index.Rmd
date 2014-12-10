@@ -1,0 +1,203 @@
+---
+title       : "Machine Learning for Scientists"
+subtitle    : "An Introduction"
+author      : "Jonathan Dursi"
+job         : "Scientific Associate/Software Engineer, Informatics and Biocomputing, OICR"
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : [mathjax]     # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+logo        : oicr-trans.png
+---
+
+## Purpose of This Course
+
+You should leave here today:
+
+* Having some basic familiarity with key terms,
+* Having used a few standard fundamental methods, and have a grounding in the underlying theory,
+* Understanding some basic concepts with broad applicability.
+
+We'll cover, and you'll use, most or all of the following methods:
+
+|                |  Supervised   |  Unsupervised|
+|---------------:|:--------------|:---------------|
+|  CONTINUOUS    |  **Regression**:  OLS, Lowess, Lasso |   **Density Estimation**: Kernel Methods; **Variable Selection**: PCA |
+|  DISCRETE      |  **Classification**:  Logistic Regression, kNN, Decision Trees, Naive Bayes |   **Clustering**: k-Means, Hierarchical Clustering |
+
+
+---
+
+## Techniques, Concepts
+
+... but more importantly, we'll look in some depth at these concepts:
+
+* Bias-Variance
+* Resampling methods
+    * Bootstrapping
+    * Cross-Validation
+    * Permutation tests
+* Model Selection
+* Variable Selection
+* Multiple Hypothesis Testing
+
+---
+
+## ML and Scientific Data Analysis
+
+Machine Learning is in some ways very similar to day-to-day scientific data analysis:
+
+* Machine learning is model fitting.
+* First, data has to be:
+    * put into appropriate format for tools,
+    * quickly summarized/visualized as sanity check ("data exploration"),
+    * cleaned
+* Then some model is fit and parameters extracted.
+* Conclusions are drawn.
+
+---
+
+## ML and Scientific Data Analysis
+
+* A scientific problem being analyzed is likely already very well characterized.
+    * Model already defined, typically very solidily
+    * Estimating a small number of parameters.
+* Machine learning is model fitting
+    * But the model may be implicit,
+    * ... and disposable.
+    * The model exists to explore the data, or make some better predictions.
+* Different approaches, techniques than common in scientific data analysis.
+* When not just parameters but the model itself up for grabs, have to take care not to lead oneself astray.
+
+---
+
+## Regression
+
+```{r, engine='python'}
+from matplotlib import pylab as plt
+x = [1,2,3]
+print x
+plt.plot(x)
+plt.savefig('outputs/f1.png')
+```
+
+![](./outputs/f1.png)
+
+
+---
+
+## OLS
+
+bar
+
+foo
+
+---
+
+## Generalizability
+
+
+---
+
+
+
+## Bias/Variance tradeoff
+
+---
+
+
+
+## Training vs Test vs Validation
+
+---
+
+
+
+## Cross Validation
+
+---
+
+
+## Kernel methods - LOESS
+
+---
+
+
+## Classification
+
+---
+
+
+### Confusion matrix
+* Sensitivity v. Specificity
+* Which are worse, false positives or false negatives? Depends!
+* ROC curve
+
+---
+
+
+## kNN
+
+---
+
+
+### Logistic Regression
+
+---
+
+
+## Naive Bayes
+
+---
+
+
+## Decision trees
+
+---
+
+
+## Variable Selection
+
+---
+
+
+## Try all combinations
+http://xkcd.com/882/
+* Be wary of multiple comparisons!
+* Bonferroni, False Discovery Rate
+
+---
+
+
+## AIC, BIC, adjusted R^2
+
+---
+
+## PCA
+
+---
+
+## Lasso
+
+---
+
+
+
+## Clustering
+
+
+---
+
+## K-means
+
+---
+
+
+## Hierarchical Clustering
+
+
+
+
+
