@@ -59,17 +59,61 @@ Machine Learning is in some ways very similar to day-to-day scientific data anal
 
 ---
 
-## ML and Scientific Data Analysis
+## ML vs Scientific Data Analysis
 
-* A scientific problem being analyzed is likely already very well characterized.
-    * Model already defined, typically very solidily
-    * Estimating a small number of parameters.
-* Machine learning is model fitting
-    * But the model may be implicit,
-    * ... and disposable.
-    * The model exists to explore the data, or make some better predictions.
-* Different approaches, techniques than common in scientific data analysis.
+Many scientific problems being analyzed are already very well characterized.
+
+* Model already defined, typically very solidily;
+* Estimating a small number of parameters within that framework.
+
+Machine learning is model fitting...
+
+* But the model may be implicit,
+* ... and disposable.
+* The model exists to explore the data, or make improved predictions.
+* Generally not holding out for some foundational insight into the fundamental nature of our world.
+
+---
+
+## Scientific Data Analysis with ML
+
+But ML approaches can be very useful for science, particularly at the beginning of a research programme:
+
+* Exploring data;
+* Uncovering patterns;
+* Testing models.
+
+Having said that, there are some potential gotchas:
+
+* Different approaches, techniques than common in scientific data analysis.  Takes some people-learning.
 * When not just parameters but the model itself up for grabs, have to take care not to lead oneself astray.
+    * Getting "a good fit" is not in question when you have all possible models at your disposal.  But does it mean anything?
+
+---
+
+## Types of problems
+
+Broadly, data analysis problems fall into two categories:
+
+* **Supervised**: already have some data labelled with (approximately) the right answer.
+    * *e.g.*, curve fitting
+    * For prediction.  "Train" the model on known data, predict on new unlabelled data.
+* **Unsupervised**: discover patterns in data.
+    * What groups of items in this data are similar?  Different?
+    * For exploration, evaluation, and prediction if useful.
+
+---
+
+## Types of Data
+
+And we will be working on two broad classes of variables:
+
+* **Continuous**: real numbers.
+* **Discrete**: 
+     * Categorical: Item falls into category A, category B...
+     * Ordinal: Discrete, but has an intrinsic order.  (Low, Med, High; S, M, L, XL).
+
+Others are possible too -- intervals, temporal or spatial continuous data -- but we won't be considering those here.
 
 ---
 
@@ -130,7 +174,8 @@ foo
 ---
 
 
-### Confusion matrix
+## Confusion matrix
+
 * Sensitivity v. Specificity
 * Which are worse, false positives or false negatives? Depends!
 * ROC curve
