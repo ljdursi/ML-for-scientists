@@ -167,6 +167,10 @@ As we learned on our grandmothers knee,
 
 ---
 
+## "Out of Sample" Application of Model
+
+---
+
 ## Choosing the right model/metaparameters
 
 ---
@@ -179,12 +183,13 @@ As we learned on our grandmothers knee,
 
 ---
 
-
-
 ## Cross Validation
 
 ---
 
+## `scikit-learn`
+
+---
 
 ## Kernel methods - LOESS
 
@@ -250,10 +255,7 @@ http://xkcd.com/882/
 
 ---
 
-
-
 ## Clustering
-
 
 ---
 
@@ -261,10 +263,6 @@ http://xkcd.com/882/
 
 ---
 
-
 ## Hierarchical Clustering
-
-
-
 
 
