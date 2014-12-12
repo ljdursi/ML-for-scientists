@@ -10,6 +10,7 @@ widgets     : [mathjax]     # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft}
 knit        : slidify::knit2slides
 logo        : oicr-trans.png
+license     : by-nc-sa
 ---
 
 ## Purpose of This Course
@@ -119,12 +120,21 @@ Others are possible too -- intervals, temporal or spatial continuous data -- but
 
 ## Regression
 
-```{r, engine='python'}
+We're going to start discussing regression.
+
+* It's the most familiar to most of us;
+* It's a good place to introduce some concepts we'll find useful through the rest of the day.
+
+---
+
+## Regression
+
+```{r engine='python'}
 from matplotlib import pylab as plt
 x = [1,2,3]
 print x
 plt.plot(x)
-plt.savefig('outputs/f1.png')
+plt.savefig('./outputs/f1.png')
 ```
 
 ![](./outputs/f1.png)
@@ -187,14 +197,29 @@ As we learned on our grandmothers knee,
 
 ---
 
-## `scikit-learn`
+## Resampling Aside #1 
+### Bootstrapping
 
 ---
 
-## Kernel methods - LOESS
+## Regression as Smoothing
 
 ---
 
+## Nonparametric Regression - LOWESS
+
+---
+
+## `statsmodels`
+
+---
+
+## Resampling Aside #2 
+### Nonparametric Hypothesis Testing
+
+Two-sample permutation test
+
+---
 
 ## Classification
 
@@ -209,26 +234,25 @@ As we learned on our grandmothers knee,
 
 ---
 
-
-## kNN
-
----
-
-
 ### Logistic Regression
 
 ---
 
+## Closest labeled point
+
+---
+
+## Nearest Neighbours - $k$NN
+
+---
 
 ## Naive Bayes
 
 ---
 
-
 ## Decision trees
 
 ---
-
 
 ## Variable Selection
 
@@ -253,13 +277,15 @@ http://xkcd.com/882/
 
 ## Lasso
 
----
+--- 
 
 ## Clustering
 
----
+--- 
 
 ## K-means
+
+Foo bar baz
 
 ---
 
