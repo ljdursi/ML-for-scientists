@@ -134,9 +134,7 @@ plt.savefig('outputs/f1.png')
 
 ## OLS
 
-bar
-
-foo
+As we learned on our grandmothers knee,
 
 ---
 
@@ -145,15 +143,39 @@ foo
 
 ---
 
-
-
-## Bias/Variance tradeoff
+## Bias and Variance 
 
 ---
 
+## Bias-Variance Tradeoff
 
+---
 
-## Training vs Test vs Validation
+## Polynomial Fitting
+
+---
+
+## Bias and Consistency
+
+---
+
+## Variance and Generalization
+
+---
+
+## Bias-Variance Tradeoff
+
+---
+
+## Choosing the right model/metaparameters
+
+---
+
+## Training vs Validation vs Test
+
+---
+
+## Hands-On: Model Selection 
 
 ---
 
