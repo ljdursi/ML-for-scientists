@@ -1,4 +1,6 @@
-This are the materials for a roughly one day course intended to
+# Machine Learning for Scientists
+
+These are the materials for a roughly one day course intended to
 provide an introduction to some of the key methods and concepts in
 machine learning, aimed at a scientific audience.
 
