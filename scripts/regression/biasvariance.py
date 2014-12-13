@@ -43,7 +43,8 @@ def noisyDataPolyPlot(degree, filename=None, **kwargs):
     p, x, y = noisyDataPolyFit(degree, **kwargs)
     fitf = numpy.poly1d(p)
     plt.plot(x,y,'ro')
-    plt.plot(x,fitf(x),'g-')
+    finex = numpy.linspace(min(x),max(x),500)
+    plt.plot(finex,fitf(finex),'g-')
     outputPlot(filename)
 
 def errorVsDegree(ndegrees, npts=40, filename=None, **kwargs):
@@ -57,7 +58,22 @@ def errorVsDegree(ndegrees, npts=40, filename=None, **kwargs):
         errs[i] = errs[i]/ntrials
     plt.semilogy(degrees,errs,'go-')
     plt.xlabel('Degree')
-    plt.ylabel('Squared L2 error')
+    plt.ylabel('Squared Error')
+    outputPlot(filename)
+
+def inSampleErrorVsDegree(ndegrees, npts=40, filename=None, **kwargs):
+    degrees = numpy.array(range(ndegrees),dtype=float)
+    errs = numpy.zeros_like(degrees)
+    ntrials=10
+    for i, deg in enumerate(degrees):
+        for trial in range(ntrials):
+            p, x, y = noisyDataPolyFit(deg)
+            fitfun = numpy.poly1d(p)
+            errs[i] = errs[i] + sum((fitfun(x)-y)**2)
+        errs[i] = errs[i]/ntrials
+    plt.semilogy(degrees,errs,'go-')
+    plt.xlabel('Degree')
+    plt.ylabel('In-Sample Squared Error')
     outputPlot(filename)
 
 def varianceDemo(degree, ntrials, filename=None, **kwargs):
@@ -78,24 +94,30 @@ def varianceDemo(degree, ntrials, filename=None, **kwargs):
     x, y = noisyData(npts=3,noise_amp=0.,x_noise_amp=0.)
     zerotrue = y[1]
     n, bins, patches = plt.hist(zeropreds, ntrials/20)
-    height = max(n)*5/4
-    line = plt.plot([zerotrue,zerotrue],[0,height],'r-')
+
+    # draw line at true zero prediction
+    lheight = max(n)*5/4
+    line = plt.plot([zerotrue,zerotrue],[0,lheight],'r-')
     plt.setp(line,linewidth=2)
 
     mean    = numpy.mean(zeropreds)
     sd      = numpy.sqrt(numpy.var(zeropreds))
-    height2 = max(n)
-    plt.annotate('Bias', xy=(mean, 0.9*height), xytext=(0, 0.9*height), xycoords='data', 
-            va='center', arrowprops={'facecolor':'red', 'shrink':0.05})
-    line = plt.plot([mean-2*sd,mean+2*sd],[height2/3.,height2/3.],'g-')
-    plt.setp(line,linewidth=7)
+    datahi  = max(n)
+
     if mean < 0:
-        txtpos = mean-3.*sd
-        align = 'left'
+        txtpos = mean-2.4*sd
+        balign = 'left'
+        valign = 'right'
     else:
-        txtpos = mean+3.*sd
-        align = 'right'
-    plt.text(txtpos, height2*9./24., 'Variance', ha=align, va='bottom')
+        txtpos = mean+2.4*sd
+        balign = 'right'
+        valign = 'left'
+
+    plt.annotate('Bias', xy=(mean, 0.9*lheight), xytext=(0, 0.9*lheight), xycoords='data', 
+            ha=balign, va='center', arrowprops={'facecolor':'red', 'shrink':0.05})
+    line = plt.plot([mean-2*sd,mean+2*sd],[datahi/3.,datahi/3.],'g-')
+    plt.setp(line,linewidth=7)
+    plt.text(txtpos, datahi*9./24., 'Variance', ha=valign, va='bottom')
     plt.suptitle('Polynomial, degree '+str(degree))
     plt.xlim((-0.3,0.3))
     outputPlot(filename)
@@ -109,10 +131,13 @@ def outputPlot(filename=None):
 
 if __name__ == "__main__":
     numpy.random.seed(123)
-    base="./assets/img/bias-variance/"
+    base="./outputs/bias-variance/"
+    noisyDataPolyPlot(1, base+'linear-fit.png')
+    noisyDataPolyPlot(20, base+'twentyth-fit.png')
     varianceDemo(0, 1000, base+'const-bias-variance.png')
     varianceDemo(1, 1000, base+'lin-bias-variance.png')
-    varianceDemo(6, 1000, base+'seventh-bias-variance.png')
-    varianceDemo(2, 1000, base+'tenth-bias-variance.png')
+    varianceDemo(7, 1000, base+'seventh-bias-variance.png')
+    varianceDemo(10,1000, base+'tenth-bias-variance.png')
     varianceDemo(20,1000, base+'twentyth-bias-variance.png')
+    inSampleErrorVsDegree(20, 40, base+'in-sample-error-vs-degree.png')
     errorVsDegree(20, 40, base+'error-vs-degree.png')

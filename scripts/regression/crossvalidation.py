@@ -61,5 +61,5 @@ def chooseDegree(npts, mindegree=0, maxdegree=20, filename=None):
 
 if __name__ == "__main__":
     numpy.random.seed(123)
-    base="./assets/img/crossvalidation/"
+    base="./outputs/crossvalidation/"
     chooseDegree(50,filename=base+'CV-polynomial.png')

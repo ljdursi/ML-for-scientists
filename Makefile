@@ -4,9 +4,9 @@ PRES=index
 
 all: $(PRES).html 
 
-BVIMGNAMES=const-bias-variance.png error-vs-degree.png lin-bias-variance.png seventh-bias-variance.png tenth-bias-variance.png twentyth-bias-variance.png
-BVIMGS=$(addprefix ./assets/img/bias-variance/,$(BVIMGNAMES))
-CVIMGS=./assets/img/crossvalidation/CV-polynomial.png
+BVIMGNAMES=linear-fit.png twentyth-fit.png const-bias-variance.png error-vs-degree.png lin-bias-variance.png seventh-bias-variance.png tenth-bias-variance.png twentyth-bias-variance.png in-sample-error-vs-degree.png
+BVIMGS=$(addprefix ./outputs/bias-variance/,$(BVIMGNAMES))
+CVIMGS=./outputs/crossvalidation/CV-polynomial.png
 
 IMGS=$(BVIMGS) $(CVIMGS)
 

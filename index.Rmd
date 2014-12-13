@@ -13,6 +13,22 @@ logo        : oicr-trans.png
 license     : by-nc-sa
 ---
 
+<style type="text/css">
+.title-slide {
+  background-color: #EDEDED; 
+}
+img {     
+  max-width: 90%
+}
+</style>
+
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+<script type="text/javascript">
+$(function() {     
+  $("p:has(img)").addClass('centered'); 
+  });
+</script>
+ 
 ## Purpose of This Course
 
 You should leave here today:
@@ -26,23 +42,30 @@ We'll cover, and you'll use, most or all of the following methods:
 |                |  Supervised   |  Unsupervised|
 |---------------:|:--------------|:---------------|
 |  CONTINUOUS    |  **Regression**:  OLS, Lowess, Lasso |   **Density Estimation**: Kernel Methods; **Variable Selection**: PCA |
-|  DISCRETE      |  **Classification**:  Logistic Regression, kNN, Decision Trees, Naive Bayes |   **Clustering**: k-Means, Hierarchical Clustering |
+|  DISCRETE      |  **Classification**:  Logistic Regression, kNN, Decision Trees, Naive Bayes, Random Forest |   **Clustering**: k-Means, Hierarchical Clustering |
 
-
----
+--- &twocol
 
 ## Techniques, Concepts
 
 ... but more importantly, we'll look in some depth at these concepts:
+
+*** =left
 
 * Bias-Variance
 * Resampling methods
     * Bootstrapping
     * Cross-Validation
     * Permutation tests
+
+*** =right
+
 * Model Selection
 * Variable Selection
 * Multiple Hypothesis Testing
+* Geometric Methods
+* Tree-based Methods
+* Probabilistic methods
 
 ---
 
@@ -87,7 +110,7 @@ But ML approaches can be very useful for science, particularly at the beginning 
 Having said that, there are some potential gotchas:
 
 * Different approaches, techniques than common in scientific data analysis.  Takes some people-learning.
-* When not just parameters but the model itself up for grabs, have to take care not to lead oneself astray.
+* When not just parameters but the model itself up for grabs, one has to take care not to lead oneself astray.
     * Getting "a good fit" is not in question when you have all possible models at your disposal.  But does it mean anything?
 
 ---
@@ -116,6 +139,10 @@ And we will be working on two broad classes of variables:
 
 Others are possible too -- intervals, temporal or spatial continuous data -- but we won't be considering those here.
 
+--- .segue .dark .nobackground
+
+## Regression
+
 ---
 
 ## Regression
@@ -125,43 +152,227 @@ We're going to start discussing regression.
 * It's the most familiar to most of us;
 * It's a good place to introduce some concepts we'll find useful through the rest of the day.
 
----
+In regression problems, 
 
-## Regression
-
-```{r engine='python'}
-from matplotlib import pylab as plt
-x = [1,2,3]
-print x
-plt.plot(x)
-plt.savefig('./outputs/f1.png')
-```
-
-![](./outputs/f1.png)
-
+* Data comes in as a set of $n$ observations.
+* Each of which has $p$ "features"; we'll be consiering all-continuous input features, which isn't necessarily the case.
+* And the initial data we have also has a known "endogenous" value, the $y$-value we're trying to fit.
+* Goal is to learn a function $y = \hat{f}(x_1, x_2, \dots, x_p)$ for predicting new values.
 
 ---
 
-## OLS
+## Ordinary Least Squares (OLS)
 
 As we learned on our grandmothers knee,
+
+$$
+y = f(\vec{x}) + \epsilon
+$$
+
+$$
+\hat{y} = \hat{f}(\vec{x})
+$$
+
+---
+
+## Note on Loss Functions
+
+Here we're going to be using least squares error as the function
+to minimize.  But this is not the only _loss_ _function_ one could
+usefully optimize.
+
+In particular, least-squares has a number of very nice mathematical
+properties, but it puts a lot of weight on outliers.  If the residual
+$r_i = y_i - \hat{y}_i$ and the loss function is $l = \sum_i \rho(r_i)$, some "robust regression" methods use different methods:
+
+$$ 
+\begin{eqnarray*} 
+\rho_\mathrm{LS}(r_i) & = &  r_i^2 \\
+\rho_\mathrm{Huber}(r_i) & = & \begin{array}{ll} r_i^2 & \mathrm{if } |r_i| \le c; \\ c(2 r_i - c) & \mathrm{if } |r_i| > c. \\ \end{array} \\
+\rho_\mathrm{Tukey}(r_i) & = & \begin{array}{ll} r_i \left ( 1 - \frac{r_i}{c} \right )^2 & \mathrm{if } |r_i| \le c; \\ 0 & \mathrm{if } |r_i| > c. \\ \end{array} \\
+\end{eqnarray*} 
+$$
+
+---
+
+## Note on Loss Functions
+
+Even crazier loss functions are possible --- for your particular
+application, it may be worse to over-predict than under-predict
+(for instance), so the loss function needn't necessarily be symmetric
+around $r_i = 0$.
+
+The "right" loss function is problem-dependent.
+
+For now, we'll just use least-squares, as it's familar and the
+mechanics don't change with other loss functions.  However, different
+algorithms may need to be used to use different loss functions;
+many explicitly use the nice mathematical properties of least
+squares.
+
+---
+
+## Polynomial Regression
+
+Let's do some linear regression of a noisy, tilted sinusoid:
+
+```{r engine='python'}
+import scripts.regression.biasvariance as bv
+import numpy
+import matplotlib.pylab as plt
+
+x,y = bv.noisyData(npts=40)
+p = numpy.polyfit(x, y, 1)
+fitfun = numpy.poly1d(p)
+
+plt.plot(x,y,'ro')
+plt.plot(x,fitfun(x),'g-')
+plt.show()
+```
+
+--- &twocol
+
+## Polynomial Regression
+
+*** =left
+
+We should have something that looks like the figure on the right.
+
+Questions we should be asking ourselves whenever we're doing something like this:
+
+* How is this likely to perform on new data?
+* How is the accuracy likely to be in the centre ($x = 0$)?  At $x = 2$?
+* How robust is our prediction - how variable is it likely to be if we had gotten different data?
+
+*** =right
+
+![](outputs/bias-variance/linear-fit.png)
+
+--- &twocol
+
+## Polynomial Regression
+
+*** =left
+
+Repeat the same steps with degree 20. 
+
+We can get much better accuracy at our points if we use a higher-order polynomial.
+
+Ask ourselves the same questions:
+
+* How is this likely to perform on new data?
+* How is the accuracy likely to be in the centre ($x = 0$)?  At $x = 2$?
+* How robust is our prediction - how variable is it likely to be if we had gotten different data?
+
+*** =right
+
+![](outputs/bias-variance/twentyth-fit.png)
+
+--- &twocol
+
+## Polynomial Regression - In Sample Error
+
+*** =left
+
+We can generate our fit and then calculate the error on the data we've used to train:
+
+$$ 
+E = \sum_i \left ( y_i - \hat{f}(x_i) \right )^2
+$$
+
+and if we plot the results, we'll see the error monotonically going down with the degree of polynomial we use.  So should we use high-order polynomials?
+
+*** =right
+
+![](outputs/bias-variance/in-sample-error-vs-degree.png)
+
+---
+
+## Bias-Variance Decomposition
+
+Consider the squared error we get from fitting some regression model $\hat{f}(x)$ to some given set of data $x$:
+
+$$
+\begin{eqnarray*}
+E \left [ (y-\hat{y})^2 \right ] & = & E \left [ ( f + \epsilon - \hat{f})^2 \right ] \\
+              & = & E \left [ \left ( f - \hat{f} \right )^2 \right ] + \sigma_\epsilon^2 \\
+              & = & E \left [ \left ( (f - E[\hat{f}]) - (\hat{f} - E[\hat{f]}) \right )^2 \right ] + \sigma_\epsilon^2 \\
+              & = & E \left [ \left ( f - E[\hat{f}] \right )^2 \right ]  - 2 E \left [ ( f - E[\hat{f}]) (\hat{f} - E[\hat{f}]) \right ] + E \left [ \left (\hat{f} - E[\hat{f}]) \right )^2 \right ] + \sigma_\epsilon^2 \\
+              & = & \left (f - E[\hat{f}]) \right )^2 + E \left [ \left ( \hat{f} - E[\hat{f}] \right )^2 \right ]  + \sigma_\epsilon^2 \\
+              & = & \mathrm{Bias}^2 + \mathrm{Var}(f) + \sigma_\epsilon^2
+\end{eqnarray*}
+$$
+
+---
+
+## Bias-Variance Decomposition
+
+$$
+\mathrm{MSE} = E \left [ \left (\hat{f} - E[\hat{f}]) \right )^2 \right ] + \left ( f - E[\hat{f}] \right )^2  + \sigma_\epsilon^2  =  \mathrm{Bias}^2 + \mathrm{Var}(f) + \sigma_\epsilon^2
+$$
+
+* Last term: intrinisic noise in the problem.  Can't do anything about it; we won't consider it any further right now.
+* First term: **bias** squared of our estimate.
+    * Is the expectation value of our regression estimate $\hat{f}$, the expectation value of $f$?
+* Second term: **variance** of our estimate.
+    * How robust/variable is our regression estimate, $\hat{f}$?
+
+* Obvious: mean squared error has contribution from both of these terms.
+* Less obvious: there is almost always a tradeoff between bias and variance.
+
+--- &twocol
+
+## Bias, Variance in Polynomial Fitting
+
+*** =left
+
+Because this is synthetic data, we can examine bias and variance in our regression estimates:
+
+* Generate many sets of data from the model
+* For each one,
+    * Generate fit with given degree
+    * Plot fit for visualization
+    * Generate predictions at a given point (say, $x=0$)
+* Examine bias, variance of predictions around zero.
+
+
+*** =right
+
+![](outputs/bias-variance/lin-bias-variance.png)
+
+---
+
+## Polynomial Fitting - Constant
+
+![](outputs/bias-variance/const-bias-variance.png)
+
+---
+
+## Polynomial Fitting - Linear
+
+![](outputs/bias-variance/lin-bias-variance.png)
+
+---
+
+## Polynomial Fitting - Seventh Order
+
+![](outputs/bias-variance/seventh-bias-variance.png)
+
+---
+
+## Polynomial Fitting - Tenth Order
+
+![](outputs/bias-variance/tenth-bias-variance.png)
+
+---
+
+## Polynomial Fitting - Twentyth Order
+
+![](outputs/bias-variance/twentyth-bias-variance.png)
 
 ---
 
 ## Generalizability
-
-
----
-
-## Bias and Variance 
-
----
-
-## Bias-Variance Tradeoff
-
----
-
-## Polynomial Fitting
 
 ---
 
@@ -219,9 +430,17 @@ As we learned on our grandmothers knee,
 
 Two-sample permutation test
 
+--- .segue .dark .nobackground
+
+## Classification
+
 ---
 
 ## Classification
+
+Classification is a broad set of problems that supperficially look a lot like regression:
+
+* Get some data in, with
 
 ---
 
@@ -234,7 +453,7 @@ Two-sample permutation test
 
 ---
 
-### Logistic Regression
+## Logistic Regression
 
 ---
 
@@ -252,7 +471,7 @@ Two-sample permutation test
 
 ## Decision trees
 
----
+--- .dark .segue .nobackground
 
 ## Variable Selection
 
@@ -266,7 +485,6 @@ http://xkcd.com/882/
 
 ---
 
-
 ## AIC, BIC, adjusted R^2
 
 ---
@@ -277,7 +495,7 @@ http://xkcd.com/882/
 
 ## Lasso
 
---- 
+--- .dark .segue .nobackground
 
 ## Clustering
 
@@ -291,4 +509,14 @@ Foo bar baz
 
 ## Hierarchical Clustering
 
+--- .dark .segue .nobackground
 
+## Ensemble Methods
+
+--- 
+
+## Bagging, Boosting
+
+--- 
+
+## Random Forest
