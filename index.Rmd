@@ -372,31 +372,62 @@ Because this is synthetic data, we can examine bias and variance in our regressi
 
 ---
 
-## Generalizability
-
----
-
 ## Bias and Consistency
+
+Bias is a measure of how consistent the model is with the true behaviour.
+
+Very generally, models that are too simple can't capture all of the
+behaviour of the system, and so estimators based on these simple models
+have higher bias.
+
+As the complexity of model increases, bias tends to go down; the model
+can capture whatever behaviour is seen.
 
 ---
 
 ## Variance and Generalization
 
----
+Variance is a measure of how sensitive the estimated model is to the particular
+set of data it sees.
+
+It is very closely tied to the idea of **generalization**.  Is the model learning
+trends that will generalize to a new set of data?  Or is it just overfitting the 
+noise of this particular data set?
+
+As the complexity of a mdoel increases, it tends to have high variance; simple
+models typically have very low variance.
+
+--- &twocol
 
 ## Bias-Variance Tradeoff
 
+*** =left
+
+For our polynomial example, if we compare the error in the computed
+model with the "true" model (not generally availble to us!), we can
+plot the error vs the degree of the polynomial:
+
+* For small degrees, the dominant term is bias; simpler models can't capture the true behaviour of the system.
+
+* For larger degrees, the dominant term is variance; more complex models are generalizing poorly and overfitting noise.
+
+There's some sweet spot where the two effects are comparably low.
+
+*** =right
+
+![](outputs/bias-variance/error-vs-degree.png)
+
 ---
 
-## "Out of Sample" Application of Model
+## Choosing the Right Model
+
+(Or in this case, the "metaparameters" of the model)
+
+In general, we get some dataset - we can't generate 
 
 ---
 
-## Choosing the right model/metaparameters
-
----
-
-## Training vs Validation vs Test
+## Training vs Validation 
 
 ---
 
@@ -405,6 +436,8 @@ Because this is synthetic data, we can examine bias and variance in our regressi
 ---
 
 ## Cross Validation
+
+![](outputs/crossvalidation/CV-polynomial.png)
 
 ---
 
