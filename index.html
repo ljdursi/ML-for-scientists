@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Machine Learning for Scientists</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Machine Learning for Scientists">
+  <meta name="author" content="Jonathan Dursi">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <aside class="gdbar">
+    <img src="assets/img/oicr-trans.png">
+  </aside>
+  <hgroup class="auto-fadein">
+    <h1>Machine Learning for Scientists</h1>
+    <h2>An Introduction</h2>
+    <p>Jonathan Dursi<br/>Scientific Associate/Software Engineer, Informatics and Biocomputing, OICR</p>
+  </hgroup>
+  <article></article>  
+  <footer class = 'license'>
+    <a href='http://creativecommons.org/licenses/by-nc-sa/3.0/'>
+    <img width = '80px' src = 'http://mirrors.creativecommons.org/presskit/buttons/88x31/png/by-nc-sa.png'>
+    </a>
+  </footer>
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <article data-timings="">
+    <style type="text/css">
+.title-slide {
+  background-color: #EDEDED; 
+}
+img {     
+  max-width: 90%
+}
+</style>
+
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+
+<script type="text/javascript">
+$(function() {     
+  $("p:has(img)").addClass('centered'); 
+  });
+</script>
+ 
+
+<h2>Purpose of This Course</h2>
+
+<p>You should leave here today:</p>
+
+<ul>
+<li>Having some basic familiarity with key terms,</li>
+<li>Having used a few standard fundamental methods, and have a grounding in the underlying theory,</li>
+<li>Understanding some basic concepts with broad applicability.</li>
+</ul>
+
+<p>We&#39;ll cover, and you&#39;ll use, most or all of the following methods:</p>
+
+<table><thead>
+<tr>
+<th align="right"></th>
+<th align="left">Supervised</th>
+<th align="left">Unsupervised</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="right">CONTINUOUS</td>
+<td align="left"><strong>Regression</strong>:  OLS, Lowess, Lasso</td>
+<td align="left"><strong>Density Estimation</strong>: Kernel Methods; <strong>Variable Selection</strong>: PCA</td>
+</tr>
+<tr>
+<td align="right">DISCRETE</td>
+<td align="left"><strong>Classification</strong>:  Logistic Regression, kNN, Decision Trees, Naive Bayes, Random Forest</td>
+<td align="left"><strong>Clustering</strong>: k-Means, Hierarchical Clustering</td>
+</tr>
+</tbody></table>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Techniques, Concepts</h2>
+  </hgroup>
+  <article data-timings="">
+    <p class='..'>but more importantly, we&#39;ll look in some depth at these concepts:</p>
+
+<div style='float:left;width:48%;' class='centered'>
+  <ul>
+<li>Bias-Variance</li>
+<li>Resampling methods
+
+<ul>
+<li>Bootstrapping</li>
+<li>Cross-Validation</li>
+<li>Permutation tests</li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:48%;'>
+  <ul>
+<li>Model Selection</li>
+<li>Variable Selection</li>
+<li>Multiple Hypothesis Testing</li>
+<li>Geometric Methods</li>
+<li>Tree-based Methods</li>
+<li>Probabilistic methods</li>
+</ul>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>ML and Scientific Data Analysis</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Machine Learning is in some ways very similar to day-to-day scientific data analysis:</p>
+
+<ul>
+<li>Machine learning is model fitting.</li>
+<li>First, data has to be:
+
+<ul>
+<li>put into appropriate format for tools,</li>
+<li>quickly summarized/visualized as sanity check (&quot;data exploration&quot;),</li>
+<li>cleaned</li>
+</ul></li>
+<li>Then some model is fit and parameters extracted.</li>
+<li>Conclusions are drawn.</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>ML vs Scientific Data Analysis</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Many scientific problems being analyzed are already very well characterized.</p>
+
+<ul>
+<li>Model already defined, typically very solidily;</li>
+<li>Estimating a small number of parameters within that framework.</li>
+</ul>
+
+<p>Machine learning is model fitting...</p>
+
+<ul>
+<li>But the model may be implicit,</li>
+<li class='..'>and disposable.</li>
+<li>The model exists to explore the data, or make improved predictions.</li>
+<li>Generally not holding out for some foundational insight into the fundamental nature of our world.</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-5" style="background:;">
+  <hgroup>
+    <h2>Scientific Data Analysis with ML</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>But ML approaches can be very useful for science, particularly at the beginning of a research programme:</p>
+
+<ul>
+<li>Exploring data;</li>
+<li>Uncovering patterns;</li>
+<li>Testing models.</li>
+</ul>
+
+<p>Having said that, there are some potential gotchas:</p>
+
+<ul>
+<li>Different approaches, techniques than common in scientific data analysis.  Takes some people-learning.</li>
+<li>When not just parameters but the model itself up for grabs, one has to take care not to lead oneself astray.
+
+<ul>
+<li>Getting &quot;a good fit&quot; is not in question when you have all possible models at your disposal.  But does it mean anything?</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-6" style="background:;">
+  <hgroup>
+    <h2>Types of problems</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Broadly, data analysis problems fall into two categories:</p>
+
+<ul>
+<li><strong>Supervised</strong>: already have some data labelled with (approximately) the right answer.
+
+<ul>
+<li><em>e.g.</em>, curve fitting</li>
+<li>For prediction.  &quot;Train&quot; the model on known data, predict on new unlabelled data.</li>
+</ul></li>
+<li><strong>Unsupervised</strong>: discover patterns in data.
+
+<ul>
+<li>What groups of items in this data are similar?  Different?</li>
+<li>For exploration, evaluation, and prediction if useful.</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-7" style="background:;">
+  <hgroup>
+    <h2>Types of Data</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>And we will be working on two broad classes of variables:</p>
+
+<ul>
+<li><strong>Continuous</strong>: real numbers.</li>
+<li><strong>Discrete</strong>: 
+
+<ul>
+<li>Categorical: Item falls into category A, category B...</li>
+<li>Ordinal: Discrete, but has an intrinsic order.  (Low, Med, High; S, M, L, XL).</li>
+</ul></li>
+</ul>
+
+<p>Others are possible too -- intervals, temporal or spatial continuous data -- but we won&#39;t be considering those here.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="segue dark nobackground" id="slide-8" style="background:;">
+  <hgroup>
+    <h2>Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-9" style="background:;">
+  <hgroup>
+    <h2>Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>We&#39;re going to start discussing regression.</p>
+
+<ul>
+<li>It&#39;s the most familiar to most of us;</li>
+<li>It&#39;s a good place to introduce some concepts we&#39;ll find useful through the rest of the day.</li>
+</ul>
+
+<p>In regression problems, </p>
+
+<ul>
+<li>Data comes in as a set of \(n\) observations.</li>
+<li>Each of which has \(p\) &quot;features&quot;; we&#39;ll be consiering all-continuous input features, which isn&#39;t necessarily the case.</li>
+<li>And the initial data we have also has a known &quot;endogenous&quot; value, the \(y\)-value we&#39;re trying to fit.</li>
+<li>Goal is to learn a function \(y = \hat{f}(x_1, x_2, \dots, x_p)\) for predicting new values.</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-10" style="background:;">
+  <hgroup>
+    <h2>Ordinary Least Squares (OLS)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>As we learned on our grandmothers knee,</p>
+
+<p>\[
+y = f(\vec{x}) + \epsilon
+\]</p>
+
+<p>\[
+\hat{y} = \hat{f}(\vec{x})
+\]</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-11" style="background:;">
+  <hgroup>
+    <h2>Note on Loss Functions</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Here we&#39;re going to be using least squares error as the function
+to minimize.  But this is not the only <em>loss</em> <em>function</em> one could
+usefully optimize.</p>
+
+<p>In particular, least-squares has a number of very nice mathematical
+properties, but it puts a lot of weight on outliers.  If the residual
+\(r_i = y_i - \hat{y}_i\) and the loss function is \(l = \sum_i \rho(r_i)\), some &quot;robust regression&quot; methods use different methods:</p>
+
+<p>\[ 
+\begin{eqnarray*} 
+\rho_\mathrm{LS}(r_i) & = &  r_i^2 \\
+\rho_\mathrm{Huber}(r_i) & = & \begin{array}{ll} r_i^2 & \mathrm{if } |r_i| \le c; \\ c(2 r_i - c) & \mathrm{if } |r_i| > c. \\ \end{array} \\
+\rho_\mathrm{Tukey}(r_i) & = & \begin{array}{ll} r_i \left ( 1 - \frac{r_i}{c} \right )^2 & \mathrm{if } |r_i| \le c; \\ 0 & \mathrm{if } |r_i| > c. \\ \end{array} \\
+\end{eqnarray*} 
+\]</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-12" style="background:;">
+  <hgroup>
+    <h2>Note on Loss Functions</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Even crazier loss functions are possible --- for your particular
+application, it may be worse to over-predict than under-predict
+(for instance), so the loss function needn&#39;t necessarily be symmetric
+around \(r_i = 0\).</p>
+
+<p>The &quot;right&quot; loss function is problem-dependent.</p>
+
+<p>For now, we&#39;ll just use least-squares, as it&#39;s familar and the
+mechanics don&#39;t change with other loss functions.  However, different
+algorithms may need to be used to use different loss functions;
+many explicitly use the nice mathematical properties of least
+squares.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-13" style="background:;">
+  <hgroup>
+    <h2>Polynomial Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Let&#39;s do some linear regression of a noisy, tilted sinusoid:</p>
+
+<pre><code class="python">import scripts.regression.biasvariance as bv
+import numpy
+import matplotlib.pylab as plt
+
+x,y = bv.noisyData(npts=40)
+p = numpy.polyfit(x, y, 1)
+fitfun = numpy.poly1d(p)
+
+plt.plot(x,y,&#39;ro&#39;)
+plt.plot(x,fitfun(x),&#39;g-&#39;)
+plt.show()
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-14" style="background:;">
+  <hgroup>
+    <h2>Polynomial Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>We should have something that looks like the figure on the right.</p>
+
+<p>Questions we should be asking ourselves whenever we&#39;re doing something like this:</p>
+
+<ul>
+<li>How is this likely to perform on new data?</li>
+<li>How is the accuracy likely to be in the centre (\(x = 0\))?  At \(x = 2\)?</li>
+<li>How robust is our prediction - how variable is it likely to be if we had gotten different data?</li>
+</ul>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/bias-variance/linear-fit.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-15" style="background:;">
+  <hgroup>
+    <h2>Polynomial Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>Repeat the same steps with degree 20. </p>
+
+<p>We can get much better accuracy at our points if we use a higher-order polynomial.</p>
+
+<p>Ask ourselves the same questions:</p>
+
+<ul>
+<li>How is this likely to perform on new data?</li>
+<li>How is the accuracy likely to be in the centre (\(x = 0\))?  At \(x = 2\)?</li>
+<li>How robust is our prediction - how variable is it likely to be if we had gotten different data?</li>
+</ul>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/bias-variance/twentyth-fit.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-16" style="background:;">
+  <hgroup>
+    <h2>Polynomial Regression - In Sample Error</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>We can generate our fit and then calculate the error on the data we&#39;ve used to train:</p>
+
+<p>\[ 
+E = \sum_i \left ( y_i - \hat{f}(x_i) \right )^2
+\]</p>
+
+<p>and if we plot the results, we&#39;ll see the error monotonically going down with the degree of polynomial we use.  So should we use high-order polynomials?</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/bias-variance/in-sample-error-vs-degree.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-17" style="background:;">
+  <hgroup>
+    <h2>Bias-Variance Decomposition</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Consider the squared error we get from fitting some regression model \(\hat{f}(x)\) to some given set of data \(x\):</p>
+
+<p>\[
+\begin{eqnarray*}
+E \left [ (y-\hat{y})^2 \right ] & = & E \left [ ( f + \epsilon - \hat{f})^2 \right ] \\
+              & = & E \left [ \left ( f - \hat{f} \right )^2 \right ] + \sigma_\epsilon^2 \\
+              & = & E \left [ \left ( (f - E[\hat{f}]) - (\hat{f} - E[\hat{f]}) \right )^2 \right ] + \sigma_\epsilon^2 \\
+              & = & E \left [ \left ( f - E[\hat{f}] \right )^2 \right ]  - 2 E \left [ ( f - E[\hat{f}]) (\hat{f} - E[\hat{f}]) \right ] + E \left [ \left (\hat{f} - E[\hat{f}]) \right )^2 \right ] + \sigma_\epsilon^2 \\
+              & = & \left (f - E[\hat{f}]) \right )^2 + E \left [ \left ( \hat{f} - E[\hat{f}] \right )^2 \right ]  + \sigma_\epsilon^2 \\
+              & = & \mathrm{Bias}^2 + \mathrm{Var}(f) + \sigma_\epsilon^2
+\end{eqnarray*}
+\]</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-18" style="background:;">
+  <hgroup>
+    <h2>Bias-Variance Decomposition</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>\[
+\mathrm{MSE} = E \left [ \left (\hat{f} - E[\hat{f}]) \right )^2 \right ] + \left ( f - E[\hat{f}] \right )^2  + \sigma_\epsilon^2  =  \mathrm{Bias}^2 + \mathrm{Var}(f) + \sigma_\epsilon^2
+\]</p>
+
+<ul>
+<li>Last term: intrinisic noise in the problem.  Can&#39;t do anything about it; we won&#39;t consider it any further right now.</li>
+<li>First term: <strong>bias</strong> squared of our estimate.
+
+<ul>
+<li>Is the expectation value of our regression estimate \(\hat{f}\), the expectation value of \(f\)?</li>
+</ul></li>
+<li><p>Second term: <strong>variance</strong> of our estimate.</p>
+
+<ul>
+<li>How robust/variable is our regression estimate, \(\hat{f}\)?</li>
+</ul></li>
+<li><p>Obvious: mean squared error has contribution from both of these terms.</p></li>
+<li><p>Less obvious: there is almost always a tradeoff between bias and variance.</p></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-19" style="background:;">
+  <hgroup>
+    <h2>Bias, Variance in Polynomial Fitting</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>Because this is synthetic data, we can examine bias and variance in our regression estimates:</p>
+
+<ul>
+<li>Generate many sets of data from the model</li>
+<li>For each one,
+
+<ul>
+<li>Generate fit with given degree</li>
+<li>Plot fit for visualization</li>
+<li>Generate predictions at a given point (say, \(x=0\))</li>
+</ul></li>
+<li>Examine bias, variance of predictions around zero.</li>
+</ul>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/bias-variance/lin-bias-variance.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-20" style="background:;">
+  <hgroup>
+    <h2>Polynomial Fitting - Constant</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="outputs/bias-variance/const-bias-variance.png" alt=""></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-21" style="background:;">
+  <hgroup>
+    <h2>Polynomial Fitting - Linear</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="outputs/bias-variance/lin-bias-variance.png" alt=""></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-22" style="background:;">
+  <hgroup>
+    <h2>Polynomial Fitting - Seventh Order</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="outputs/bias-variance/seventh-bias-variance.png" alt=""></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-23" style="background:;">
+  <hgroup>
+    <h2>Polynomial Fitting - Tenth Order</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="outputs/bias-variance/tenth-bias-variance.png" alt=""></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-24" style="background:;">
+  <hgroup>
+    <h2>Polynomial Fitting - Twentyth Order</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="outputs/bias-variance/twentyth-bias-variance.png" alt=""></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-25" style="background:;">
+  <hgroup>
+    <h2>Bias and Consistency</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Bias is a measure of how consistent the model is with the true behaviour.</p>
+
+<p>Very generally, models that are too simple can&#39;t capture all of the
+behaviour of the system, and so estimators based on these simple models
+have higher bias.</p>
+
+<p>As the complexity of model increases, bias tends to go down; the model
+can capture whatever behaviour is seen.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-26" style="background:;">
+  <hgroup>
+    <h2>Variance and Generalization</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Variance is a measure of how sensitive the estimated model is to the particular
+set of data it sees.</p>
+
+<p>It is very closely tied to the idea of <strong>generalization</strong>.  Is the model learning
+trends that will generalize to a new set of data?  Or is it just overfitting the 
+noise of this particular data set?</p>
+
+<p>As the complexity of a mdoel increases, it tends to have high variance; simple
+models typically have very low variance.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-27" style="background:;">
+  <hgroup>
+    <h2>Bias-Variance Tradeoff</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>For our polynomial example, if we compare the error in the computed
+model with the &quot;true&quot; model (not generally availble to us!), we can
+plot the error vs the degree of the polynomial:</p>
+
+<ul>
+<li><p>For small degrees, the dominant term is bias; simpler models can&#39;t capture the true behaviour of the system.</p></li>
+<li><p>For larger degrees, the dominant term is variance; more complex models are generalizing poorly and overfitting noise.</p></li>
+</ul>
+
+<p>There&#39;s some sweet spot where the two effects are comparably low.</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/bias-variance/error-vs-degree.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-28" style="background:;">
+  <hgroup>
+    <h2>Choosing the Right Model</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>(Or in this case, the &quot;metaparameters&quot; of the model)</p>
+
+<p>In general, we get some dataset - we can&#39;t generate </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-29" style="background:;">
+  <hgroup>
+    <h2>Training vs Validation</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-30" style="background:;">
+  <hgroup>
+    <h2>Hands-On: Model Selection</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-31" style="background:;">
+  <hgroup>
+    <h2>Cross Validation</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="outputs/crossvalidation/CV-polynomial.png" alt=""></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-32" style="background:;">
+  <hgroup>
+    <h2>Resampling Aside #1</h2>
+  </hgroup>
+  <article data-timings="">
+    <h3>Bootstrapping</h3>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-33" style="background:;">
+  <hgroup>
+    <h2>Regression as Smoothing</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-34" style="background:;">
+  <hgroup>
+    <h2>Nonparametric Regression - LOWESS</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-35" style="background:;">
+  <hgroup>
+    <h2><code>statsmodels</code></h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-36" style="background:;">
+  <hgroup>
+    <h2>Resampling Aside #2</h2>
+  </hgroup>
+  <article data-timings="">
+    <h3>Nonparametric Hypothesis Testing</h3>
+
+<p>Two-sample permutation test</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="segue dark nobackground" id="slide-37" style="background:;">
+  <hgroup>
+    <h2>Classification</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-38" style="background:;">
+  <hgroup>
+    <h2>Classification</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Classification is a broad set of problems that supperficially look a lot like regression:</p>
+
+<ul>
+<li>Get some data in, with</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-39" style="background:;">
+  <hgroup>
+    <h2>Confusion matrix</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Sensitivity v. Specificity</li>
+<li>Which are worse, false positives or false negatives? Depends!</li>
+<li>ROC curve</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-40" style="background:;">
+  <hgroup>
+    <h2>Logistic Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-41" style="background:;">
+  <hgroup>
+    <h2>Closest labeled point</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-42" style="background:;">
+  <hgroup>
+    <h2>Nearest Neighbours - $k$NN</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-43" style="background:;">
+  <hgroup>
+    <h2>Naive Bayes</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-44" style="background:;">
+  <hgroup>
+    <h2>Decision trees</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="dark segue nobackground" id="slide-45" style="background:;">
+  <hgroup>
+    <h2>Variable Selection</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-46" style="background:;">
+  <hgroup>
+    <h2>Try all combinations</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><a href="http://xkcd.com/882/">http://xkcd.com/882/</a></p>
+
+<ul>
+<li>Be wary of multiple comparisons!</li>
+<li>Bonferroni, False Discovery Rate</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-47" style="background:;">
+  <hgroup>
+    <h2>AIC, BIC, adjusted R<sup>2</sup></h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-48" style="background:;">
+  <hgroup>
+    <h2>PCA</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-49" style="background:;">
+  <hgroup>
+    <h2>Lasso</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="dark segue nobackground" id="slide-50" style="background:;">
+  <hgroup>
+    <h2>Clustering</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-51" style="background:;">
+  <hgroup>
+    <h2>K-means</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Foo bar baz</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-52" style="background:;">
+  <hgroup>
+    <h2>Hierarchical Clustering</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="dark segue nobackground" id="slide-53" style="background:;">
+  <hgroup>
+    <h2>Ensemble Methods</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-54" style="background:;">
+  <hgroup>
+    <h2>Bagging, Boosting</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-55" style="background:;">
+  <hgroup>
+    <h2>Random Forest</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title=''>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Techniques, Concepts'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='ML and Scientific Data Analysis'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='ML vs Scientific Data Analysis'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Scientific Data Analysis with ML'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='Types of problems'>
+         6
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=7 title='Types of Data'>
+         7
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=8 title='Regression'>
+         8
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=9 title='Regression'>
+         9
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=10 title='Ordinary Least Squares (OLS)'>
+         10
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=11 title='Note on Loss Functions'>
+         11
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=12 title='Note on Loss Functions'>
+         12
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=13 title='Polynomial Regression'>
+         13
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=14 title='Polynomial Regression'>
+         14
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=15 title='Polynomial Regression'>
+         15
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=16 title='Polynomial Regression - In Sample Error'>
+         16
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=17 title='Bias-Variance Decomposition'>
+         17
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=18 title='Bias-Variance Decomposition'>
+         18
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=19 title='Bias, Variance in Polynomial Fitting'>
+         19
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=20 title='Polynomial Fitting - Constant'>
+         20
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=21 title='Polynomial Fitting - Linear'>
+         21
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=22 title='Polynomial Fitting - Seventh Order'>
+         22
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=23 title='Polynomial Fitting - Tenth Order'>
+         23
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=24 title='Polynomial Fitting - Twentyth Order'>
+         24
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=25 title='Bias and Consistency'>
+         25
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=26 title='Variance and Generalization'>
+         26
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=27 title='Bias-Variance Tradeoff'>
+         27
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=28 title='Choosing the Right Model'>
+         28
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=29 title='Training vs Validation'>
+         29
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=30 title='Hands-On: Model Selection'>
+         30
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=31 title='Cross Validation'>
+         31
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=32 title='Resampling Aside #1'>
+         32
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=33 title='Regression as Smoothing'>
+         33
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=34 title='Nonparametric Regression - LOWESS'>
+         34
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=35 title='<code>statsmodels</code>'>
+         35
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=36 title='Resampling Aside #2'>
+         36
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=37 title='Classification'>
+         37
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=38 title='Classification'>
+         38
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=39 title='Confusion matrix'>
+         39
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=40 title='Logistic Regression'>
+         40
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=41 title='Closest labeled point'>
+         41
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=42 title='Nearest Neighbours - $k$NN'>
+         42
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=43 title='Naive Bayes'>
+         43
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=44 title='Decision trees'>
+         44
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=45 title='Variable Selection'>
+         45
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=46 title='Try all combinations'>
+         46
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=47 title='AIC, BIC, adjusted R<sup>2</sup>'>
+         47
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=48 title='PCA'>
+         48
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=49 title='Lasso'>
+         49
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=50 title='Clustering'>
+         50
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=51 title='K-means'>
+         51
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=52 title='Hierarchical Clustering'>
+         52
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=53 title='Ensemble Methods'>
+         53
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=54 title='Bagging, Boosting'>
+         54
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=55 title='Random Forest'>
+         55
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script> -->
+  <script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
