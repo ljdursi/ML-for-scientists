@@ -14,7 +14,10 @@ BOOTIMGS=$(addprefix ./outputs/bootstrap/,$(BOOTIMGNAMES))
 NPIMGNAMES=lowess-fit.png kernel-fit.png kernel-demo.png
 NPIMGS=$(addprefix ./outputs/nonparametric/,$(NPIMGNAMES))
 
-IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS)
+DTIMGNAMES=basic.png good-evil.png impurity-plots.png
+DTIMGS=$(addprefix ./outputs/classification/,$(DTIMGNAMES))
+
+IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS) $(DTIMGS)
 
 %.md %.html: %.Rmd $(IMGS)
 	Rscript -e "library(slidify); slidify('$<',knit_deck=TRUE,save_payload=TRUE)"
@@ -32,11 +35,16 @@ $(NPIMGS): scripts/regression/lowess.py scripts/regression/kernel.py
 	python scripts/regression/lowess.py 
 	python scripts/regression/kernel.py 
 
+$(DTIMGS): scripts/classification/decisiontree.py scripts/classification/impurityplot.py
+	python scripts/classification/decisiontree.py 
+	python scripts/classification/impurityplot.py
+
 tidy:
 	rm -f *~
 	rm -f scripts/*.pyc scripts/*~ scripts/.*.swp
 	rm -f scripts/regression/*.pyc scripts/regression/*~ scripts/regression/.*.swp
 	rm -f scripts/bootstrap/*.pyc scripts/bootstrap/*~ scripts/bootstrap/.*.swp
+	rm -f scripts/classification/*.pyc scripts/classification/*~ scripts/classification/.*.swp
 
 clean:
 	rm -f $(PRES).html $(PRES).md $(IMGS)
