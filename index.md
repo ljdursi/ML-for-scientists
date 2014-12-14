@@ -143,7 +143,7 @@ And we will be working on two broad classes of variables:
 
 Others are possible too -- intervals, temporal or spatial continuous data -- but we won't be considering those here.
 
---- .segue .dark .nobackground
+--- .segue .dark
 
 ## Regression
 
@@ -702,17 +702,112 @@ $$
 \hat{y}(x) = \sum_i y_i \left ( \frac{ x_i x}{\sum_j x_j^2} \right ) = \sum_i y_i w(x,\vec{x})
 $$
 
-That is, a weighted average of the initial $y_i$s.
+That is, a weighted average of *all* of the initial $y_i$s.
 
 ---
 
+## Regression with Nonparametric Smoothing
+
+To get good prediction results, we don't *need* to choose a particular, parameterized, global functional form to smooth onto.
+
+As with parametric/nonparametric bootstrap,
+
+* Parametric version is more powerful *if* the functional form is correctly known.
+* Nonparametric version has to "waste" some information to reconstruct the overall shape.
+
+Many nonparametric approaches are quite local, allowing adaptation to local features.
+
+--- &twocol
+
+## Nonparametric Regression - Kernel
+
+*** =left
+
+* The simplest approach is to smooth the value of each point over some local area with some kernel basis function.
+* The regression function is then calculated by summing the input data points convolved with the basis function.
+* Commonly used kernel basis functions:
+    * Gaussian (downside - never falls off to zero)
+    * Tricubic 
+* Kernel basis function characterized by some bandwidth.
+* How to choose best bandwidth?
+
+
+*** =right
+
+![](outputs/nonparametric/kernel-demo.png)
+![](outputs/nonparametric/kernel-fit.png)
+
+--- &twocol
+
 ## Nonparametric Regression - LOWESS
+
+LOESS and LOWESS are two very related methods which use a similar-but-different approach to kernel regression.
+
+*** =left
+
+At each point, a **local** low-order polynomial regression performed, fit to some fixed **number** of neighbouring points, rather than smoothed over a particular area.
+
+Number of neighbours has to be chosen:
+
+* Too few: too noisy.
+* Too many: smooth too much.
+
+How are number of neighbours chosen?
+
+*** =right
 
 ![](outputs/nonparametric/lowess-fit.png)
 
 ---
 
 ## `statsmodels`
+
+Statsmodels ( http://statsmodels.sourceforge.net ) is a very useful python package which includes:
+
+* Wide variety of regression tools
+* Ties in with pandas and other packages, to give very nice environment for exploring these sorts of questions
+* Many tools for hypothesis testing
+
+
+
+```python
+def lowessFit(x,y,**kwargs):
+    """Use statsmodels to do a lowess fit to the given data.
+       Returns the x and fitted y."""
+    fit = sm.nonparametric.lowess(y,x,**kwargs)
+    xlowess = fit[:,0]
+    ylowess = fit[:,1]
+    return xlowess, ylowess
+```
+
+---
+
+## Nonparametric Regression
+
+* You will sometimes hear nonparametric techniques referred to as "model-free".
+    * These people are either 
+        * dishonest, or 
+        * too dumb to understand the techniques they're using.
+    * Either way, not to be trusted.
+* Have very specific models, and thus applicability:
+    * Tend to require constant noise ("homoskedastic")
+    * Kernel methods work best when data has roughly constant density
+* However, the underlying models are both:
+    * normally weaker than specifying a particular functional form
+    * fairly transparent - if these methods go wrong, they don't go subtly wrong.
+
+---
+
+## Parametric vs Nonparametric Regression
+
+* If you know the right answer, you should certainly exploit that
+    * Will get more information out of your data.
+* Nonparametric techniques will always have higher variance, bias than the right parametric method, if available
+    * But it's hard for them to go subtly badly wrong.
+* Even if you think you know the right answer and do a parametric regression, you should do a non-parametric regession, as well.
+    * Costs almost nothing.
+    * If your parametric regression is correct, non-parametric version should look like a noisier version of same.
+    * If they differ substantially in some region, now you've learned something potentially quite interesting.
 
 ---
 
@@ -731,16 +826,297 @@ Two-sample permutation test
 
 Classification is a broad set of problems that supperficially look a lot like regression:
 
-* Get some data in, with
+* Get some data in, with known correct answers
+* Learn algorithm that produces new correct answers for new inputs.
+
+But it is greatly complicated by the fact that the labels are discrete:
+
+* Item should either be in category A or category B.
+* You don't get partial points for being close; there's no category A$\frac{1}{2}$.
+
+So classification algorithms spend a great deal of time looking for methods to as cleanly
+distringuish various categories as possible.
+
+In some cases, it may be useful to have not only a "best guess" classification, but a quantitative
+measure of how much evidence there is in that assignment.
 
 ---
 
+## Classification Problems
+
+Some classic classification problems:
+
+* Bioinformatics - classify proteins according to their function
+* Image processing - what objects exist in the image
+* Text categorization:
+    * Spam filtering
+    * Sentiment analysis: is this tweet about my company positive or negative?
+* Fraud detection
+* Market segmentation
+
+Input variables are commonly both continuous and categorical.
+
+---
+
+## Binary vs Multiclass Classification
+
+Classification algorithms can be broken broadly into two categories;
+
+* Binary classification: answers yes/no questions about whether an item is in a particular class;
+* Multiclass classification: of $m$ classes, which one does this item belong to?
+
+One approach to multiclass classifiication is to deompose into $m$ binary classification problems, and
+for each item, choose the category in which the item is most securely assigned.  But more sophisticated
+methods exist.
+
+---
+
+## Outline
+
+For the next couple of hours, we'll look at the following:
+
+* Decision Trees
+* Evaluating binary classifiers
+    * Confusion matrix
+    * Precision, Recall
+    * ROC curves
+* Nearest Neighbours
+* Logistic Regression
+* Naive Bayes
+
+--- &twocol
+
+## Decision Trees
+
+*** =left
+
+A Decision Tree is a structure, and the algorithm which generates
+it, which classifies an input based on a number of binary decisions.
+
+"Splits" the data set based on one of the $p$ features of the items.
+
+Can split based on continuous data ("if height < 1.5 m"), or ordinal/discrete
+("if category == 'A').
+
+
+*** =right
+![](outputs/classification/basic.png)
+
+---
+
+## Batman Decision Tree
+
+Consider this example ( from Rob Schapire, Princeton:)
+
+|Name    |  cape |  ears |  male |  mask | smokes | tie  | Good/Bad
+|--------|-------|-------|-------|-------|--------|------|--------- 
+|Batman  |  True |  True | True  | True  | False  |False | Good
+|Robin   |  True | False | True  | True  | False  |False | Good
+|Alfred  | False | False | True  |False  | False  | True | Good
+|Pengin  | False | False | True  |False  |  True  | True | Bad
+|Catwoman| False |  True | False | True  | False  |False | Bad
+|Joker   | False | False | True  |False  | False  |False | Bad
+
+"Learn" a decision tere to classify new characters into Good/Bad.
+
+How does your tree do on this test set?
+
+|Name    |  cape |  ears |  male |  mask | smokes | tie  | Good/Bad
+|--------|-------|-------|-------|-------|--------|------|--------- 
+|Batgirl |  True |  True | False | True  | False  |False | ??
+|Riddler | False | False | True  | True  | False  |False | ??
+
+---
+
+## Splitting Algorithms
+
+Consider the following two possible first splits:
+
+* Split based on cape.
+    * Cape == True: get Batman, Robin (Good)
+    * Cape == False: get Alfred (Good), Penguin, Catwoman, Joker (Bad)
+* or Split based on tie.
+    * Tie == True: get Alfred (Good), Penguin (Bad)
+    * Tie == False: get Batman, Robin (Good), Catwoman, Joker (Bad).
+
+There's a sense in which cape is clearly the better split.  It leads to two groups, one of which is purely good, and the
+other which is almost purely bad.
+
+The other choice gives you two groups just as heterogeneous as the input data.
+
+--- &twocol
+
+## Splitting Algorithms
+
+Typically rank possible splits based on increase in "purity" of the two subgroups it generates.
+
+Information theory: this is clearly a more informitive decision, leads two two groups of much lower entropy.
+
+*** =left
+
+Consider the probability $p$ that a member of one of the subgroups is in a given category.  Two common measures 
+for the "impurity" of the groups generated (higher is worse):
+* Gini Index: $p (1 - p)$
+* Entropy: $-p \ln p - (1-p) \ln (1 - p)$
+
+*** =right
+![](outputs/classification/impurity-plots.png)
+
+--- 
+
+## Splitting Algorithms
+
+So splitting algorithms look something like this:
+
+* Until every element is in a pure subtree,
+    * For each variable, consider a split.
+        * For categorical, consider all levels; split and measure impurity of resulting groups.
+        * For continuous, use line optimization to choose best point at which to split, keep track of impurity at that point.
+    * Choose split which maximizes (negative) change in impurity
+
+Actually implementing this leads to a large number of decisions
+which effect both quality of results and computational performance.
+Common, classic decision tree algorithms you will encounter include
+CART and C4.5.  Both (and many others) are fine, but have their
+particular strengths and weaknesses.
+
+--- &twocol
+
+## Scikit-learn
+
+*** =left
+
+Scikit-learn is a python package which contains a suite of machine
+learning algorithms each of which are implemented with a consistent API.
+
+Makes trying various algorithms on a data set fairly painless.
+
+Typical supervised-learning workflow:
+
+* Instantiate an instance of a particular learner (here, a classifier), with whatever parameters you choose;
+* Use the `fit()` method to train it for some given input training data;
+* use the `predict()` method to apply it to some test data.
+
+*** =right
+
+![](outputs/classification/good-evil.png)
+
+--- 
+
+## `sklearn`
+
+Let's take a look at `scripts/classification/decisiontree.py`:
+
+
+```python
+import pandas
+import sklearn
+import sklearn.tree
+
+#...
+
+    train, labels, test = goodEvilData()
+    model = sklearn.tree.DecisionTreeClassifier()
+    model.fit(train, labels)
+
+    predictions = model.predict(test)
+```
+
+--- 
+
+## `pandas`
+
+Pandas is a python module for handling data series and R-like data frames.
+
+Data frames are collections of columns of data about observations.
+Each column may be of a different type (string, integer, float,
+boolean), but within a column the data is homogeneous.
+
+This isn't typically super-useful for regression (where we often, but not always, are
+using continuous values), but is generally pretty useful for classification problems.
+
+Many other useful features, but data frames are what interest us today.
+
+--- 
+
+## `pandas`
+
+```python
+import pandas
+
+df = pandas.DataFrame( {'Name':['Jonathan','Ted','Harvey'],
+                        'Type':['human','dog','roomba'],
+                        'Height':[180.,50.,5.],
+                        'Age':[42, 15, 2],
+                        'Recharged':[False,True,True]} )
+print df
+```
+
+```
+##    Age  Height      Name Recharged    Type
+## 0   42     180  Jonathan     False   human
+## 1   15      50       Ted      True     dog
+## 2    2       5    Harvey      True  roomba
+```
+
+
+---
+
+## Trees and Overfitting
+
+As with polynomials and regression, can easily produce overly-complex models which do great on their training data set
+but don't generalize.
+
+Except this is guaranteed to happen with trees.  Tree will **always** give you a completely divided up data set that will
+correctly classify the input data set.   
+
+How to avoid this?
+
+---
+
+## Tree-pruning
+
+The normal approach is to let the tree do its thing, and then
+afterwards prune it at some level where the results are "good enough"
+while the model is not "too complex".
+
+How to determine where that point is?  
+
+Cross validation.
+
+---
+
+## Hands on - Iris Data Set
+
+The iris data set is famous enough that it has its own wikipedia page: http://en.wikipedia.org/wiki/Iris_flower_data_set .
+
+It is a set of four measurements for each of 50 irises of 3 different species.  (At least 100 of which were picked in Quebec).
+It's a classic classification problem - two of the categories seperate themselves quite cleanly, but the third is much trickier.
+
+Play with the tree parameters and see if you can improve on the sklearn defaults.
+
+
+```python
+import scripts.classification.decisiontree as dt
+
+a = dt.irisProblem()
+b = dt.irisProblem(splitter='random')
+```
+
+```
+## Misclassifications on test set:  3 out of  51
+## Misclassifications on test set:  4 out of  51
+```
+
+
+---
 
 ## Confusion matrix
 
 * Sensitivity v. Specificity
 * Which are worse, false positives or false negatives? Depends!
 * ROC curve
+
 
 ---
 

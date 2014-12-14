@@ -268,7 +268,7 @@ $(function() {
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark nobackground" id="slide-8" style="background:;">
+<slide class="segue dark" id="slide-8" style="background:;">
   <hgroup>
     <h2>Regression</h2>
   </hgroup>
@@ -1027,7 +1027,7 @@ We can rewrite this as
 \hat{y}(x) = \sum_i y_i \left ( \frac{ x_i x}{\sum_j x_j^2} \right ) = \sum_i y_i w(x,\vec{x})
 \]</p>
 
-<p>That is, a weighted average of the initial $y_i$s.</p>
+<p>That is, a weighted average of <em>all</em> of the initial $y_i$s.</p>
 
   </article>
   <!-- Presenter Notes -->
@@ -1035,10 +1035,19 @@ We can rewrite this as
 
 <slide class="" id="slide-43" style="background:;">
   <hgroup>
-    <h2>Nonparametric Regression - LOWESS</h2>
+    <h2>Regression with Nonparametric Smoothing</h2>
   </hgroup>
   <article data-timings="">
-    <p><img src="outputs/nonparametric/lowess-fit.png" alt=""></p>
+    <p>To get good prediction results, we don&#39;t <em>need</em> to choose a particular, parameterized, global functional form to smooth onto.</p>
+
+<p>As with parametric/nonparametric bootstrap,</p>
+
+<ul>
+<li>Parametric version is more powerful <em>if</em> the functional form is correctly known.</li>
+<li>Nonparametric version has to &quot;waste&quot; some information to reconstruct the overall shape.</li>
+</ul>
+
+<p>Many nonparametric approaches are quite local, allowing adaptation to local features.</p>
 
   </article>
   <!-- Presenter Notes -->
@@ -1046,15 +1055,153 @@ We can rewrite this as
 
 <slide class="" id="slide-44" style="background:;">
   <hgroup>
-    <h2><code>statsmodels</code></h2>
+    <h2>Nonparametric Regression - Kernel</h2>
   </hgroup>
   <article data-timings="">
     
+<div style='float:left;width:48%;' class='centered'>
+  <ul>
+<li>The simplest approach is to smooth the value of each point over some local area with some kernel basis function.</li>
+<li>The regression function is then calculated by summing the input data points convolved with the basis function.</li>
+<li>Commonly used kernel basis functions:
+
+<ul>
+<li>Gaussian (downside - never falls off to zero)</li>
+<li>Tricubic </li>
+</ul></li>
+<li>Kernel basis function characterized by some bandwidth.</li>
+<li>How to choose best bandwidth?</li>
+</ul>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/nonparametric/kernel-demo.png" alt="">
+<img src="outputs/nonparametric/kernel-fit.png" alt=""></p>
+
+</div>
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-45" style="background:;">
+  <hgroup>
+    <h2>Nonparametric Regression - LOWESS</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>LOESS and LOWESS are two very related methods which use a similar-but-different approach to kernel regression.</p>
+
+<div style='float:left;width:48%;' class='centered'>
+  <p>At each point, a <strong>local</strong> low-order polynomial regression performed, fit to some fixed <strong>number</strong> of neighbouring points, rather than smoothed over a particular area.</p>
+
+<p>Number of neighbours has to be chosen:</p>
+
+<ul>
+<li>Too few: too noisy.</li>
+<li>Too many: smooth too much.</li>
+</ul>
+
+<p>How are number of neighbours chosen?</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/nonparametric/lowess-fit.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-46" style="background:;">
+  <hgroup>
+    <h2><code>statsmodels</code></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Statsmodels ( <a href="http://statsmodels.sourceforge.net">http://statsmodels.sourceforge.net</a> ) is a very useful python package which includes:</p>
+
+<ul>
+<li>Wide variety of regression tools</li>
+<li>Ties in with pandas and other packages, to give very nice environment for exploring these sorts of questions</li>
+<li>Many tools for hypothesis testing</li>
+</ul>
+
+<pre><code class="python">def lowessFit(x,y,**kwargs):
+    &quot;&quot;&quot;Use statsmodels to do a lowess fit to the given data.
+       Returns the x and fitted y.&quot;&quot;&quot;
+    fit = sm.nonparametric.lowess(y,x,**kwargs)
+    xlowess = fit[:,0]
+    ylowess = fit[:,1]
+    return xlowess, ylowess
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-47" style="background:;">
+  <hgroup>
+    <h2>Nonparametric Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>You will sometimes hear nonparametric techniques referred to as &quot;model-free&quot;.
+
+<ul>
+<li>These people are either 
+
+<ul>
+<li>dishonest, or </li>
+<li>too dumb to understand the techniques they&#39;re using.</li>
+</ul></li>
+<li>Either way, not to be trusted.</li>
+</ul></li>
+<li>Have very specific models, and thus applicability:
+
+<ul>
+<li>Tend to require constant noise (&quot;homoskedastic&quot;)</li>
+<li>Kernel methods work best when data has roughly constant density</li>
+</ul></li>
+<li>However, the underlying models are both:
+
+<ul>
+<li>normally weaker than specifying a particular functional form</li>
+<li>fairly transparent - if these methods go wrong, they don&#39;t go subtly wrong.</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-48" style="background:;">
+  <hgroup>
+    <h2>Parametric vs Nonparametric Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>If you know the right answer, you should certainly exploit that
+
+<ul>
+<li>Will get more information out of your data.</li>
+</ul></li>
+<li>Nonparametric techniques will always have higher variance, bias than the right parametric method, if available
+
+<ul>
+<li>But it&#39;s hard for them to go subtly badly wrong.</li>
+</ul></li>
+<li>Even if you think you know the right answer and do a parametric regression, you should do a non-parametric regession, as well.
+
+<ul>
+<li>Costs almost nothing.</li>
+<li>If your parametric regression is correct, non-parametric version should look like a noisier version of same.</li>
+<li>If they differ substantially in some region, now you&#39;ve learned something potentially quite interesting.</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-49" style="background:;">
   <hgroup>
     <h2>Resampling Aside #2</h2>
   </hgroup>
@@ -1067,7 +1214,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark nobackground" id="slide-46" style="background:;">
+<slide class="segue dark nobackground" id="slide-50" style="background:;">
   <hgroup>
     <h2>Classification</h2>
   </hgroup>
@@ -1077,7 +1224,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-47" style="background:;">
+<slide class="" id="slide-51" style="background:;">
   <hgroup>
     <h2>Classification</h2>
   </hgroup>
@@ -1085,14 +1232,493 @@ We can rewrite this as
     <p>Classification is a broad set of problems that supperficially look a lot like regression:</p>
 
 <ul>
-<li>Get some data in, with</li>
+<li>Get some data in, with known correct answers</li>
+<li>Learn algorithm that produces new correct answers for new inputs.</li>
+</ul>
+
+<p>But it is greatly complicated by the fact that the labels are discrete:</p>
+
+<ul>
+<li>Item should either be in category A or category B.</li>
+<li>You don&#39;t get partial points for being close; there&#39;s no category A\(\frac{1}{2}\).</li>
+</ul>
+
+<p>So classification algorithms spend a great deal of time looking for methods to as cleanly
+distringuish various categories as possible.</p>
+
+<p>In some cases, it may be useful to have not only a &quot;best guess&quot; classification, but a quantitative
+measure of how much evidence there is in that assignment.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-52" style="background:;">
+  <hgroup>
+    <h2>Classification Problems</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Some classic classification problems:</p>
+
+<ul>
+<li>Bioinformatics - classify proteins according to their function</li>
+<li>Image processing - what objects exist in the image</li>
+<li>Text categorization:
+
+<ul>
+<li>Spam filtering</li>
+<li>Sentiment analysis: is this tweet about my company positive or negative?</li>
+</ul></li>
+<li>Fraud detection</li>
+<li>Market segmentation</li>
+</ul>
+
+<p>Input variables are commonly both continuous and categorical.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-53" style="background:;">
+  <hgroup>
+    <h2>Binary vs Multiclass Classification</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Classification algorithms can be broken broadly into two categories;</p>
+
+<ul>
+<li>Binary classification: answers yes/no questions about whether an item is in a particular class;</li>
+<li>Multiclass classification: of \(m\) classes, which one does this item belong to?</li>
+</ul>
+
+<p>One approach to multiclass classifiication is to deompose into \(m\) binary classification problems, and
+for each item, choose the category in which the item is most securely assigned.  But more sophisticated
+methods exist.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-54" style="background:;">
+  <hgroup>
+    <h2>Outline</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>For the next couple of hours, we&#39;ll look at the following:</p>
+
+<ul>
+<li>Decision Trees</li>
+<li>Evaluating binary classifiers
+
+<ul>
+<li>Confusion matrix</li>
+<li>Precision, Recall</li>
+<li>ROC curves</li>
+</ul></li>
+<li>Nearest Neighbours</li>
+<li>Logistic Regression</li>
+<li>Naive Bayes</li>
 </ul>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-48" style="background:;">
+<slide class="" id="slide-55" style="background:;">
+  <hgroup>
+    <h2>Decision Trees</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>A Decision Tree is a structure, and the algorithm which generates
+it, which classifies an input based on a number of binary decisions.</p>
+
+<p>&quot;Splits&quot; the data set based on one of the \(p\) features of the items.</p>
+
+<p>Can split based on continuous data (&quot;if height &lt; 1.5 m&quot;), or ordinal/discrete
+(&quot;if category == &#39;A&#39;).</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/classification/basic.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-56" style="background:;">
+  <hgroup>
+    <h2>Batman Decision Tree</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Consider this example ( from Rob Schapire, Princeton:)</p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>cape</th>
+<th>ears</th>
+<th>male</th>
+<th>mask</th>
+<th>smokes</th>
+<th>tie</th>
+<th>Good/Bad</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Batman</td>
+<td>True</td>
+<td>True</td>
+<td>True</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+<td>Good</td>
+</tr>
+<tr>
+<td>Robin</td>
+<td>True</td>
+<td>False</td>
+<td>True</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+<td>Good</td>
+</tr>
+<tr>
+<td>Alfred</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>Good</td>
+</tr>
+<tr>
+<td>Pengin</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>True</td>
+<td>True</td>
+<td>Bad</td>
+</tr>
+<tr>
+<td>Catwoman</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+<td>Bad</td>
+</tr>
+<tr>
+<td>Joker</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>Bad</td>
+</tr>
+</tbody></table>
+
+<p>&quot;Learn&quot; a decision tere to classify new characters into Good/Bad.</p>
+
+<p>How does your tree do on this test set?</p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>cape</th>
+<th>ears</th>
+<th>male</th>
+<th>mask</th>
+<th>smokes</th>
+<th>tie</th>
+<th>Good/Bad</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Batgirl</td>
+<td>True</td>
+<td>True</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+<td>??</td>
+</tr>
+<tr>
+<td>Riddler</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+<td>??</td>
+</tr>
+</tbody></table>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-57" style="background:;">
+  <hgroup>
+    <h2>Splitting Algorithms</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Consider the following two possible first splits:</p>
+
+<ul>
+<li>Split based on cape.
+
+<ul>
+<li>Cape == True: get Batman, Robin (Good)</li>
+<li>Cape == False: get Alfred (Good), Penguin, Catwoman, Joker (Bad)</li>
+</ul></li>
+<li>or Split based on tie.
+
+<ul>
+<li>Tie == True: get Alfred (Good), Penguin (Bad)</li>
+<li>Tie == False: get Batman, Robin (Good), Catwoman, Joker (Bad).</li>
+</ul></li>
+</ul>
+
+<p>There&#39;s a sense in which cape is clearly the better split.  It leads to two groups, one of which is purely good, and the
+other which is almost purely bad.</p>
+
+<p>The other choice gives you two groups just as heterogeneous as the input data.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-58" style="background:;">
+  <hgroup>
+    <h2>Splitting Algorithms</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Typically rank possible splits based on increase in &quot;purity&quot; of the two subgroups it generates.</p>
+
+<p>Information theory: this is clearly a more informitive decision, leads two two groups of much lower entropy.</p>
+
+<div style='float:left;width:48%;' class='centered'>
+  <p>Consider the probability \(p\) that a member of one of the subgroups is in a given category.  Two common measures 
+for the &quot;impurity&quot; of the groups generated (higher is worse):</p>
+
+<ul>
+<li>Gini Index: \(p (1 - p)\)</li>
+<li>Entropy: \(-p \ln p - (1-p) \ln (1 - p)\)</li>
+</ul>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/classification/impurity-plots.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-59" style="background:;">
+  <hgroup>
+    <h2>Splitting Algorithms</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>So splitting algorithms look something like this:</p>
+
+<ul>
+<li>Until every element is in a pure subtree,
+
+<ul>
+<li>For each variable, consider a split.
+
+<ul>
+<li>For categorical, consider all levels; split and measure impurity of resulting groups.</li>
+<li>For continuous, use line optimization to choose best point at which to split, keep track of impurity at that point.</li>
+</ul></li>
+<li>Choose split which maximizes (negative) change in impurity</li>
+</ul></li>
+</ul>
+
+<p>Actually implementing this leads to a large number of decisions
+which effect both quality of results and computational performance.
+Common, classic decision tree algorithms you will encounter include
+CART and C4.5.  Both (and many others) are fine, but have their
+particular strengths and weaknesses.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-60" style="background:;">
+  <hgroup>
+    <h2>Scikit-learn</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>Scikit-learn is a python package which contains a suite of machine
+learning algorithms each of which are implemented with a consistent API.</p>
+
+<p>Makes trying various algorithms on a data set fairly painless.</p>
+
+<p>Typical supervised-learning workflow:</p>
+
+<ul>
+<li>Instantiate an instance of a particular learner (here, a classifier), with whatever parameters you choose;</li>
+<li>Use the <code>fit()</code> method to train it for some given input training data;</li>
+<li>use the <code>predict()</code> method to apply it to some test data.</li>
+</ul>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/classification/good-evil.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-61" style="background:;">
+  <hgroup>
+    <h2><code>sklearn</code></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Let&#39;s take a look at <code>scripts/classification/decisiontree.py</code>:</p>
+
+<pre><code class="python">import pandas
+import sklearn
+import sklearn.tree
+
+#...
+
+    train, labels, test = goodEvilData()
+    model = sklearn.tree.DecisionTreeClassifier()
+    model.fit(train, labels)
+
+    predictions = model.predict(test)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-62" style="background:;">
+  <hgroup>
+    <h2><code>pandas</code></h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Pandas is a python module for handling data series and R-like data frames.</p>
+
+<p>Data frames are collections of columns of data about observations.
+Each column may be of a different type (string, integer, float,
+boolean), but within a column the data is homogeneous.</p>
+
+<p>This isn&#39;t typically super-useful for regression (where we often, but not always, are
+using continuous values), but is generally pretty useful for classification problems.</p>
+
+<p>Many other useful features, but data frames are what interest us today.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-63" style="background:;">
+  <hgroup>
+    <h2><code>pandas</code></h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="python">import pandas
+
+df = pandas.DataFrame( {&#39;Name&#39;:[&#39;Jonathan&#39;,&#39;Ted&#39;,&#39;Harvey&#39;],
+                        &#39;Type&#39;:[&#39;human&#39;,&#39;dog&#39;,&#39;roomba&#39;],
+                        &#39;Height&#39;:[180.,50.,5.],
+                        &#39;Age&#39;:[42, 15, 2],
+                        &#39;Recharged&#39;:[False,True,True]} )
+print df
+</code></pre>
+
+<pre><code>##    Age  Height      Name Recharged    Type
+## 0   42     180  Jonathan     False   human
+## 1   15      50       Ted      True     dog
+## 2    2       5    Harvey      True  roomba
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-64" style="background:;">
+  <hgroup>
+    <h2>Trees and Overfitting</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>As with polynomials and regression, can easily produce overly-complex models which do great on their training data set
+but don&#39;t generalize.</p>
+
+<p>Except this is guaranteed to happen with trees.  Tree will <strong>always</strong> give you a completely divided up data set that will
+correctly classify the input data set.   </p>
+
+<p>How to avoid this?</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-65" style="background:;">
+  <hgroup>
+    <h2>Tree-pruning</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The normal approach is to let the tree do its thing, and then
+afterwards prune it at some level where the results are &quot;good enough&quot;
+while the model is not &quot;too complex&quot;.</p>
+
+<p>How to determine where that point is?  </p>
+
+<p>Cross validation.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-66" style="background:;">
+  <hgroup>
+    <h2>Hands on - Iris Data Set</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The iris data set is famous enough that it has its own wikipedia page: <a href="http://en.wikipedia.org/wiki/Iris_flower_data_set">http://en.wikipedia.org/wiki/Iris_flower_data_set</a> .</p>
+
+<p>It is a set of four measurements for each of 50 irises of 3 different species.  (At least 100 of which were picked in Quebec).
+It&#39;s a classic classification problem - two of the categories seperate themselves quite cleanly, but the third is much trickier.</p>
+
+<p>Play with the tree parameters and see if you can improve on the sklearn defaults.</p>
+
+<pre><code class="python">import scripts.classification.decisiontree as dt
+
+a = dt.irisProblem()
+b = dt.irisProblem(splitter=&#39;random&#39;)
+</code></pre>
+
+<pre><code>## Misclassifications on test set:  3 out of  51
+## Misclassifications on test set:  4 out of  51
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-67" style="background:;">
   <hgroup>
     <h2>Confusion matrix</h2>
   </hgroup>
@@ -1107,7 +1733,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-49" style="background:;">
+<slide class="" id="slide-68" style="background:;">
   <hgroup>
     <h2>Logistic Regression</h2>
   </hgroup>
@@ -1117,7 +1743,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-50" style="background:;">
+<slide class="" id="slide-69" style="background:;">
   <hgroup>
     <h2>Closest labeled point</h2>
   </hgroup>
@@ -1127,7 +1753,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-51" style="background:;">
+<slide class="" id="slide-70" style="background:;">
   <hgroup>
     <h2>Nearest Neighbours - $k$NN</h2>
   </hgroup>
@@ -1137,7 +1763,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-52" style="background:;">
+<slide class="" id="slide-71" style="background:;">
   <hgroup>
     <h2>Naive Bayes</h2>
   </hgroup>
@@ -1147,7 +1773,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-53" style="background:;">
+<slide class="" id="slide-72" style="background:;">
   <hgroup>
     <h2>Decision trees</h2>
   </hgroup>
@@ -1157,7 +1783,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-54" style="background:;">
+<slide class="dark segue nobackground" id="slide-73" style="background:;">
   <hgroup>
     <h2>Variable Selection</h2>
   </hgroup>
@@ -1167,7 +1793,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-55" style="background:;">
+<slide class="" id="slide-74" style="background:;">
   <hgroup>
     <h2>Try all combinations</h2>
   </hgroup>
@@ -1183,7 +1809,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-56" style="background:;">
+<slide class="" id="slide-75" style="background:;">
   <hgroup>
     <h2>AIC, BIC, adjusted R<sup>2</sup></h2>
   </hgroup>
@@ -1193,7 +1819,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-57" style="background:;">
+<slide class="" id="slide-76" style="background:;">
   <hgroup>
     <h2>PCA</h2>
   </hgroup>
@@ -1203,7 +1829,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-58" style="background:;">
+<slide class="" id="slide-77" style="background:;">
   <hgroup>
     <h2>Lasso</h2>
   </hgroup>
@@ -1213,7 +1839,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-59" style="background:;">
+<slide class="dark segue nobackground" id="slide-78" style="background:;">
   <hgroup>
     <h2>Clustering</h2>
   </hgroup>
@@ -1223,7 +1849,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-60" style="background:;">
+<slide class="" id="slide-79" style="background:;">
   <hgroup>
     <h2>K-means</h2>
   </hgroup>
@@ -1234,7 +1860,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-61" style="background:;">
+<slide class="" id="slide-80" style="background:;">
   <hgroup>
     <h2>Hierarchical Clustering</h2>
   </hgroup>
@@ -1244,7 +1870,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-62" style="background:;">
+<slide class="dark segue nobackground" id="slide-81" style="background:;">
   <hgroup>
     <h2>Ensemble Methods</h2>
   </hgroup>
@@ -1254,7 +1880,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-63" style="background:;">
+<slide class="" id="slide-82" style="background:;">
   <hgroup>
     <h2>Bagging, Boosting</h2>
   </hgroup>
@@ -1264,7 +1890,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-64" style="background:;">
+<slide class="" id="slide-83" style="background:;">
   <hgroup>
     <h2>Random Forest</h2>
   </hgroup>
@@ -1274,7 +1900,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue, dark, nobackground" id="slide-65" style="background:;">
+<slide class="segue, dark, nobackground" id="slide-84" style="background:;">
   <hgroup>
     <h2>Conclusions</h2>
   </hgroup>
@@ -1284,7 +1910,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-66" style="background:;">
+<slide class="" id="slide-85" style="background:;">
   <hgroup>
     <h2>Useful Resources</h2>
   </hgroup>
@@ -1555,146 +2181,260 @@ We can rewrite this as
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=43 title='Nonparametric Regression - LOWESS'>
+        data-slide=43 title='Regression with Nonparametric Smoothing'>
          43
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=44 title='<code>statsmodels</code>'>
+        data-slide=44 title='Nonparametric Regression - Kernel'>
          44
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=45 title='Resampling Aside #2'>
+        data-slide=45 title='Nonparametric Regression - LOWESS'>
          45
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=46 title='Classification'>
+        data-slide=46 title='<code>statsmodels</code>'>
          46
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=47 title='Classification'>
+        data-slide=47 title='Nonparametric Regression'>
          47
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=48 title='Confusion matrix'>
+        data-slide=48 title='Parametric vs Nonparametric Regression'>
          48
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=49 title='Logistic Regression'>
+        data-slide=49 title='Resampling Aside #2'>
          49
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=50 title='Closest labeled point'>
+        data-slide=50 title='Classification'>
          50
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=51 title='Nearest Neighbours - $k$NN'>
+        data-slide=51 title='Classification'>
          51
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=52 title='Naive Bayes'>
+        data-slide=52 title='Classification Problems'>
          52
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=53 title='Decision trees'>
+        data-slide=53 title='Binary vs Multiclass Classification'>
          53
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=54 title='Variable Selection'>
+        data-slide=54 title='Outline'>
          54
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=55 title='Try all combinations'>
+        data-slide=55 title='Decision Trees'>
          55
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=56 title='AIC, BIC, adjusted R<sup>2</sup>'>
+        data-slide=56 title='Batman Decision Tree'>
          56
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=57 title='PCA'>
+        data-slide=57 title='Splitting Algorithms'>
          57
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=58 title='Lasso'>
+        data-slide=58 title='Splitting Algorithms'>
          58
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=59 title='Clustering'>
+        data-slide=59 title='Splitting Algorithms'>
          59
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=60 title='K-means'>
+        data-slide=60 title='Scikit-learn'>
          60
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=61 title='Hierarchical Clustering'>
+        data-slide=61 title='<code>sklearn</code>'>
          61
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=62 title='Ensemble Methods'>
+        data-slide=62 title='<code>pandas</code>'>
          62
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=63 title='Bagging, Boosting'>
+        data-slide=63 title='<code>pandas</code>'>
          63
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=64 title='Random Forest'>
+        data-slide=64 title='Trees and Overfitting'>
          64
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=65 title='Conclusions'>
+        data-slide=65 title='Tree-pruning'>
          65
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=66 title='Useful Resources'>
+        data-slide=66 title='Hands on - Iris Data Set'>
          66
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=67 title='Confusion matrix'>
+         67
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=68 title='Logistic Regression'>
+         68
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=69 title='Closest labeled point'>
+         69
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=70 title='Nearest Neighbours - $k$NN'>
+         70
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=71 title='Naive Bayes'>
+         71
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=72 title='Decision trees'>
+         72
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=73 title='Variable Selection'>
+         73
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=74 title='Try all combinations'>
+         74
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=75 title='AIC, BIC, adjusted R<sup>2</sup>'>
+         75
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=76 title='PCA'>
+         76
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=77 title='Lasso'>
+         77
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=78 title='Clustering'>
+         78
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=79 title='K-means'>
+         79
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=80 title='Hierarchical Clustering'>
+         80
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=81 title='Ensemble Methods'>
+         81
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=82 title='Bagging, Boosting'>
+         82
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=83 title='Random Forest'>
+         83
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=84 title='Conclusions'>
+         84
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=85 title='Useful Resources'>
+         85
       </a>
     </li>
   </ul>
