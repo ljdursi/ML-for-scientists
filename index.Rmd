@@ -143,7 +143,7 @@ And we will be working on two broad classes of variables:
 
 Others are possible too -- intervals, temporal or spatial continuous data -- but we won't be considering those here.
 
---- .segue .dark .nobackground
+--- .segue .dark
 
 ## Regression
 
@@ -685,17 +685,111 @@ $$
 \hat{y}(x) = \sum_i y_i \left ( \frac{ x_i x}{\sum_j x_j^2} \right ) = \sum_i y_i w(x,\vec{x})
 $$
 
-That is, a weighted average of the initial $y_i$s.
+That is, a weighted average of *all* of the initial $y_i$s.
 
 ---
 
+## Regression with Nonparametric Smoothing
+
+To get good prediction results, we don't *need* to choose a particular, parameterized, global functional form to smooth onto.
+
+As with parametric/nonparametric bootstrap,
+
+* Parametric version is more powerful *if* the functional form is correctly known.
+* Nonparametric version has to "waste" some information to reconstruct the overall shape.
+
+Many nonparametric approaches are quite local, allowing adaptation to local features.
+
+--- &twocol
+
+## Nonparametric Regression - Kernel
+
+*** =left
+
+* The simplest approach is to smooth the value of each point over some local area with some kernel basis function.
+* The regression function is then calculated by summing the input data points convolved with the basis function.
+* Commonly used kernel basis functions:
+    * Gaussian (downside - never falls off to zero)
+    * Tricubic 
+* Kernel basis function characterized by some bandwidth.
+* How to choose best bandwidth?
+
+
+*** =right
+
+![](outputs/nonparametric/kernel-demo.png)
+![](outputs/nonparametric/kernel-fit.png)
+
+--- &twocol
+
 ## Nonparametric Regression - LOWESS
+
+LOESS and LOWESS are two very related methods which use a similar-but-different approach to kernel regression.
+
+*** =left
+
+At each point, a **local** low-order polynomial regression performed, fit to some fixed **number** of neighbouring points, rather than smoothed over a particular area.
+
+Number of neighbours has to be chosen:
+
+* Too few: too noisy.
+* Too many: smooth too much.
+
+How are number of neighbours chosen?
+
+*** =right
 
 ![](outputs/nonparametric/lowess-fit.png)
 
 ---
 
 ## `statsmodels`
+
+Statsmodels ( http://statsmodels.sourceforge.net ) is a very useful python package which includes:
+
+* Wide variety of regression tools
+* Ties in with pandas and other packages, to give very nice environment for exploring these sorts of questions
+* Many tools for hypothesis testing
+
+
+```{r, engine='python', eval=FALSE}
+def lowessFit(x,y,**kwargs):
+    """Use statsmodels to do a lowess fit to the given data.
+       Returns the x and fitted y."""
+    fit = sm.nonparametric.lowess(y,x,**kwargs)
+    xlowess = fit[:,0]
+    ylowess = fit[:,1]
+    return xlowess, ylowess
+```
+
+---
+
+## Nonparametric Regression
+
+* You will sometimes hear nonparametric techniques referred to as "model-free".
+    * These people are either 
+        * dishonest, or 
+        * too dumb to understand the techniques they're using.
+    * Either way, not to be trusted.
+* Have very specific models, and thus applicability:
+    * Tend to require constant noise ("homoskedastic")
+    * Kernel methods work best when data has roughly constant density
+* However, the underlying models are both:
+    * normally weaker than specifying a particular functional form
+    * fairly transparent - if these methods go wrong, they don't go subtly wrong.
+
+---
+
+## Parametric vs Nonparametric Regression
+
+* If you know the right answer, you should certainly exploit that
+    * Will get more information out of your data.
+* Nonparametric techniques will always have higher variance, bias than the right parametric method, if available
+    * But it's hard for them to go subtly badly wrong.
+* Even if you think you know the right answer and do a parametric regression, you should do a non-parametric regession, as well.
+    * Costs almost nothing.
+    * If your parametric regression is correct, non-parametric version should look like a noisier version of same.
+    * If they differ substantially in some region, now you've learned something potentially quite interesting.
 
 ---
 

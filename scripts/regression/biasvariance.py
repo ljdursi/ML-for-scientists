@@ -44,7 +44,7 @@ def noisyDataPolyPlot(degree, filename=None, **kwargs):
     fitf = numpy.poly1d(p)
     plt.plot(x,y,'ro')
     finex = numpy.linspace(min(x),max(x),500)
-    plt.plot(finex,fitf(finex),'g-')
+    plt.plot(finex,fitf(finex),'g-',lw=2)
     outputPlot(filename)
 
 def errorVsDegree(ndegrees, npts=40, filename=None, **kwargs):
@@ -84,7 +84,7 @@ def varianceDemo(degree, ntrials, filename=None, **kwargs):
     for i in range(ntrials):
         p, x, y = noisyDataPolyFit(degree, **kwargs)
         fitf = numpy.poly1d(p)
-        plt.plot(pts,fitf(pts),'g-')
+        plt.plot(pts,fitf(pts),'g-',alpha=.5)
         zeropreds[i] = fitf(0.)
     plt.plot(x,y,'ro')
     plt.xlim([MIN,MAX])

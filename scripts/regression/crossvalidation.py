@@ -52,7 +52,7 @@ def chooseDegree(npts, mindegree=0, maxdegree=20, filename=None):
     plt.plot(x2,y2,'ro')
     xs = numpy.linspace(min(x),max(x),150)
     fitf = numpy.poly1d(numpy.polyfit(x2,y2,bestdegree))
-    plt.plot(xs,fitf(xs),'g-')
+    plt.plot(xs,fitf(xs),'g-',lw=2)
     plt.xlim((bv.MIN,bv.MAX))
     plt.ylim((-2.,2.))
     plt.suptitle('Selected Degree '+str(bestdegree))

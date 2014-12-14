@@ -21,5 +21,5 @@ if __name__ == "__main__":
     x, y = bv.noisyData(npts)
     xlowess, ylowess = lowessFit(x,y,frac=0.1,it=5)
     plt.plot(x, y, 'ro')
-    plt.plot(xlowess, ylowess, 'g-')
+    plt.plot(xlowess, ylowess, 'g-', lw=2)
     plt.savefig(base+"lowess-fit.png", transparent=True)
