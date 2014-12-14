@@ -4,6 +4,8 @@ These are the materials for a roughly one day course intended to
 provide an introduction to some of the key methods and concepts in
 machine learning, aimed at a scientific audience.
 
+The presentation can be viewed at http://ljdursi.github.io/ML-for-scientists . 
+
 The intent is that attendees with some experience in scientific
 data analysis (curve fitting, etc) and some familiarity with python
 or R would, after working through this material:
