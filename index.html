@@ -38,6 +38,9 @@
     <h2>An Introduction</h2>
     <p>Jonathan Dursi<br/>Scientific Associate/Software Engineer, Informatics and Biocomputing, OICR</p>
   </hgroup>
+    <a href="https://github.com/ljdursi/ML-for-scientists/zipball/gh-pages" class="example">
+     Download
+    </a>
   <article></article>  
   <footer class = 'license'>
     <a href='http://creativecommons.org/licenses/by-nc-sa/3.0/'>
@@ -75,6 +78,7 @@ $(function() {
 <ul>
 <li>Having some basic familiarity with key terms,</li>
 <li>Having used a few standard fundamental methods, and have a grounding in the underlying theory,</li>
+<li>Having developed some familiarity with the python package <code>scikit-learn</code></li>
 <li>Understanding some basic concepts with broad applicability.</li>
 </ul>
 
@@ -290,7 +294,7 @@ $(function() {
 
 <ul>
 <li>Data comes in as a set of \(n\) observations.</li>
-<li>Each of which has \(p\) &quot;features&quot;; we&#39;ll be consiering all-continuous input features, which isn&#39;t necessarily the case.</li>
+<li>Each of which has \(p\) &quot;features&quot;; we&#39;ll be considering all-continuous input features, which isn&#39;t necessarily the case.</li>
 <li>And the initial data we have also has a known &quot;endogenous&quot; value, the \(y\)-value we&#39;re trying to fit.</li>
 <li>Goal is to learn a function \(y = \hat{f}(x_1, x_2, \dots, x_p)\) for predicting new values.</li>
 </ul>
@@ -304,14 +308,19 @@ $(function() {
     <h2>Ordinary Least Squares (OLS)</h2>
   </hgroup>
   <article data-timings="">
-    <p>As we learned on our grandmothers knee,</p>
+    <p>As we learned on our grandmothers knee, a good way to fit a functional
+form \(\hat{y} = \hat{f}(\vec{x};\theta)\) to some data \((\vec{x},y)\)
+is to minimize the squared error.  We assume the data is generated
+by some true function</p>
 
 <p>\[
 y = f(\vec{x}) + \epsilon
 \]</p>
 
+<p>where \(\epsilon\) is some irreducible error (here assumed constant), and we choose \(\theta\):</p>
+
 <p>\[
-\hat{y} = \hat{f}(\vec{x})
+\hat{\theta} = \mathrm{argmin}_\theta \sum_i \left ( y_i - \hat{f} (x_i, \theta) \right )^2.
 \]</p>
 
   </article>
@@ -334,8 +343,8 @@ properties, but it puts a lot of weight on outliers.  If the residual
 <p>\[ 
 \begin{eqnarray*} 
 \rho_\mathrm{LS}(r_i) & = &  r_i^2 \\
-\rho_\mathrm{Huber}(r_i) & = & \begin{array}{ll} r_i^2 & \mathrm{if } |r_i| \le c; \\ c(2 r_i - c) & \mathrm{if } |r_i| > c. \\ \end{array} \\
-\rho_\mathrm{Tukey}(r_i) & = & \begin{array}{ll} r_i \left ( 1 - \frac{r_i}{c} \right )^2 & \mathrm{if } |r_i| \le c; \\ 0 & \mathrm{if } |r_i| > c. \\ \end{array} \\
+\rho_\mathrm{Huber}(r_i) & = & \left \{ \begin{array}{ll} r_i^2 & \mathrm{if } |r_i| \le c; \\ c(2 r_i - c) & \mathrm{if } |r_i| > c. \\ \end{array} \right . \\
+\rho_\mathrm{Tukey}(r_i) & = & \left \{ \begin{array}{ll} r_i \left ( 1 - \frac{r_i}{c} \right )^2 & \mathrm{if } |r_i| \le c; \\ 0 & \mathrm{if } |r_i| > c. \\ \end{array} \right . \\
 \end{eqnarray*} 
 \]</p>
 
@@ -633,7 +642,7 @@ set of data it sees.</p>
 trends that will generalize to a new set of data?  Or is it just overfitting the 
 noise of this particular data set?</p>
 
-<p>As the complexity of a mdoel increases, it tends to have high variance; simple
+<p>As the complexity of a model increases, it tends to have higher variance; simple
 models typically have very low variance.</p>
 
   </article>
@@ -674,7 +683,7 @@ plot the error vs the degree of the polynomial:</p>
   <article data-timings="">
     <p>(Or in this case, the &quot;metaparameters&quot; of the model)</p>
 
-<p>In general, we get some dataset - we can&#39;t generate </p>
+<p>In general, we get some dataset - we can&#39;t generate more data on a whim, and we certainly can&#39;t just compare to the true model.</p>
 
   </article>
   <!-- Presenter Notes -->
@@ -695,7 +704,25 @@ plot the error vs the degree of the polynomial:</p>
     <h2>Hands-On: Model Selection</h2>
   </hgroup>
   <article data-timings="">
-    
+    <p>Use this validation-hold-out approach to generate a noisy data set, and choose a degree polynomial to fit the 
+entire data set.  The routines <code>numpy.random.shuffle()</code> and <code>numpy.split()</code> may be helpful.</p>
+
+<pre><code class="python">import scripts.regression.biasvariance as bv
+x,y = bv.noisyData(npts=100)
+
+import numpy
+import numpy.random
+
+a = numpy.arange(10)
+numpy.random.shuffle(a)
+print a
+print numpy.split(a, 2)
+</code></pre>
+
+<pre><code>## [7 3 9 5 4 8 2 1 0 6]
+## [array([7, 3, 9, 5, 4]), array([8, 2, 1, 0, 6])]
+</code></pre>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
@@ -718,11 +745,153 @@ plot the error vs the degree of the polynomial:</p>
   <article data-timings="">
     <h3>Bootstrapping</h3>
 
+<p>Cross-validation is closely related to a more fundamental method, bootstrapping. </p>
+
+<p>Let&#39;s say you want to find how some function of your data would behave - say, the range of sample means of your data, or
+a mean and standard deviation of an estimation error for a given model (as with CV).</p>
+
+<p>You&#39;d like new sets of data that you could calculate your statistic on, and then look at the distribution of those.</p>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-33" style="background:;">
+  <hgroup>
+    <h2>Parametric Bootstrapping</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>If you <em>know</em> the form of the distribution that describes your data, you can simulate new data sets:</p>
+
+<ul>
+<li>Fit the distribution to the data;</li>
+<li>Generate synthetic data sets from the now-known distribution to your heart&#39;s content;</li>
+<li>Calculate the statistic on these synthetic data sets, and get their distribution.</li>
+</ul>
+
+<p>This works perfectly well if you know a model that will correctly describe your data; and indeed if you do know that, 
+it would be madness <em>not</em> to make use of it in your analysis.</p>
+
+<p>But what if you don&#39;t?</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-34" style="background:;">
+  <hgroup>
+    <h2>Non-parametric Bootstrapping</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The key insight to the non-parametric bootstrap is that you already have an unbiased description of the process that generated your data - the data itself.</p>
+
+<p>The apprach for the non-parametric bootstrap is:</p>
+
+<ul>
+<li>Generate synthetic data sets from the original by resampling;</li>
+<li>Calculate the statistic on these synthetic data sets, and get their distribution.</li>
+</ul>
+
+<p>Cross-validation is a particular case: CV takes \(k\) (sub)samples of the original data set, applied a function (fit the data set to part, calculate error on the remainder), 
+and calcluates the mean.  </p>
+
+<p>Bootstrapping can be used far more generally.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-35" style="background:;">
+  <hgroup>
+    <h2>Non-parametric Bootstrapping</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Example:</p>
+
+<pre><code class="python">import numpy
+import numpy.random
+numpy.random.seed(789)
+data = numpy.random.randn(100)*2 + 1  # Normal with sigma=2, mu=1
+
+print numpy.mean(data)
+means = [ numpy.mean( numpy.random.choice(data,100) ) for i in xrange(1000) ]
+print numpy.mean(means)
+print numpy.var(means)   # expect: sigma^2/N = 4/100 = 0.04
+</code></pre>
+
+<pre><code>## 1.03332758651
+## 1.02269633225
+## 0.0395873095222
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-36" style="background:;">
+  <hgroup>
+    <h2>Hands On: Boostrapping Forest Fires</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>In the file <code>scripts/boostrap/forestfire.py</code> is a routine which will load historical data
+about forest fires in northeastern Portugal, including the area burned.  You can view it
+as follows:</p>
+
+<pre><code class="python">import matplotlib.pylab as plt
+import scripts.bootstrap.forestfire as ff
+
+t, h, w, r, area = ff.forestFireData(skipZeros=True)
+
+n, bins, patches = plt.hist( area, 50, facecolor=&#39;red&#39;, normed=True, log=True )
+plt.xlabel(&#39;Area burned (Hectares)&#39;)
+plt.ylabel(&#39;Frequency&#39;)
+plt.show()
+</code></pre>
+
+<pre><code>## min burned Area =  0.09
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-37" style="background:;">
+  <hgroup>
+    <h2>Hands On: Boostrapping Forest Fires</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="outputs/bootstrap/area-histogram.png" alt=""></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-38" style="background:;">
+  <hgroup>
+    <h2>Hands On: Boostrapping Forest Fires</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>Using the non-parametric bootstrap, calculate the 5% and 95%
+confidence intervals for the median of the area burned in forest
+fires large enough to have their areas recorded.  Eg, you would
+expect that in 90% of similar data sets, the median would fall
+within those confidence intervals.</p>
+
+<p>You should get a distribution of medians that look like the plot 
+on the right:</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/bootstrap/median-area-histogram.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-39" style="background:;">
   <hgroup>
     <h2>Regression as Smoothing</h2>
   </hgroup>
@@ -732,7 +901,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-34" style="background:;">
+<slide class="" id="slide-40" style="background:;">
   <hgroup>
     <h2>Nonparametric Regression - LOWESS</h2>
   </hgroup>
@@ -742,7 +911,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-35" style="background:;">
+<slide class="" id="slide-41" style="background:;">
   <hgroup>
     <h2><code>statsmodels</code></h2>
   </hgroup>
@@ -752,7 +921,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-36" style="background:;">
+<slide class="" id="slide-42" style="background:;">
   <hgroup>
     <h2>Resampling Aside #2</h2>
   </hgroup>
@@ -765,7 +934,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark nobackground" id="slide-37" style="background:;">
+<slide class="segue dark nobackground" id="slide-43" style="background:;">
   <hgroup>
     <h2>Classification</h2>
   </hgroup>
@@ -775,7 +944,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-38" style="background:;">
+<slide class="" id="slide-44" style="background:;">
   <hgroup>
     <h2>Classification</h2>
   </hgroup>
@@ -790,7 +959,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-39" style="background:;">
+<slide class="" id="slide-45" style="background:;">
   <hgroup>
     <h2>Confusion matrix</h2>
   </hgroup>
@@ -805,7 +974,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-40" style="background:;">
+<slide class="" id="slide-46" style="background:;">
   <hgroup>
     <h2>Logistic Regression</h2>
   </hgroup>
@@ -815,7 +984,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-41" style="background:;">
+<slide class="" id="slide-47" style="background:;">
   <hgroup>
     <h2>Closest labeled point</h2>
   </hgroup>
@@ -825,7 +994,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-42" style="background:;">
+<slide class="" id="slide-48" style="background:;">
   <hgroup>
     <h2>Nearest Neighbours - $k$NN</h2>
   </hgroup>
@@ -835,7 +1004,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-43" style="background:;">
+<slide class="" id="slide-49" style="background:;">
   <hgroup>
     <h2>Naive Bayes</h2>
   </hgroup>
@@ -845,7 +1014,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-44" style="background:;">
+<slide class="" id="slide-50" style="background:;">
   <hgroup>
     <h2>Decision trees</h2>
   </hgroup>
@@ -855,7 +1024,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-45" style="background:;">
+<slide class="dark segue nobackground" id="slide-51" style="background:;">
   <hgroup>
     <h2>Variable Selection</h2>
   </hgroup>
@@ -865,7 +1034,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-46" style="background:;">
+<slide class="" id="slide-52" style="background:;">
   <hgroup>
     <h2>Try all combinations</h2>
   </hgroup>
@@ -881,7 +1050,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-47" style="background:;">
+<slide class="" id="slide-53" style="background:;">
   <hgroup>
     <h2>AIC, BIC, adjusted R<sup>2</sup></h2>
   </hgroup>
@@ -891,7 +1060,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-48" style="background:;">
+<slide class="" id="slide-54" style="background:;">
   <hgroup>
     <h2>PCA</h2>
   </hgroup>
@@ -901,7 +1070,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-49" style="background:;">
+<slide class="" id="slide-55" style="background:;">
   <hgroup>
     <h2>Lasso</h2>
   </hgroup>
@@ -911,7 +1080,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-50" style="background:;">
+<slide class="dark segue nobackground" id="slide-56" style="background:;">
   <hgroup>
     <h2>Clustering</h2>
   </hgroup>
@@ -921,7 +1090,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-51" style="background:;">
+<slide class="" id="slide-57" style="background:;">
   <hgroup>
     <h2>K-means</h2>
   </hgroup>
@@ -932,7 +1101,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-52" style="background:;">
+<slide class="" id="slide-58" style="background:;">
   <hgroup>
     <h2>Hierarchical Clustering</h2>
   </hgroup>
@@ -942,7 +1111,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-53" style="background:;">
+<slide class="dark segue nobackground" id="slide-59" style="background:;">
   <hgroup>
     <h2>Ensemble Methods</h2>
   </hgroup>
@@ -952,7 +1121,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-54" style="background:;">
+<slide class="" id="slide-60" style="background:;">
   <hgroup>
     <h2>Bagging, Boosting</h2>
   </hgroup>
@@ -962,7 +1131,7 @@ plot the error vs the degree of the polynomial:</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-55" style="background:;">
+<slide class="" id="slide-61" style="background:;">
   <hgroup>
     <h2>Random Forest</h2>
   </hgroup>
@@ -1170,140 +1339,176 @@ plot the error vs the degree of the polynomial:</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=33 title='Regression as Smoothing'>
+        data-slide=33 title='Parametric Bootstrapping'>
          33
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=34 title='Nonparametric Regression - LOWESS'>
+        data-slide=34 title='Non-parametric Bootstrapping'>
          34
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=35 title='<code>statsmodels</code>'>
+        data-slide=35 title='Non-parametric Bootstrapping'>
          35
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=36 title='Resampling Aside #2'>
+        data-slide=36 title='Hands On: Boostrapping Forest Fires'>
          36
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=37 title='Classification'>
+        data-slide=37 title='Hands On: Boostrapping Forest Fires'>
          37
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=38 title='Classification'>
+        data-slide=38 title='Hands On: Boostrapping Forest Fires'>
          38
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=39 title='Confusion matrix'>
+        data-slide=39 title='Regression as Smoothing'>
          39
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=40 title='Logistic Regression'>
+        data-slide=40 title='Nonparametric Regression - LOWESS'>
          40
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=41 title='Closest labeled point'>
+        data-slide=41 title='<code>statsmodels</code>'>
          41
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=42 title='Nearest Neighbours - $k$NN'>
+        data-slide=42 title='Resampling Aside #2'>
          42
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=43 title='Naive Bayes'>
+        data-slide=43 title='Classification'>
          43
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=44 title='Decision trees'>
+        data-slide=44 title='Classification'>
          44
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=45 title='Variable Selection'>
+        data-slide=45 title='Confusion matrix'>
          45
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=46 title='Try all combinations'>
+        data-slide=46 title='Logistic Regression'>
          46
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=47 title='AIC, BIC, adjusted R<sup>2</sup>'>
+        data-slide=47 title='Closest labeled point'>
          47
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=48 title='PCA'>
+        data-slide=48 title='Nearest Neighbours - $k$NN'>
          48
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=49 title='Lasso'>
+        data-slide=49 title='Naive Bayes'>
          49
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=50 title='Clustering'>
+        data-slide=50 title='Decision trees'>
          50
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=51 title='K-means'>
+        data-slide=51 title='Variable Selection'>
          51
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=52 title='Hierarchical Clustering'>
+        data-slide=52 title='Try all combinations'>
          52
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=53 title='Ensemble Methods'>
+        data-slide=53 title='AIC, BIC, adjusted R<sup>2</sup>'>
          53
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=54 title='Bagging, Boosting'>
+        data-slide=54 title='PCA'>
          54
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=55 title='Random Forest'>
+        data-slide=55 title='Lasso'>
          55
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=56 title='Clustering'>
+         56
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=57 title='K-means'>
+         57
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=58 title='Hierarchical Clustering'>
+         58
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=59 title='Ensemble Methods'>
+         59
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=60 title='Bagging, Boosting'>
+         60
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=61 title='Random Forest'>
+         61
       </a>
     </li>
   </ul>
