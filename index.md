@@ -115,7 +115,7 @@ Having said that, there are some potential gotchas:
 
 * Different approaches, techniques than common in scientific data analysis.  Takes some people-learning.
 * When not just parameters but the model itself up for grabs, one has to take care not to lead oneself astray.
-    * Getting "a good fit" is not in question when you have all possible models at your disposal.  But does it mean anything?
+    * Getting "a good fit" is not in question when you have all possible models devised by human minds at your disposal.  But does it mean anything?
 
 ---
 
@@ -151,9 +151,9 @@ Others are possible too -- intervals, temporal or spatial continuous data -- but
 
 ## Regression
 
-We're going to start discussing regression.
+We're going to spend this morning discussing regression.
 
-* It's the most familiar to most of us;
+* It's the most familiar to most of us; so
 * It's a good place to introduce some concepts we'll find useful through the rest of the day.
 
 In regression problems, 
@@ -192,7 +192,8 @@ usefully optimize.
 
 In particular, least-squares has a number of very nice mathematical
 properties, but it puts a lot of weight on outliers.  If the residual
-$r_i = y_i - \hat{y}_i$ and the loss function is $l = \sum_i \rho(r_i)$, some "robust regression" methods use different methods:
+$r_i = y_i - \hat{y}_i$ and the loss function is $l = \sum_i
+\rho(r_i)$, some "robust regression" methods use different methods:
 
 $$ 
 \begin{eqnarray*} 
@@ -308,8 +309,8 @@ E \left [ (y-\hat{y})^2 \right ] & = & E \left [ ( f + \epsilon - \hat{f})^2 \ri
               & = & E \left [ \left ( f - \hat{f} \right )^2 \right ] + \sigma_\epsilon^2 \\
               & = & E \left [ \left ( (f - E[\hat{f}]) - (\hat{f} - E[\hat{f]}) \right )^2 \right ] + \sigma_\epsilon^2 \\
               & = & E \left [ \left ( f - E[\hat{f}] \right )^2 \right ]  - 2 E \left [ ( f - E[\hat{f}]) (\hat{f} - E[\hat{f}]) \right ] + E \left [ \left (\hat{f} - E[\hat{f}]) \right )^2 \right ] + \sigma_\epsilon^2 \\
-              & = & \left (f - E[\hat{f}]) \right )^2 + E \left [ \left ( \hat{f} - E[\hat{f}] \right )^2 \right ]  + \sigma_\epsilon^2 \\
-              & = & \mathrm{Bias}^2 + \mathrm{Var}(f) + \sigma_\epsilon^2
+              & = & \left (E[f] - E[\hat{f}]) \right )^2 + E \left [ \left ( \hat{f} - E[\hat{f}] \right )^2 \right ]  + \sigma_\epsilon^2 \\
+              & = & \mathrm{Bias}^2 + \mathrm{Var} + \sigma_\epsilon^2
 \end{eqnarray*}
 $$
 
@@ -318,7 +319,7 @@ $$
 ## Bias-Variance Decomposition
 
 $$
-\mathrm{MSE} = E \left [ \left (\hat{f} - E[\hat{f}]) \right )^2 \right ] + \left ( f - E[\hat{f}] \right )^2  + \sigma_\epsilon^2  =  \mathrm{Bias}^2 + \mathrm{Var}(f) + \sigma_\epsilon^2
+\mathrm{MSE} = \left (E[f] - E[\hat{f}]) \right )^2 + E \left [ \left ( \hat{f} - E[\hat{f}] \right )^2 \right ]  + \sigma_\epsilon^2  = \mathrm{Bias}^2 + \mathrm{Var} + \sigma_\epsilon^2
 $$
 
 * Last term: intrinisic noise in the problem.  Can't do anything about it; we won't consider it any further right now.
@@ -407,6 +408,10 @@ noise of this particular data set?
 As the complexity of a model increases, it tends to have higher variance; simple
 models typically have very low variance.
 
+Note too that variance typically gets smaller as sample sizes increase; a model
+which shows large variance with different 100-point data sets will likely be
+much better behaved on 1,000,000-point data sets.
+
 --- &twocol
 
 ## Bias-Variance Tradeoff
@@ -414,7 +419,7 @@ models typically have very low variance.
 *** =left
 
 For our polynomial example, if we compare the error in the computed
-model with the "true" model (not generally availble to us!), we can
+model with the "true" model (not generally available to us!), we can
 plot the error vs the degree of the polynomial:
 
 * For small degrees, the dominant term is bias; simpler models can't capture the true behaviour of the system.
@@ -433,12 +438,34 @@ There's some sweet spot where the two effects are comparably low.
 
 (Or in this case, the "metaparameters" of the model)
 
-In general, we get some dataset - we can't generate more data on a whim, and we certainly can't just compare to the true model.
+In general, we get some dataset - we can't generate more data on a
+whim, and we certainly can't just compare to the true model.
 
+So what do we do to choose our model?  If we simply fit with higher
+order polynomials and calculate the error on the same data set,
+we'll find that more complex models are always "better".
+
+How do we do out-of-sample testing when we only have one set of samples?
 
 ---
 
 ## Training vs Validation 
+
+The solution is to hold out some of the data.  The bulk of the data is used for training 
+the model; the remainder is used for validating the trained model against "new" data. 
+
+Once the model is chosen, then you train the selected model on the entire training+validiation
+data set.
+
+In some cases, you may need still further data; eg, you may need to both choose your
+model, and end a paper or report with a sentence like "the final model achieved 80% accuracy...".
+This still can't be done on the data the model was trained on (train+validation); in that case,
+a second chunk of data must be held out, for testing. 
+
+In the case of Training:Validation:Testing, a common breakdown of the data sizes might be 
+50%:25%:25% of the initial set.  If you don't need a test data set, 2/3:1/3 is common.
+
+Note that the data sets should be chosen randomly!
 
 ---
 
@@ -468,7 +495,77 @@ print numpy.split(a, 2)
 
 ---
 
-## Cross Validation
+## $k$-fold Cross Validation
+
+There are some downsides to the approach we've taken for validation hold-out.  What if most negative outliers happened to be in the training set?
+
+Ideally, would do several partitions, average over results.
+
+$k$-fold Cross Validation:
+
+* Partition data set (randomly) into $k$ sets.
+* For each set:
+    * Train on the remaining $k-1$ sets
+    * Validate on the held-out set
+* Average results
+
+Makes very efficient use of the data set, easily automated.
+
+--- 
+
+##  $k$-fold Cross Validation 
+
+How to choose $k$?
+
+* $k$ too large - the different training sets are very highly correlated (almost all of their points are the same).
+* $k$ too small - don't get very much advantage of averaging.
+
+In practice, 10 is a very commonly-used value for $k$.
+
+--- 
+
+##  $k$-fold Cross Validation 
+
+Let's look at `scripts/regression/crossvalidation.py`:
+
+```python
+    err = 0.
+    for i in range(kfolds):
+        startv = n*i/kfolds; endv = n*(i+1)/kfolds
+        test[idxes[startv:endv]] = True
+
+        test_x  = x[test];  test_y  = y[test]
+        train_x = x[-test]; train_y = y[-test]
+
+        p = numpy.polyfit(train_x, train_y, d)
+        fitf = numpy.poly1d(p)
+
+        err = err + sum((test_y - fitf(test_x))**2)
+        test[:] = False
+```
+
+--- &twocol
+
+## $k$-fold Cross Validation
+
+*** =left
+Running gives:
+
+```python
+import scripts.regression.crossvalidation as cv
+cv.chooseDegree(50)
+```
+
+This chooses the degree to fit 50 data points using
+cross validation, and tests the results on a new 50 points.
+
+The error is estimated for each degree, and the minimum is chosen.
+In practice, may not want to greedily go for the minimum; the
+simplest model that is "close enough" to the minimum is generally
+a good choice.
+
+
+*** =right
 
 ![](outputs/crossvalidation/CV-polynomial.png)
 
@@ -509,6 +606,9 @@ The apprach for the non-parametric bootstrap is:
 
 * Generate synthetic data sets from the original by resampling;
 * Calculate the statistic on these synthetic data sets, and get their distribution.
+
+This is less powerful than parametric bootstrapping **if** the parametric functional form is correctly known; but it is much better if the parametric
+functional form is incorrectly known, or not known at all.
 
 Cross-validation is a particular case: CV takes $k$ (sub)samples of the original data set, applied a function (fit the data set to part, calculate error on the remainder), 
 and calcluates the mean.  
@@ -589,9 +689,26 @@ on the right:
 
 ## Regression as Smoothing
 
+Regression is just a form of data smoothing - smoothing the data onto a particular functional form.
+
+For instance, consider OLS linear regression on variables we've `centred' - subtracted off the mean.
+
+The OLS regression function is
+$$
+\hat{y}(x) = \frac{\sum_i x_i y_i}{\sum_j x_j^2} x
+$$
+We can rewrite this as
+$$
+\hat{y}(x) = \sum_i y_i \left ( \frac{ x_i x}{\sum_j x_j^2} \right ) = \sum_i y_i w(x,\vec{x})
+$$
+
+That is, a weighted average of the initial $y_i$s.
+
 ---
 
 ## Nonparametric Regression - LOWESS
+
+![](outputs/nonparametric/lowess-fit.png)
 
 ---
 
@@ -694,3 +811,14 @@ Foo bar baz
 --- 
 
 ## Random Forest
+
+--- .segue, .dark, .nobackground
+
+## Conclusions
+
+---
+
+## Useful Resources
+
+* Cosma Shalizi, "Advanced Data Analysis from an Elementary Point of View", http://www.stat.cmu.edu/~cshalizi/ADAfaEPoV/, covers regression, hypothesis testing, PCA, and density estimation, amongst other things, and is extremely lucidly written.
+
