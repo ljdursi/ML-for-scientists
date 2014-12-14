@@ -11,6 +11,9 @@ mode        : selfcontained # {standalone, draft}
 knit        : slidify::knit2slides
 logo        : oicr-trans.png
 license     : by-nc-sa
+github      :
+  user: ljdursi
+  repo: ML-for-scientists
 ---
 
 <style type="text/css">
@@ -35,6 +38,7 @@ You should leave here today:
 
 * Having some basic familiarity with key terms,
 * Having used a few standard fundamental methods, and have a grounding in the underlying theory,
+* Having developed some familiarity with the python package `scikit-learn`
 * Understanding some basic concepts with broad applicability.
 
 We'll cover, and you'll use, most or all of the following methods:
@@ -155,7 +159,7 @@ We're going to start discussing regression.
 In regression problems, 
 
 * Data comes in as a set of $n$ observations.
-* Each of which has $p$ "features"; we'll be consiering all-continuous input features, which isn't necessarily the case.
+* Each of which has $p$ "features"; we'll be considering all-continuous input features, which isn't necessarily the case.
 * And the initial data we have also has a known "endogenous" value, the $y$-value we're trying to fit.
 * Goal is to learn a function $y = \hat{f}(x_1, x_2, \dots, x_p)$ for predicting new values.
 
@@ -163,14 +167,19 @@ In regression problems,
 
 ## Ordinary Least Squares (OLS)
 
-As we learned on our grandmothers knee,
+As we learned on our grandmothers knee, a good way to fit a functional
+form $\hat{y} = \hat{f}(\vec{x};\theta)$ to some data $(\vec{x},y)$
+is to minimize the squared error.  We assume the data is generated
+by some true function
 
 $$
 y = f(\vec{x}) + \epsilon
 $$
 
+where $\epsilon$ is some irreducible error (here assumed constant), and we choose $\theta$:
+
 $$
-\hat{y} = \hat{f}(\vec{x})
+\hat{\theta} = \mathrm{argmin}_\theta \sum_i \left ( y_i - \hat{f} (x_i, \theta) \right )^2.
 $$
 
 ---
@@ -178,7 +187,7 @@ $$
 ## Note on Loss Functions
 
 Here we're going to be using least squares error as the function
-to minimize.  But this is not the only _loss_ _function_ one could
+to minimize.  But this is not the only *loss* *function* one could
 usefully optimize.
 
 In particular, least-squares has a number of very nice mathematical
@@ -188,8 +197,8 @@ $r_i = y_i - \hat{y}_i$ and the loss function is $l = \sum_i \rho(r_i)$, some "r
 $$ 
 \begin{eqnarray*} 
 \rho_\mathrm{LS}(r_i) & = &  r_i^2 \\
-\rho_\mathrm{Huber}(r_i) & = & \begin{array}{ll} r_i^2 & \mathrm{if } |r_i| \le c; \\ c(2 r_i - c) & \mathrm{if } |r_i| > c. \\ \end{array} \\
-\rho_\mathrm{Tukey}(r_i) & = & \begin{array}{ll} r_i \left ( 1 - \frac{r_i}{c} \right )^2 & \mathrm{if } |r_i| \le c; \\ 0 & \mathrm{if } |r_i| > c. \\ \end{array} \\
+\rho_\mathrm{Huber}(r_i) & = & \left \{ \begin{array}{ll} r_i^2 & \mathrm{if } |r_i| \le c; \\ c(2 r_i - c) & \mathrm{if } |r_i| > c. \\ \end{array} \right . \\
+\rho_\mathrm{Tukey}(r_i) & = & \left \{ \begin{array}{ll} r_i \left ( 1 - \frac{r_i}{c} \right )^2 & \mathrm{if } |r_i| \le c; \\ 0 & \mathrm{if } |r_i| > c. \\ \end{array} \right . \\
 \end{eqnarray*} 
 $$
 
@@ -394,7 +403,7 @@ It is very closely tied to the idea of **generalization**.  Is the model learnin
 trends that will generalize to a new set of data?  Or is it just overfitting the 
 noise of this particular data set?
 
-As the complexity of a mdoel increases, it tends to have high variance; simple
+As the complexity of a model increases, it tends to have higher variance; simple
 models typically have very low variance.
 
 --- &twocol
@@ -423,7 +432,8 @@ There's some sweet spot where the two effects are comparably low.
 
 (Or in this case, the "metaparameters" of the model)
 
-In general, we get some dataset - we can't generate 
+In general, we get some dataset - we can't generate more data on a whim, and we certainly can't just compare to the true model.
+
 
 ---
 
@@ -432,6 +442,22 @@ In general, we get some dataset - we can't generate
 ---
 
 ## Hands-On: Model Selection 
+
+Use this validation-hold-out approach to generate a noisy data set, and choose a degree polynomial to fit the 
+entire data set.  The routines `numpy.random.shuffle()` and `numpy.split()` may be helpful.
+
+```{r engine='python'}
+import scripts.regression.biasvariance as bv
+x,y = bv.noisyData(npts=100)
+
+import numpy
+import numpy.random
+
+a = numpy.arange(10)
+numpy.random.shuffle(a)
+print a
+print numpy.split(a, 2)
+```
 
 ---
 
@@ -443,6 +469,106 @@ In general, we get some dataset - we can't generate
 
 ## Resampling Aside #1 
 ### Bootstrapping
+
+Cross-validation is closely related to a more fundamental method, bootstrapping. 
+
+Let's say you want to find how some function of your data would behave - say, the range of sample means of your data, or
+a mean and standard deviation of an estimation error for a given model (as with CV).
+
+You'd like new sets of data that you could calculate your statistic on, and then look at the distribution of those.
+
+---
+
+## Parametric Bootstrapping
+
+If you _know_ the form of the distribution that describes your data, you can simulate new data sets:
+
+* Fit the distribution to the data;
+* Generate synthetic data sets from the now-known distribution to your heart's content;
+* Calculate the statistic on these synthetic data sets, and get their distribution.
+
+This works perfectly well if you know a model that will correctly describe your data; and indeed if you do know that, 
+it would be madness *not* to make use of it in your analysis.
+
+But what if you don't?
+
+---
+
+## Non-parametric Bootstrapping
+
+The key insight to the non-parametric bootstrap is that you already have an unbiased description of the process that generated your data - the data itself.
+
+The apprach for the non-parametric bootstrap is:
+
+* Generate synthetic data sets from the original by resampling;
+* Calculate the statistic on these synthetic data sets, and get their distribution.
+
+Cross-validation is a particular case: CV takes $k$ (sub)samples of the original data set, applied a function (fit the data set to part, calculate error on the remainder), 
+and calcluates the mean.  
+
+Bootstrapping can be used far more generally.
+
+---
+
+## Non-parametric Bootstrapping
+
+Example:
+```{r engine='python'}
+import numpy
+import numpy.random
+numpy.random.seed(789)
+data = numpy.random.randn(100)*2 + 1  # Normal with sigma=2, mu=1
+
+print numpy.mean(data)
+means = [ numpy.mean( numpy.random.choice(data,100) ) for i in xrange(1000) ]
+print numpy.mean(means)
+print numpy.var(means)   # expect: sigma^2/N = 4/100 = 0.04
+```
+
+--- 
+
+## Hands On: Boostrapping Forest Fires
+
+In the file `scripts/boostrap/forestfire.py` is a routine which will load historical data
+about forest fires in northeastern Portugal, including the area burned.  You can view it
+as follows:
+
+```{r engine='python'}
+import matplotlib.pylab as plt
+import scripts.bootstrap.forestfire as ff
+
+t, h, w, r, area = ff.forestFireData(skipZeros=True)
+
+n, bins, patches = plt.hist( area, 50, facecolor='red', normed=True, log=True )
+plt.xlabel('Area burned (Hectares)')
+plt.ylabel('Frequency')
+plt.show()
+```
+
+--- 
+
+## Hands On: Boostrapping Forest Fires
+
+![](outputs/bootstrap/area-histogram.png)
+
+--- &twocol
+
+## Hands On: Boostrapping Forest Fires
+
+*** =left 
+Using the non-parametric bootstrap, calculate the 5% and 95%
+confidence intervals for the median of the area burned in forest
+fires large enough to have their areas recorded.  Eg, you would
+expect that in 90% of similar data sets, the median would fall
+within those confidence intervals.
+
+You should get a distribution of medians that look like the plot 
+on the right:
+
+*** =right
+
+![](outputs/bootstrap/median-area-histogram.png)
+
 
 ---
 
