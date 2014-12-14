@@ -11,10 +11,13 @@ CVIMGS=./outputs/crossvalidation/CV-polynomial.png
 BOOTIMGNAMES=area-histogram.png	median-area-histogram.png
 BOOTIMGS=$(addprefix ./outputs/bootstrap/,$(BOOTIMGNAMES))
 
-NPIMGNAMES=lowess-fit.ong
+NPIMGNAMES=lowess-fit.png kernel-fit.png kernel-demo.png
 NPIMGS=$(addprefix ./outputs/nonparametric/,$(NPIMGNAMES))
 
-IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS)
+DTIMGNAMES=basic.png good-evil.png impurity-plots.png
+DTIMGS=$(addprefix ./outputs/classification/,$(DTIMGNAMES))
+
+IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS) $(DTIMGS)
 
 %.md %.html: %.Rmd $(IMGS)
 	Rscript -e "library(slidify); slidify('$<',knit_deck=TRUE,save_payload=TRUE)"
@@ -28,19 +31,20 @@ $(CVIMGS): scripts/regression/crossvalidation.py
 $(BOOTIMGS): scripts/bootstrap/forestfire.py
 	python $<
 
-$(NPIMGS): scripts/regression/lowess.py
-	python $<
+$(NPIMGS): scripts/regression/lowess.py scripts/regression/kernel.py
+	python scripts/regression/lowess.py 
+	python scripts/regression/kernel.py 
+
+$(DTIMGS): scripts/classification/decisiontree.py scripts/classification/impurityplot.py
+	python scripts/classification/decisiontree.py 
+	python scripts/classification/impurityplot.py
 
 tidy:
 	rm -f *~
-	rm -f scripts/*.pyc
-	rm -f scripts/*~
-	rm -f scripts/regression/*.pyc
-	rm -f scripts/regression/*~
-	rm -f scripts/biasvariance/*.pyc
-	rm -f scripts/biasvariance/*~
-	rm -f scripts/bootstrap/*.pyc
-	rm -f scripts/bootstrap/*~
+	rm -f scripts/*.pyc scripts/*~ scripts/.*.swp
+	rm -f scripts/regression/*.pyc scripts/regression/*~ scripts/regression/.*.swp
+	rm -f scripts/bootstrap/*.pyc scripts/bootstrap/*~ scripts/bootstrap/.*.swp
+	rm -f scripts/classification/*.pyc scripts/classification/*~ scripts/classification/.*.swp
 
 clean:
 	rm -f $(PRES).html $(PRES).md $(IMGS)
