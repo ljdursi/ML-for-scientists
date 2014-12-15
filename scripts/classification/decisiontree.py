@@ -77,4 +77,8 @@ if __name__ == "__main__":
             graph.write_png(base+"good-evil.png")
         except: 
             print "Could not generate decision tree visualization."
+    else:
+        # to satisfy make
+        open(base+'basic.png', 'a').close()
+        open(base+'good-eveil.png', 'a').close()
 
