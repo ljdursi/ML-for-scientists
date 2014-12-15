@@ -20,7 +20,10 @@ DTIMGS=$(addprefix ./outputs/classification/,$(DTIMGNAMES))
 KNNIMGNAMES=knn-demo.png knn-vary-k.png knn-variance.png digits.png
 KNNIMGS=$(addprefix ./outputs/classification/,$(KNNIMGNAMES))
 
-IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS) $(DTIMGS) $(KNNIMGS)
+LRIMGNAMES=logistic-demo.png logistic-iris-demo.png roc.png
+LRIMGS=$(addprefix ./outputs/classification/,$(LRIMGNAMES))
+
+IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS) $(DTIMGS) $(KNNIMGS) $(LRIMGS)
 
 allimgs: $(IMGS)
 
@@ -48,6 +51,11 @@ $(DTIMGS): scripts/classification/decisiontree.py scripts/classification/impurit
 $(KNNIMGS): scripts/classification/knndemo.py scripts/classification/knndigits.py
 	python scripts/classification/knndemo.py 
 	python scripts/classification/knndigits.py
+
+$(LRIMGS): scripts/classification/logistic.py scripts/classification/logisticiris.py
+	python scripts/classification/logistic.py 
+	python scripts/classification/logisticiris.py
+	python scripts/classification/roc.py
 
 tidy:
 	rm -f *~
