@@ -2572,15 +2572,37 @@ the words as present/not present instead of counts - make a difference?).  Do th
 
 <p>Or: how does Naive Bayes deal with the Iris data set (using GaussianNB?)</p>
 
-<h2></h2>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
 
-<h2>Classification Summary</h2>
+<slide class="" id="slide-99" style="background:;">
+  <hgroup>
+    <h2>Classification Summary</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>We&#39;ve covered quite a bit of ground here:</p>
+
+<ul>
+<li>Probabilistic methods (Naive, maybe Logistic Regression)</li>
+<li>Regression method (LR)</li>
+<li>Tree-based method (decision tree)</li>
+<li>Geometric method (kNN)</li>
+</ul>
+
+<p>They each have benefits and drawbacks.  Decision Trees and LR both,
+in their way, require one or a series of linear separation surfaces;
+kNN requires a meaningful distance metric.  Decision Trees and
+especially NB can work quite well in high-dimensional spaces.</p>
+
+<p>There are guidelines you can use, but ultimately experience and
+experimentation is most important.</p>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-99" style="background:;">
+<slide class="dark segue nobackground" id="slide-100" style="background:;">
   <hgroup>
     <h2>Variable Selection</h2>
   </hgroup>
@@ -2590,25 +2612,297 @@ the words as present/not present instead of counts - make a difference?).  Do th
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-100" style="background:;">
+<slide class="" id="slide-101" style="background:;">
   <hgroup>
-    <h2>Try all combinations</h2>
+    <h2>Multivariate Linear Regression</h2>
   </hgroup>
   <article data-timings="">
-    <p><a href="http://xkcd.com/882/">http://xkcd.com/882/</a></p>
+    <p>Let&#39;s take a look at linear regression again, using statsmodels and a wider data set:</p>
+
+<pre><code class="python">import statsmodels.api as sm
+
+data = sm.datasets.star98.load()
+X = data.exog; Y = data.endog
+X = sm.add_constant(X)
+model=sm.OLS(Y[:,0],X)
+results = model.fit()
+print results.summary()
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-102" style="background:;">
+  <hgroup>
+    <h2>Multivariate Linear Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="python">##Model:                            OLS   Adj. R-squared:                  0.507
+##[...]
+##Time:                        13:01:10   Log-Likelihood:                -2279.5
+##No. Observations:                 303   AIC:                             4601.
+##Df Residuals:                     282   BIC:                             4679.
+##[...]
+##==============================================================================
+##                 coef    std err          t      P&gt;|t|      [95.0% Conf. Int.]
+##------------------------------------------------------------------------------
+##const      -1.014e+04   5209.878     -1.946      0.053     -2.04e+04   115.090
+##x1             0.2139      2.230      0.096      0.924        -4.175     4.603
+##x2            15.3423      3.505      4.377      0.000         8.443    22.242
+##x3             5.9944      4.140      1.448      0.149        -2.155    14.144
+##x4            -3.0512      2.138     -1.427      0.155        -7.261     1.158
+##x5          1597.6665    155.557     10.271      0.000      1291.467  1903.866
+##x6          1176.8157    249.155      4.723      0.000       686.377  1667.255
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-103" style="background:;">
+  <hgroup>
+    <h2>Multivariate Linear Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="python">##x7           340.5269     62.086      5.485      0.000       218.317   462.737
+##x8         -1714.4834    904.058     -1.896      0.059     -3494.042    65.075
+##x9          -405.7498    195.183     -2.079      0.039      -789.951   -21.549
+##x10         -228.3569     99.588     -2.293      0.023      -424.388   -32.326
+##x11            7.1600      4.862      1.473      0.142        -2.411    16.731
+##x12            0.4313      1.333      0.324      0.747        -2.193     3.056
+##x13         -109.8054     10.718    -10.245      0.000      -130.903   -88.708
+##x14          -28.1694      2.587    -10.888      0.000       -33.262   -23.077
+##x15          -21.4271      4.318     -4.963      0.000       -29.926   -12.928
+##x16           84.6002     43.967      1.924      0.055        -1.945   171.146
+##x17           47.8686     20.668      2.316      0.021         7.185    88.552
+##x18           11.9591      4.679      2.556      0.011         2.750    21.168
+##x19            1.9302      0.175     11.049      0.000         1.586     2.274
+##x20           -2.5449      1.018     -2.499      0.013        -4.549    -0.540
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-104" style="background:;">
+  <hgroup>
+    <h2>Multivariate Linear Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>What to make of all of this?</p>
 
 <ul>
-<li>Be wary of multiple comparisons!</li>
-<li>Bonferroni, False Discovery Rate</li>
+<li>Can compute a linear regression with all available variables.</li>
+<li>Is this meaningful?</li>
+<li>Naively, it looks like some of these variables aren&#39;t very important.</li>
+<li>Can construct a better-motivated, more robust model if we reduce the number of variables / features.</li>
+<li>Some regression/clustering/classification algorithms will have real difficulties on problems with many extraneous variables.</li>
+<li>Sometimes variables are highly collinear and will break some algorithms.</li>
+<li>The information &quot;only these 5 (say) variables are really important&quot; is itself worth having.</li>
+</ul>
+
+<p>We should strive to produce the simplest model that produces sufficiently good answers.</p>
+
+<ul>
+<li>Feature selection.</li>
 </ul>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-101" style="background:;">
+<slide class="" id="slide-105" style="background:;">
+  <hgroup>
+    <h2>How Not to do Variable Selection</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>&quot;Variables 3,5,6,13,14,15, and 19 all have really low \(p\) values - let&#39;s just use those.&quot;</p>
+
+<ul>
+<li>No.</li>
+</ul>
+
+<p>A super-low \(p\)-value means, &quot;in <em>this</em> <em>model</em>, it&#39;s unlikely that this coefficient is zero&quot;.</p>
+
+<ul>
+<li>Says nothing about its contribution to the hypothetical model in which you&#39;ve removed other variables.</li>
+<li>Says even less about how <em>important</em> the contribution of the variable is.</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-106" style="background:;">
+  <hgroup>
+    <h2>How (Maybe, but Hopefully Not) to do Variable Selection</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>How have we done model selection in the past?</p>
+
+<ul>
+<li>Cross-validation!</li>
+</ul>
+
+<p>Huge CV problem:</p>
+
+<ul>
+<li>Try all \(2^p\) combinations of variables.</li>
+<li>Regress on them.</li>
+<li>Of the possibilities, find best (adjusted) error.</li>
+<li>Will work for modest \(p\).</li>
+<li>(But for modest \(p\), don&#39;t need so badly to do variable selection.)</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-107" style="background:;">
+  <hgroup>
+    <h2>Aside: Danger, Danger!</h2>
+  </hgroup>
+  <article data-timings="">
+    <h3>Multiple Hypothesis Testing</h3>
+
+<p>In general, something inside you should shudder when facing the possibility of doing tens of thousands of tests on your data.</p>
+
+<p>For variable selection, this is ok, but for very small perturbations
+of this problem description things quickly go horribly, inexorably,
+off the rails.</p>
+
+<ul>
+<li>&quot;Let&#39;s look through all pairwise combinations of my 100 features, looking for statistically significant correlations!&quot;</li>
+<li>This comes up in cases where it&#39;s not necessarily obvious - looking for correlations between pixels in images.</li>
+<li>If you are doing 10,000 hypothesis tests, using as your test for significance \(p < 0.05\), you <strong>expect</strong> 500 significant results --- even if the data is just random noise.</li>
+<li>Eternal torment, gnashing of teeth, etc.</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-108" style="background:;">
+  <hgroup>
+    <h2>Aside: Danger, Danger!</h2>
+  </hgroup>
+  <article data-timings="">
+    <h3>Multiple Hypothesis Testing</h3>
+
+<p>The canonical cautionary works on this subject:</p>
+
+<ul>
+<li><a href="http://xkcd.com/882/">http://xkcd.com/882/</a> (deals with the subject in XKCDs inimitable fashion)</li>
+<li><a href="http://www.wired.com/2009/09/fmrisalmon/">http://www.wired.com/2009/09/fmrisalmon/</a> (finds statistically significant activation correlations in the brain of a salmon shown pictures of humans experiencing emotions.  The salmon &quot;was not alive at the time of scanning&quot;).</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-109" style="background:;">
+  <hgroup>
+    <h2>Multiple Hypothesis Testing Corrections</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>There are a few methods of dealing with the situation of multiple
+testing.  They all involve stricter definitions of what is significant
+in this situation.  </p>
+
+<p>Which is appropriate depends on the nature of your tests. Are they all independent? Identically distributed?</p>
+
+<ul>
+<li><strong>Bonferroni Correction</strong>: Safest choice; works regardless of independence, distribution.  Bluntest instrument.
+
+<ul>
+<li>If you otherwise would use a threshold \(\alpha\) for significance, and are doing \(k\) tests, use \(\alpha / k\).</li>
+</ul></li>
+<li><strong>Šidák correction</strong>: If independent:
+
+<ul>
+<li>use \((1 - (1-\alpha)^{(1/k)})\).</li>
+</ul></li>
+<li><strong>Holm–Bonferroni method</strong>: If independent, 
+
+<ul>
+<li>Sort results by significance, apply strictest Bonferroni correction only to most significant (i=1); in descending order, use \(\alpha/(k-i+1)\).</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-110" style="background:;">
+  <hgroup>
+    <h2>Multiple Hypothesis Testing Corrections</h2>
+  </hgroup>
+  <article data-timings="">
+    <h3>End of Aside</h3>
+
+<p>We won&#39;t cover this any further today, but it is vitally important to know
+that both this is an issue, and there are ways of correcting for it.</p>
+
+<p>Terms to look up if you find yourself in this situation:</p>
+
+<ul>
+<li>Family wise error rate</li>
+<li>False discovery rate</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-111" style="background:;">
+  <hgroup>
+    <h2>Forward and Backward Selection</h2>
+  </hgroup>
+  <article data-timings="">
+    <h3>How else to do variable selection</h3>
+
+<p>Exhaustive search is safe, but infeasible in the most urgent cases.
+(\(p = 100\) implies \(10^{30}\) model tests, and 100 isn&#39;t a huge
+number of features.)</p>
+
+<p>Greedy methods often work relatively well, but can get caught in local minima.</p>
+
+<p>Nonetheless, two are in common use:</p>
+
+<ul>
+<li>Forward selection: starting from nothing,
+
+<ul>
+<li>For each remaining feature, include it, and calculate adjusted CV error.</li>
+<li>If for best feature, error drops enough, 
+
+<ul>
+<li>Select it and continue</li>
+</ul></li>
+<li>Else terminate and report selected features.</li>
+</ul></li>
+<li>Backward selection: same, but start with a model with all features, and drop until error rises too much.</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-112" style="background:;">
   <hgroup>
     <h2>AIC, BIC, adjusted R<sup>2</sup></h2>
+  </hgroup>
+  <article data-timings="">
+    <h3>What is this &quot;adjusted error&quot; you speak of?</h3>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-113" style="background:;">
+  <hgroup>
+    <h2>Lasso/Ridge Regression</h2>
   </hgroup>
   <article data-timings="">
     
@@ -2616,7 +2910,7 @@ the words as present/not present instead of counts - make a difference?).  Do th
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-102" style="background:;">
+<slide class="" id="slide-114" style="background:;">
   <hgroup>
     <h2>PCA</h2>
   </hgroup>
@@ -2626,17 +2920,7 @@ the words as present/not present instead of counts - make a difference?).  Do th
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-103" style="background:;">
-  <hgroup>
-    <h2>Lasso</h2>
-  </hgroup>
-  <article data-timings="">
-    
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="dark segue nobackground" id="slide-104" style="background:;">
+<slide class="dark segue nobackground" id="slide-115" style="background:;">
   <hgroup>
     <h2>Clustering</h2>
   </hgroup>
@@ -2646,7 +2930,7 @@ the words as present/not present instead of counts - make a difference?).  Do th
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-105" style="background:;">
+<slide class="" id="slide-116" style="background:;">
   <hgroup>
     <h2>K-means</h2>
   </hgroup>
@@ -2657,7 +2941,7 @@ the words as present/not present instead of counts - make a difference?).  Do th
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-106" style="background:;">
+<slide class="" id="slide-117" style="background:;">
   <hgroup>
     <h2>Hierarchical Clustering</h2>
   </hgroup>
@@ -2667,7 +2951,7 @@ the words as present/not present instead of counts - make a difference?).  Do th
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-107" style="background:;">
+<slide class="dark segue nobackground" id="slide-118" style="background:;">
   <hgroup>
     <h2>Ensemble Methods</h2>
   </hgroup>
@@ -2677,7 +2961,7 @@ the words as present/not present instead of counts - make a difference?).  Do th
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-108" style="background:;">
+<slide class="" id="slide-119" style="background:;">
   <hgroup>
     <h2>Bagging, Boosting</h2>
   </hgroup>
@@ -2687,7 +2971,7 @@ the words as present/not present instead of counts - make a difference?).  Do th
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-109" style="background:;">
+<slide class="" id="slide-120" style="background:;">
   <hgroup>
     <h2>Random Forest</h2>
   </hgroup>
@@ -2697,7 +2981,7 @@ the words as present/not present instead of counts - make a difference?).  Do th
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue, dark, nobackground" id="slide-110" style="background:;">
+<slide class="segue, dark, nobackground" id="slide-121" style="background:;">
   <hgroup>
     <h2>Conclusions</h2>
   </hgroup>
@@ -2707,7 +2991,7 @@ the words as present/not present instead of counts - make a difference?).  Do th
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-111" style="background:;">
+<slide class="" id="slide-122" style="background:;">
   <hgroup>
     <h2>Useful Resources</h2>
   </hgroup>
@@ -3314,80 +3598,146 @@ the words as present/not present instead of counts - make a difference?).  Do th
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=99 title='Variable Selection'>
+        data-slide=99 title='Classification Summary'>
          99
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=100 title='Try all combinations'>
+        data-slide=100 title='Variable Selection'>
          100
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=101 title='AIC, BIC, adjusted R<sup>2</sup>'>
+        data-slide=101 title='Multivariate Linear Regression'>
          101
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=102 title='PCA'>
+        data-slide=102 title='Multivariate Linear Regression'>
          102
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=103 title='Lasso'>
+        data-slide=103 title='Multivariate Linear Regression'>
          103
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=104 title='Clustering'>
+        data-slide=104 title='Multivariate Linear Regression'>
          104
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=105 title='K-means'>
+        data-slide=105 title='How Not to do Variable Selection'>
          105
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=106 title='Hierarchical Clustering'>
+        data-slide=106 title='How (Maybe, but Hopefully Not) to do Variable Selection'>
          106
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=107 title='Ensemble Methods'>
+        data-slide=107 title='Aside: Danger, Danger!'>
          107
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=108 title='Bagging, Boosting'>
+        data-slide=108 title='Aside: Danger, Danger!'>
          108
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=109 title='Random Forest'>
+        data-slide=109 title='Multiple Hypothesis Testing Corrections'>
          109
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=110 title='Conclusions'>
+        data-slide=110 title='Multiple Hypothesis Testing Corrections'>
          110
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=111 title='Useful Resources'>
+        data-slide=111 title='Forward and Backward Selection'>
          111
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=112 title='AIC, BIC, adjusted R<sup>2</sup>'>
+         112
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=113 title='Lasso/Ridge Regression'>
+         113
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=114 title='PCA'>
+         114
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=115 title='Clustering'>
+         115
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=116 title='K-means'>
+         116
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=117 title='Hierarchical Clustering'>
+         117
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=118 title='Ensemble Methods'>
+         118
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=119 title='Bagging, Boosting'>
+         119
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=120 title='Random Forest'>
+         120
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=121 title='Conclusions'>
+         121
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=122 title='Useful Resources'>
+         122
       </a>
     </li>
   </ul>
