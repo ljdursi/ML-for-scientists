@@ -1429,7 +1429,7 @@ it, which classifies an input based on a number of binary decisions.</p>
 </tr>
 </tbody></table>
 
-<p>&quot;Learn&quot; a decision tere to classify new characters into Good/Bad.</p>
+<p>&quot;Learn&quot; a decision tree to classify new characters into Good/Bad.</p>
 
 <p>How does your tree do on this test set?</p>
 
@@ -1688,6 +1688,8 @@ while the model is not &quot;too complex&quot;.</p>
 
 <p>Cross validation.</p>
 
+<p>Note that after pruning, have a way to express confidence in classification - \(p\) in the chosen leaf.</p>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
@@ -1720,20 +1722,257 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
 
 <slide class="" id="slide-67" style="background:;">
   <hgroup>
-    <h2>Confusion matrix</h2>
+    <h2>Nearest Neighbours - $k$NN</h2>
   </hgroup>
   <article data-timings="">
-    <ul>
-<li>Sensitivity v. Specificity</li>
-<li>Which are worse, false positives or false negatives? Depends!</li>
-<li>ROC curve</li>
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>Another approach to classification is very geometric in nature.</p>
+
+<p>Given a new input observation, find the nearest point in the training set, and choose that classification.</p>
+
+<p>A generalization is to choose the \(k\) nearest neighbours, and choose the classification that the majority of those \(k\) neighbouring
+points has.</p>
+
+<p>Case on the right: two normal distributions centred at \((-1,-1)\) and \((1,1)\) with \(\sigma = 3/2\).  </p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/classification/knn-demo.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-68" style="background:;">
+  <hgroup>
+    <h2>Bias-Variance in $k$NN</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="outputs/classification/knn-vary-k.png" alt=""></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-69" style="background:;">
+  <hgroup>
+    <h2>Bias-Variance in $k$NN</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>There&#39;s a bias-variance-like tradeoff in $k$NN, that can be seen by varying \(k\) on the same data set on our right.</p>
+
+<p>In words, what&#39;s happening as we increase \(k\)?</p>
+
+<p>With \(k\) = 1, <strong>variance</strong> is very large.  The model is exceptionally sensitive to every single data point.
+(See next slide).</p>
+
+<p>But with large \(k\), we average over very large area - lose local features.</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/classification/knn-vary-k.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-70" style="background:;">
+  <hgroup>
+    <h2>Bias-Variance in $k$NN</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>Here we see the variance of the model when \(k = 1\); we keep \(k\) fixed at one, but have different realizations of
+the data set.  </p>
+
+<p>The decision boundary varies widely from run to run.</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/classification/knn-variance.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-71" style="background:;">
+  <hgroup>
+    <h2>$k$NN and Geometry</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Some notes on $k$NN:</p>
+
+<ul>
+<li>This method <strong>requires</strong> a distance metric.  This all but rules
+out categorical input variables (<em>some</em> ordinal variables can be
+made to work, but not all)</li>
+<li>This can work extremely well in low-dimensional spaces (small
+\(p\)).  In 1,000-dimensional space, for instance, for any meaningful
+\(k\), many of your &quot;nearest&quot; neighbours may in fact be quite dissimilar.</li>
+<li>Even for a modest number of continuous variables, some caution is needed: have to <em>scale</em> the variables.</li>
 </ul>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-68" style="background:;">
+<slide class="" id="slide-72" style="background:;">
+  <hgroup>
+    <h2>$k$NN and Geometry</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Consider the variables in the iris data set</p>
+
+<pre><code class="python">import sklearn.datasets
+import numpy as np
+
+iris = sklearn.datasets.load_iris()
+for i in range(4):
+    print iris.feature_names[i], &quot;variance: &quot;, np.round(np.var(iris.data[:,i]),2)
+</code></pre>
+
+<pre><code>## sepal length (cm) variance:  0.68
+## sepal width (cm) variance:  0.19
+## petal length (cm) variance:  3.09
+## petal width (cm) variance:  0.58
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-73" style="background:;">
+  <hgroup>
+    <h2>Scaling continuous features</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Petal length varies over a <em>much</em> greater range than sepal width.</p>
+
+<p>If we just use euclidian distance, sepal width will provide very
+little information - essentially all points are close in that
+dimension.</p>
+
+<p>Want to scale variables so they all have the opportunity to play equal role. 
+A common technique is to centre the variables by subtracting off their means, then
+scale by the standard deviation:</p>
+
+<p>\[ 
+X' = \frac{1}{\sigma_X} \left ( X - \mu \right )
+\]</p>
+
+<p>Many libraries will do this for you for methods where it matters, but not all; 
+check the documentation!</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-74" style="background:;">
+  <hgroup>
+    <h2>Digits data set</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>The digits data set is a set of ~1,800 handwritten digits, ~180 of
+each digit, used to train OCR systems (originally, for US zip codes).</p>
+
+<p>In <code>sklearn.datasets.load_digits()</code>.</p>
+
+<p>Each image is represented by 64 greylevel values (8x8 grid).</p>
+
+<p>A simple $k$NN test on this data set is found in <code>scripts/classification/knndigits.py</code>.</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/classification/digits.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-75" style="background:;">
+  <hgroup>
+    <h2>Hands-on: kNN digits</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="python">import scripts.classification.knndigits as knnd
+
+knnd.digitsProblem(weights=&#39;distance&#39;)
+</code></pre>
+
+<pre><code>## Number mismatched:  12 / 611
+## [[62  0  0  0  0  0  0  0  0  0]
+##  [ 0 58  0  0  0  0  0  0  0  0]
+##  [ 0  0 62  1  0  0  0  0  0  0]
+##  [ 0  0  0 59  0  0  0  0  0  0]
+##  [ 0  0  0  0 68  0  0  0  0  0]
+##  [ 0  0  0  0  0 52  0  0  0  1]
+##  [ 0  0  0  0  0  0 62  0  0  0]
+##  [ 0  0  0  0  0  0  0 59  0  0]
+##  [ 0  4  0  1  0  0  0  0 57  0]
+##  [ 0  0  0  3  0  1  0  0  1 60]]
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-76" style="background:;">
+  <hgroup>
+    <h2>Hands-on: kNN digits</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Play with the arguments to KNeighboursClassifier ( particularly
+useful optins: n_neighbors, weights, algorithm ).  Can you improve
+the performance?</p>
+
+<p>(You may wish to pass a seed to keep the train/test set the same for each test)</p>
+
+<p>You may also wish to try to use a decision tree on the same data.  Is that 
+better?  Worse?  Why?</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-77" style="background:;">
+  <hgroup>
+    <h2>Confusion matrix</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>How you &#39;score&#39; a classifier is different than a regression.</p>
+
+<p>You can count the number wrongly classified, and that is a useful
+metric - but it doesn&#39;t give you much information about how to <em>improve</em> the result.</p>
+
+<p>Confusion matrix tells you which misclassifications happened.  Traditionally, &quot;true&quot; classifications on the rows,
+model predictions on the columns.  </p>
+
+<pre><code class="python">import scripts.classification.decisiontree as dt
+
+dt.irisProblem(printConfusion=True)
+</code></pre>
+
+<pre><code>## Misclassifications on test set:  2 out of  51
+## [[19  0  0]
+##  [ 0 17  0]
+##  [ 0  2 13]]
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-78" style="background:;">
   <hgroup>
     <h2>Logistic Regression</h2>
   </hgroup>
@@ -1743,7 +1982,17 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-69" style="background:;">
+<slide class="" id="slide-79" style="background:;">
+  <hgroup>
+    <h2>ROC Curve</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-80" style="background:;">
   <hgroup>
     <h2>Closest labeled point</h2>
   </hgroup>
@@ -1753,17 +2002,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-70" style="background:;">
-  <hgroup>
-    <h2>Nearest Neighbours - $k$NN</h2>
-  </hgroup>
-  <article data-timings="">
-    
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-71" style="background:;">
+<slide class="" id="slide-81" style="background:;">
   <hgroup>
     <h2>Naive Bayes</h2>
   </hgroup>
@@ -1773,7 +2012,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-72" style="background:;">
+<slide class="" id="slide-82" style="background:;">
   <hgroup>
     <h2>Decision trees</h2>
   </hgroup>
@@ -1783,7 +2022,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-73" style="background:;">
+<slide class="dark segue nobackground" id="slide-83" style="background:;">
   <hgroup>
     <h2>Variable Selection</h2>
   </hgroup>
@@ -1793,7 +2032,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-74" style="background:;">
+<slide class="" id="slide-84" style="background:;">
   <hgroup>
     <h2>Try all combinations</h2>
   </hgroup>
@@ -1809,7 +2048,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-75" style="background:;">
+<slide class="" id="slide-85" style="background:;">
   <hgroup>
     <h2>AIC, BIC, adjusted R<sup>2</sup></h2>
   </hgroup>
@@ -1819,7 +2058,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-76" style="background:;">
+<slide class="" id="slide-86" style="background:;">
   <hgroup>
     <h2>PCA</h2>
   </hgroup>
@@ -1829,7 +2068,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-77" style="background:;">
+<slide class="" id="slide-87" style="background:;">
   <hgroup>
     <h2>Lasso</h2>
   </hgroup>
@@ -1839,7 +2078,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-78" style="background:;">
+<slide class="dark segue nobackground" id="slide-88" style="background:;">
   <hgroup>
     <h2>Clustering</h2>
   </hgroup>
@@ -1849,7 +2088,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-79" style="background:;">
+<slide class="" id="slide-89" style="background:;">
   <hgroup>
     <h2>K-means</h2>
   </hgroup>
@@ -1860,7 +2099,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-80" style="background:;">
+<slide class="" id="slide-90" style="background:;">
   <hgroup>
     <h2>Hierarchical Clustering</h2>
   </hgroup>
@@ -1870,7 +2109,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-81" style="background:;">
+<slide class="dark segue nobackground" id="slide-91" style="background:;">
   <hgroup>
     <h2>Ensemble Methods</h2>
   </hgroup>
@@ -1880,7 +2119,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-82" style="background:;">
+<slide class="" id="slide-92" style="background:;">
   <hgroup>
     <h2>Bagging, Boosting</h2>
   </hgroup>
@@ -1890,7 +2129,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-83" style="background:;">
+<slide class="" id="slide-93" style="background:;">
   <hgroup>
     <h2>Random Forest</h2>
   </hgroup>
@@ -1900,7 +2139,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue, dark, nobackground" id="slide-84" style="background:;">
+<slide class="segue, dark, nobackground" id="slide-94" style="background:;">
   <hgroup>
     <h2>Conclusions</h2>
   </hgroup>
@@ -1910,7 +2149,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-85" style="background:;">
+<slide class="" id="slide-95" style="background:;">
   <hgroup>
     <h2>Useful Resources</h2>
   </hgroup>
@@ -2325,116 +2564,176 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=67 title='Confusion matrix'>
+        data-slide=67 title='Nearest Neighbours - $k$NN'>
          67
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=68 title='Logistic Regression'>
+        data-slide=68 title='Bias-Variance in $k$NN'>
          68
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=69 title='Closest labeled point'>
+        data-slide=69 title='Bias-Variance in $k$NN'>
          69
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=70 title='Nearest Neighbours - $k$NN'>
+        data-slide=70 title='Bias-Variance in $k$NN'>
          70
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=71 title='Naive Bayes'>
+        data-slide=71 title='$k$NN and Geometry'>
          71
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=72 title='Decision trees'>
+        data-slide=72 title='$k$NN and Geometry'>
          72
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=73 title='Variable Selection'>
+        data-slide=73 title='Scaling continuous features'>
          73
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=74 title='Try all combinations'>
+        data-slide=74 title='Digits data set'>
          74
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=75 title='AIC, BIC, adjusted R<sup>2</sup>'>
+        data-slide=75 title='Hands-on: kNN digits'>
          75
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=76 title='PCA'>
+        data-slide=76 title='Hands-on: kNN digits'>
          76
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=77 title='Lasso'>
+        data-slide=77 title='Confusion matrix'>
          77
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=78 title='Clustering'>
+        data-slide=78 title='Logistic Regression'>
          78
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=79 title='K-means'>
+        data-slide=79 title='ROC Curve'>
          79
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=80 title='Hierarchical Clustering'>
+        data-slide=80 title='Closest labeled point'>
          80
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=81 title='Ensemble Methods'>
+        data-slide=81 title='Naive Bayes'>
          81
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=82 title='Bagging, Boosting'>
+        data-slide=82 title='Decision trees'>
          82
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=83 title='Random Forest'>
+        data-slide=83 title='Variable Selection'>
          83
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=84 title='Conclusions'>
+        data-slide=84 title='Try all combinations'>
          84
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=85 title='Useful Resources'>
+        data-slide=85 title='AIC, BIC, adjusted R<sup>2</sup>'>
          85
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=86 title='PCA'>
+         86
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=87 title='Lasso'>
+         87
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=88 title='Clustering'>
+         88
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=89 title='K-means'>
+         89
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=90 title='Hierarchical Clustering'>
+         90
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=91 title='Ensemble Methods'>
+         91
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=92 title='Bagging, Boosting'>
+         92
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=93 title='Random Forest'>
+         93
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=94 title='Conclusions'>
+         94
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=95 title='Useful Resources'>
+         95
       </a>
     </li>
   </ul>

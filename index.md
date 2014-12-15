@@ -917,7 +917,7 @@ Consider this example ( from Rob Schapire, Princeton:)
 |Catwoman| False |  True | False | True  | False  |False | Bad
 |Joker   | False | False | True  |False  | False  |False | Bad
 
-"Learn" a decision tere to classify new characters into Good/Bad.
+"Learn" a decision tree to classify new characters into Good/Bad.
 
 How does your tree do on this test set?
 
@@ -1084,6 +1084,8 @@ How to determine where that point is?
 
 Cross validation.
 
+Note that after pruning, have a way to express confidence in classification - $p$ in the chosen leaf.
+
 ---
 
 ## Hands on - Iris Data Set
@@ -1108,15 +1110,200 @@ b = dt.irisProblem(splitter='random')
 ## Misclassifications on test set:  4 out of  51
 ```
 
+--- &twocol
+
+## Nearest Neighbours - $k$NN
+
+*** =left
+Another approach to classification is very geometric in nature.
+
+Given a new input observation, find the nearest point in the training set, and choose that classification.
+
+A generalization is to choose the $k$ nearest neighbours, and choose the classification that the majority of those $k$ neighbouring
+points has.
+
+Case on the right: two normal distributions centred at $(-1,-1)$ and $(1,1)$ with $\sigma = 3/2$.  
+
+*** =right
+![](outputs/classification/knn-demo.png)
+
+--- 
+
+## Bias-Variance in $k$NN
+
+![](outputs/classification/knn-vary-k.png)
+
+--- &twocol
+
+## Bias-Variance in $k$NN
+
+*** =left
+
+There's a bias-variance-like tradeoff in $k$NN, that can be seen by varying $k$ on the same data set on our right.
+
+In words, what's happening as we increase $k$?
+
+With $k$ = 1, **variance** is very large.  The model is exceptionally sensitive to every single data point.
+(See next slide).
+
+But with large $k$, we average over very large area - lose local features.
+
+*** =right
+![](outputs/classification/knn-vary-k.png)
+
+--- &twocol
+
+## Bias-Variance in $k$NN
+
+*** =left
+
+Here we see the variance of the model when $k = 1$; we keep $k$ fixed at one, but have different realizations of
+the data set.  
+
+The decision boundary varies widely from run to run.
+
+*** =right
+
+![](outputs/classification/knn-variance.png)
+
+---
+
+## $k$NN and Geometry
+
+Some notes on $k$NN:
+
+* This method **requires** a distance metric.  This all but rules
+out categorical input variables (_some_ ordinal variables can be
+made to work, but not all)
+* This can work extremely well in low-dimensional spaces (small
+$p$).  In 1,000-dimensional space, for instance, for any meaningful
+$k$, many of your "nearest" neighbours may in fact be quite dissimilar.
+* Even for a modest number of continuous variables, some caution is needed: have to *scale* the variables.
+
+---
+
+## $k$NN and Geometry
+
+Consider the variables in the iris data set
+
+```python
+import sklearn.datasets
+import numpy as np
+
+iris = sklearn.datasets.load_iris()
+for i in range(4):
+    print iris.feature_names[i], "variance: ", np.round(np.var(iris.data[:,i]),2)
+```
+
+```
+## sepal length (cm) variance:  0.68
+## sepal width (cm) variance:  0.19
+## petal length (cm) variance:  3.09
+## petal width (cm) variance:  0.58
+```
+
+---
+
+## Scaling continuous features
+
+Petal length varies over a _much_ greater range than sepal width.
+
+If we just use euclidian distance, sepal width will provide very
+little information - essentially all points are close in that
+dimension.
+
+Want to scale variables so they all have the opportunity to play equal role. 
+A common technique is to centre the variables by subtracting off their means, then
+scale by the standard deviation:
+
+$$ 
+X' = \frac{1}{\sigma_X} \left ( X - \mu \right )
+$$
+
+Many libraries will do this for you for methods where it matters, but not all; 
+check the documentation!
+
+--- &twocol
+
+## Digits data set
+
+*** =left
+
+The digits data set is a set of ~1,800 handwritten digits, ~180 of
+each digit, used to train OCR systems (originally, for US zip codes).
+
+In `sklearn.datasets.load_digits()`.
+
+Each image is represented by 64 greylevel values (8x8 grid).
+
+A simple $k$NN test on this data set is found in `scripts/classification/knndigits.py`.
+
+*** =right
+![](outputs/classification/digits.png)
+
+--- 
+
+## Hands-on: kNN digits
+
+
+```python
+import scripts.classification.knndigits as knnd
+
+knnd.digitsProblem(weights='distance')
+```
+
+```
+## Number mismatched:  12 / 611
+## [[62  0  0  0  0  0  0  0  0  0]
+##  [ 0 58  0  0  0  0  0  0  0  0]
+##  [ 0  0 62  1  0  0  0  0  0  0]
+##  [ 0  0  0 59  0  0  0  0  0  0]
+##  [ 0  0  0  0 68  0  0  0  0  0]
+##  [ 0  0  0  0  0 52  0  0  0  1]
+##  [ 0  0  0  0  0  0 62  0  0  0]
+##  [ 0  0  0  0  0  0  0 59  0  0]
+##  [ 0  4  0  1  0  0  0  0 57  0]
+##  [ 0  0  0  3  0  1  0  0  1 60]]
+```
+
+--- 
+
+## Hands-on: kNN digits
+
+Play with the arguments to KNeighboursClassifier ( particularly
+useful optins: n_neighbors, weights, algorithm ).  Can you improve
+the performance?
+
+(You may wish to pass a seed to keep the train/test set the same for each test)
+
+You may also wish to try to use a decision tree on the same data.  Is that 
+better?  Worse?  Why?
 
 ---
 
 ## Confusion matrix
 
-* Sensitivity v. Specificity
-* Which are worse, false positives or false negatives? Depends!
-* ROC curve
+How you 'score' a classifier is different than a regression.
 
+You can count the number wrongly classified, and that is a useful
+metric - but it doesn't give you much information about how to _improve_ the result.
+
+Confusion matrix tells you which misclassifications happened.  Traditionally, "true" classifications on the rows,
+model predictions on the columns.  
+
+
+```python
+import scripts.classification.decisiontree as dt
+
+dt.irisProblem(printConfusion=True)
+```
+
+```
+## Misclassifications on test set:  2 out of  51
+## [[19  0  0]
+##  [ 0 17  0]
+##  [ 0  2 13]]
+```
 
 ---
 
@@ -1124,11 +1311,11 @@ b = dt.irisProblem(splitter='random')
 
 ---
 
-## Closest labeled point
+## ROC Curve
 
 ---
 
-## Nearest Neighbours - $k$NN
+## Closest labeled point
 
 ---
 
