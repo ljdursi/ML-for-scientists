@@ -1233,14 +1233,29 @@ How you 'score' a classifier is different than a regression.
 You can count the number wrongly classified, and that is a useful
 way to keep score - but it doesn't give you much information you can use to improve the result.
 
-Confusion matrix tells you which misclassifications happened.  Traditionally, "true" classifications on the rows,
-model predictions on the columns.  
+Confusion matrix tells you which misclassifications happened.
+Traditionally, "true" classifications on the rows, model predictions
+on the columns.
 
 ```{r,engine='python'}
 import scripts.classification.decisiontree as dt
 
 dt.irisProblem(printConfusion=True)
 ```
+
+---
+
+## Evaluating Binary Classifiers
+
+Binary classification is a common and important enough special case
+that its confusion matrix elements have special names, and various quality measures are defined.
+
+
+|                    |  Classified Positive (CP)  |  Classified Negative (CN) |
+|--------------------|--------------|---------------|
+|  Actual Positive (AP)  |  <span style="color:green; font-weight:bold">True Positive(TP)</span> | <span style="color:red; font-weight:bold">False Negative (FN)</span> | 
+|  Actual Negative (AN)  |  <span style="color:red; font-weight:bold">False Positive (FP)</span> | <span style="color:green; font-weight:bold">True Negative (TN)</span> |
+
 
 
 --- &twocol

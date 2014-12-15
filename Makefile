@@ -52,7 +52,7 @@ $(KNNIMGS): scripts/classification/knndemo.py scripts/classification/knndigits.p
 	python scripts/classification/knndemo.py 
 	python scripts/classification/knndigits.py
 
-$(LRIMGS): scripts/classification/logistic.py scripts/classification/logisticiris.py
+$(LRIMGS): scripts/classification/logistic.py scripts/classification/logisticiris.py scripts/classification/roc.py
 	python scripts/classification/logistic.py 
 	python scripts/classification/logisticiris.py
 	python scripts/classification/roc.py

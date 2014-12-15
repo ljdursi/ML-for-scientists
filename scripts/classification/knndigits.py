@@ -9,6 +9,7 @@ import sklearn
 import sklearn.datasets
 import sklearn.neighbors
 import sklearn.metrics
+import sklearn.cross_validation as cv
 
 def digitsProblem(trainfrac=0.66, seed=None, **kwargs):
     """Use kNN to differentiate between digits in the sklearn load_digits set.
@@ -17,20 +18,15 @@ def digitsProblem(trainfrac=0.66, seed=None, **kwargs):
     if seed is not None:
         numpy.random.seed(seed)
     digits = sklearn.datasets.load_digits()
-    n = len(digits.target)
-    idxs = numpy.arange(n)
-    numpy.random.shuffle(idxs)
-    trainidxs = idxs[:int(trainfrac*n)]
-    testidxs  = idxs[int(trainfrac*n):]
+    traindata, testdata, trainlabels, testlabels = cv.train_test_split(digits.data, digits.target, test_size=trainfrac)
 
     model = sklearn.neighbors.KNeighborsClassifier(**kwargs)
-    model.fit(digits.data[trainidxs],digits.target[trainidxs])
+    model.fit(traindata, trainlabels)
 
-    predicted = model.predict(digits.data[testidxs])
-    expected = digits.target[testidxs]
-    nwrong =sum(predicted != expected)
+    predicted = model.predict(testdata)
+    nwrong =sum(predicted != testlabels)
     print 'Number mismatched: ', nwrong, '/', len(predicted)
-    print sklearn.metrics.confusion_matrix(expected, predicted)
+    print sklearn.metrics.confusion_matrix(testlabels, predicted)
 
 def digitsPlot(filename=None):
     digits = sklearn.datasets.load_digits()
