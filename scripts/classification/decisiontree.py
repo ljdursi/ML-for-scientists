@@ -1,14 +1,22 @@
 #!/usr/bin/env python
 """Some demo examples for decision trees."""
 
+__havepydot__ = True
+
 import pandas
 import sklearn
 import sklearn.tree
 import sklearn.datasets
-import sklearn.externals.six
-import pydot
 import numpy
 import numpy.random
+import sklearn.externals.six
+import sklearn.cross_validation as cv
+
+try:
+    import pydot
+except ImportError, e:
+    print "Don't have pydot: will run, but won't be able to generate plots."
+    __havepydot__ = False
 
 def goodEvilData():
     """Returns the batman good/evil data set.
@@ -36,22 +44,18 @@ def goodEvilData():
 
 def irisProblem(trainfrac=0.66, printConfusion=False, **kwargs):
     iris = sklearn.datasets.load_iris()
-    n = len(iris.target)
-    idxs = numpy.arange(n)
-    numpy.random.shuffle(idxs)
-    trainidxs = idxs[0:int(trainfrac*n)]
-    testidxs  = idxs[int(trainfrac*n):]
+    traindata, testdata, trainlabels, testlabels = cv.ntrain_test_split(iris.data, iris.target, test_size=trainfrac)
     
     # these are the defaults
     #model = sklearn.tree.DecisionTreeClassifier(criterion='gini',splitter='best',max_features=None,max_depth=None)
     model = sklearn.tree.DecisionTreeClassifier(**kwargs)
-    model = model.fit(iris.data[trainidxs], iris.target[trainidxs])
-    predictions = model.predict(iris.data[testidxs])
+    model = model.fit(traindata, trainlabels)
+    predictions = model.predict(testdata)
 
-    nwrong = sum(predictions != iris.target[testidxs])
-    print "Misclassifications on test set: ", nwrong, "out of ", len(testidxs)
+    nwrong = sum(predictions != testlabels)
+    print "Misclassifications on test set: ", nwrong, "out of ", len(predictions)
     if printConfusion:
-        print sklearn.metrics.confusion_matrix(iris.target[testidxs],predictions)
+        print sklearn.metrics.confusion_matrix(testlabels,predictions)
     return nwrong
 
 if __name__ == "__main__":
@@ -61,13 +65,20 @@ if __name__ == "__main__":
     model.fit(train, labels)
     predictions = model.predict(test)
 
-    dot_data = sklearn.externals.six.StringIO()
-    sklearn.tree.export_graphviz(model, out_file=dot_data)
-    graph = pydot.graph_from_dot_data(dot_data.getvalue())
-    graph.write_png(base+"basic.png")
-    dot_data2 = sklearn.externals.six.StringIO()
-    sklearn.tree.export_graphviz(model, out_file=dot_data2, feature_names=train.columns)
-    graph = pydot.graph_from_dot_data(dot_data2.getvalue())
-    graph.write_png(base+"good-evil.png")
-
+    if __havepydot__:
+        try:
+            dot_data = sklearn.externals.six.StringIO()
+            sklearn.tree.export_graphviz(model, out_file=dot_data)
+            graph = pydot.graph_from_dot_data(dot_data.getvalue())
+            graph.write_png(base+"basic.png")
+            dot_data2 = sklearn.externals.six.StringIO()
+            sklearn.tree.export_graphviz(model, out_file=dot_data2, feature_names=train.columns)
+            graph = pydot.graph_from_dot_data(dot_data2.getvalue())
+            graph.write_png(base+"good-evil.png")
+        except: 
+            print "Could not generate decision tree visualization."
+    else:
+        # to satisfy make
+        open(base+'basic.png', 'a').close()
+        open(base+'good-eveil.png', 'a').close()
 
