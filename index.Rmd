@@ -1253,10 +1253,72 @@ that its confusion matrix elements have special names, and various quality measu
 
 |                    |  Classified Positive (CP)  |  Classified Negative (CN) |
 |--------------------|--------------|---------------|
-|  Actual Positive (AP)  |  <span style="color:green; font-weight:bold">True Positive(TP)</span> | <span style="color:red; font-weight:bold">False Negative (FN)</span> | 
-|  Actual Negative (AN)  |  <span style="color:red; font-weight:bold">False Positive (FP)</span> | <span style="color:green; font-weight:bold">True Negative (TN)</span> |
+|  Actual Positive (P)  |  <span style="color:green; font-weight:bold">True Positive(TP)</span> | <span style="color:red; font-weight:bold">False Negative (FN)</span> | 
+|  Actual Negative (N)  |  <span style="color:red; font-weight:bold">False Positive (FP)</span> | <span style="color:green; font-weight:bold">True Negative (TN)</span> |
 
+One can always get exactly one of FN or FP zero - for instance, if
+my classifier just classifies everything as positive, there will
+never be a false negative, and vice versa.
 
+But there's usually some tradeoff between false negatives and false
+positives.
+
+---
+
+## Evaluating Binary Classifiers
+
+Several quality measures exist, but because of the FN/FP tradeoff, you normally need two, one from each category:
+
+* Something to do with how many of the actual positives you get
+    * Sensitivity = Recall = True Postive Rate (TPR)
+        * $\mathrm{TPR} = \mathrm{TP}/\mathrm{P} = \mathrm{TP}/\left(\mathrm{TP}+\mathrm{FN}\right)$.  
+        * Given an actual positive, what is the probability of it being classified positive?
+* Something to do with how strong evidence your positive classification is:
+    * Specificity (SPC) = 1 - False Positive Rate (FPR)
+        * $\mathrm{SPC} = \mathrm{TN}/\mathrm{N} = \mathrm{TN}/\left (\mathrm{FP}+\mathrm{TN}\right)$
+        * Given an actual negative, what is the probability of it being classified negative?
+    * Precision = Positive Predictive Value (PPV): $\mathrm{PPV} = \mathrm{TP}/\left(\mathrm{TP}+\mathrm{FP}\right)$.
+        * What fraction of your positive calls are true?
+
+--- &twocol
+
+## ROC Curve
+
+*** =left
+
+In most binary classifiers, there's some equivalent of a threshold you can set; 
+* Set it lower (to allow more true positives, but also false positives);
+* Or higher (to allow more true negatives, but also false negatives).
+
+Plotting one of the two quality measures on either axis, get a ROC curve.  
+* Diagonal line = random chance
+* Want to be as far away as possible.
+
+sklearn plots TPR vs FPR (= 1 - SPC).
+
+*** =right
+
+![](outputs/classification/roc.png)
+
+---
+
+## ROC Curve
+
+![](outputs/classification/roc.png)
+
+--- &twocol
+
+## Evaluating Binary Classifiers
+
+*** =left
+
+Where to set the threshold?
+
+* For applications where a false positive is just as bad as a false negative, try to balance the two error rates.
+* But some applications, a false positive is much worse than a false negative, or vice versa.
+* Correct choice is problem dependant.
+*** =right
+![](outputs/classification/roc.png)
 
 --- &twocol
 
@@ -1375,12 +1437,6 @@ logir.irisProblem(printConfusion=True)
 
 Because of the additional dimensions in the problem, logistic regression actually does quite well.  Can you tweak it to
 work still better?
-
----
-
-## ROC Curve
-
-![](outputs/classification/roc.png)
 
 ---
 
