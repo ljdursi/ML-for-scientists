@@ -34,7 +34,7 @@ def goodEvilData():
     testdf = pandas.DataFrame(test, index=testnames )
     return traindf, traingood, testdf
 
-def irisProblem(trainfrac=0.66, **kwargs):
+def irisProblem(trainfrac=0.66, printConfusion=False, **kwargs):
     iris = sklearn.datasets.load_iris()
     n = len(iris.target)
     idxs = numpy.arange(n)
@@ -50,6 +50,8 @@ def irisProblem(trainfrac=0.66, **kwargs):
 
     nwrong = sum(predictions != iris.target[testidxs])
     print "Misclassifications on test set: ", nwrong, "out of ", len(testidxs)
+    if printConfusion:
+        print sklearn.metrics.confusion_matrix(iris.target[testidxs],predictions)
     return nwrong
 
 if __name__ == "__main__":
