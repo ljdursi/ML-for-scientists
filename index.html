@@ -262,7 +262,7 @@ $(function() {
 </ul></li>
 </ul>
 
-<p>Others are possible too -- intervals, temporal or spatial continuous data -- but we won&#39;t be considering those here.</p>
+<p>Others are possible too -- intervals, temporal or spatial continuous data -- but we won&#39;t be considering those today.</p>
 
   </article>
   <!-- Presenter Notes -->
@@ -732,7 +732,7 @@ a second chunk of data must be held out, for testing. </p>
   </hgroup>
   <article data-timings="">
     <p>Use this validation-hold-out approach to generate a noisy data set, and choose a degree polynomial to fit the 
-entire data set.  The routines <code>numpy.random.shuffle()</code> and <code>numpy.split()</code> may be helpful.</p>
+entire data set.  The routines <code>numpy.random.shuffle()</code> and <code>numpy.array_split()</code> may be helpful.</p>
 
 <pre><code class="python">import scripts.regression.biasvariance as bv
 x,y = bv.noisyData(npts=100)
@@ -743,11 +743,11 @@ import numpy.random
 a = numpy.arange(10)
 numpy.random.shuffle(a)
 print a
-print numpy.split(a, 2)
+print numpy.array_split(a, 2)
 </code></pre>
 
-<pre><code>## [7 3 9 5 4 8 2 1 0 6]
-## [array([7, 3, 9, 5, 4]), array([8, 2, 1, 0, 6])]
+<pre><code>## [6 0 4 5 8 9 1 2 7 3]
+## [array([6, 0, 4, 5, 8]), array([9, 1, 2, 7, 3])]
 </code></pre>
 
   </article>
@@ -835,8 +835,9 @@ print numpy.split(a, 2)
 <div style='float:left;width:48%;' class='centered'>
   <p>Running gives:</p>
 
-<pre><code class="python">import scripts.regression.crossvalidation as cv
-cv.chooseDegree(50)
+<pre><code class="python">from scripts.regression import crossvalidation 
+
+crossvalidation.chooseDegree(50)
 </code></pre>
 
 <p>This chooses the degree to fit 50 data points using
@@ -1952,7 +1953,7 @@ better?  Worse?  Why?</p>
     <p>How you &#39;score&#39; a classifier is different than a regression.</p>
 
 <p>You can count the number wrongly classified, and that is a useful
-metric - but it doesn&#39;t give you much information about how to <em>improve</em> the result.</p>
+way to keep score - but it doesn&#39;t give you much information you can use to improve the result.</p>
 
 <p>Confusion matrix tells you which misclassifications happened.  Traditionally, &quot;true&quot; classifications on the rows,
 model predictions on the columns.  </p>
@@ -1978,31 +1979,172 @@ dt.irisProblem(printConfusion=True)
   </hgroup>
   <article data-timings="">
     
+<div style='float:left;width:48%;' class='centered'>
+  <p>One way to consider binary classification is to go back to regression,
+and consider a linear regression to an integer 0/1 variable for classification.</p>
+
+<p>Get over 0.5, True, else False.</p>
+
+<p>Requires a linear seperation between the classes, but this is
+somewhat less of a problem for high-\(p\) problems; can often be useful.</p>
+
+<p>However, naive linear regresion has a number of problems, which grow worse
+at high \(p\), that mostly come down to the unbounded nature of the function.</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/classification/logistic-demo.png" alt=""></p>
+
+</div>
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-79" style="background:;">
   <hgroup>
-    <h2>ROC Curve</h2>
+    <h2>Logistic Regression</h2>
   </hgroup>
   <article data-timings="">
     
+<div style='float:left;width:48%;' class='centered'>
+  <p>However, a surprisingly minor variation on this approach makes it very useful.</p>
+
+<p>A whole infrastructure exists for &quot;generalized linear models&quot;, where the function
+being fit is not 
+\[
+y = \beta_0 + x_1 \beta_1 + x_2 \beta_2 + \dots = x \vec{\beta}
+\]</p>
+
+<p>but some power or exponential of \(X \vec{\beta}\).</p>
+
+<p>Consider fitting not \(p\), but the log-odds,
+\[
+\mu = \ln \frac{p}{1-p} = \beta_0 + \beta_1 x_1
+\]
+so now \(p\) can remain between 0 and 1, and the linear function can remain unbounded.</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/classification/logistic-demo.png" alt=""></p>
+
+</div>
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-80" style="background:;">
   <hgroup>
-    <h2>Closest labeled point</h2>
+    <h2>Logistic Regression</h2>
   </hgroup>
   <article data-timings="">
     
+<div style='float:left;width:48%;' class='centered'>
+  <p>We can fit this log-odds equation, and derive
+\[
+p = \frac{e^{\beta_0 + x \beta_1}}{1 + e^{\beta_0 + x \beta_1}} = \frac{1}{1 - e^{-(\beta_0 + x \beta_1)}}
+\]</p>
+
+<p>This approach has a number of very nice properties:</p>
+
+<ul>
+<li>We have a nice, bounded, well-behaved function and transformation to fit</li>
+<li>We can directly calculate the inferred probability of membership.<br></li>
+<li>We&#39;re essentially fitting a Bernoulli process.</li>
+</ul>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/classification/logistic-demo.png" alt=""></p>
+
+</div>
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-81" style="background:;">
+  <hgroup>
+    <h2>Logistic Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>One has to use somewhat different numerical algorithms to fit these
+curves; typical curve-fitting algorithms deal very poorly with
+exponentials.</p>
+
+<p>Often use techinques like expectation maximization (EM) or other
+well-conditioned iterative methods.  </p>
+
+<p>That&#39;s fine; they&#39;re all hidden beneath whatever logistic or GLM 
+packages you might want to use.</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/classification/logistic-demo.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-82" style="background:;">
+  <hgroup>
+    <h2>Logistic Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>Logistic regression can be fairly easily used in multiclassification problems; we have the probabilities in the binary case, so
+we can apply \(c\) classification tests and take the best one.</p>
+
+<p>Note the linear class boundaries.  The results aren&#39;t as bad as they look here, as we&#39;re projecting out two dimensions.</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/classification/logistic-iris-demo.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-83" style="background:;">
+  <hgroup>
+    <h2>Logistic Regression Hands on</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="python">import scripts.classification.logisticiris as logir
+import numpy.random
+
+numpy.random.seed(123)
+logir.irisProblem(printConfusion=True)
+</code></pre>
+
+<pre><code>## Misclassifications on test set:  6 out of  51
+## [[12  0  0]
+##  [ 0 16  6]
+##  [ 0  0 17]]
+</code></pre>
+
+<p>Because of the additional dimensions in the problem, logistic regression actually does quite well.  Can you tweak it to
+work still better?</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-84" style="background:;">
+  <hgroup>
+    <h2>ROC Curve</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="outputs/classification/roc.png" alt=""></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-85" style="background:;">
   <hgroup>
     <h2>Naive Bayes</h2>
   </hgroup>
@@ -2012,9 +2154,9 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-82" style="background:;">
+<slide class="" id="slide-86" style="background:;">
   <hgroup>
-    <h2>Decision trees</h2>
+    <h2>Classification Summary</h2>
   </hgroup>
   <article data-timings="">
     
@@ -2022,7 +2164,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-83" style="background:;">
+<slide class="dark segue nobackground" id="slide-87" style="background:;">
   <hgroup>
     <h2>Variable Selection</h2>
   </hgroup>
@@ -2032,7 +2174,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-84" style="background:;">
+<slide class="" id="slide-88" style="background:;">
   <hgroup>
     <h2>Try all combinations</h2>
   </hgroup>
@@ -2048,7 +2190,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-85" style="background:;">
+<slide class="" id="slide-89" style="background:;">
   <hgroup>
     <h2>AIC, BIC, adjusted R<sup>2</sup></h2>
   </hgroup>
@@ -2058,7 +2200,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-86" style="background:;">
+<slide class="" id="slide-90" style="background:;">
   <hgroup>
     <h2>PCA</h2>
   </hgroup>
@@ -2068,7 +2210,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-87" style="background:;">
+<slide class="" id="slide-91" style="background:;">
   <hgroup>
     <h2>Lasso</h2>
   </hgroup>
@@ -2078,7 +2220,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-88" style="background:;">
+<slide class="dark segue nobackground" id="slide-92" style="background:;">
   <hgroup>
     <h2>Clustering</h2>
   </hgroup>
@@ -2088,7 +2230,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-89" style="background:;">
+<slide class="" id="slide-93" style="background:;">
   <hgroup>
     <h2>K-means</h2>
   </hgroup>
@@ -2099,7 +2241,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-90" style="background:;">
+<slide class="" id="slide-94" style="background:;">
   <hgroup>
     <h2>Hierarchical Clustering</h2>
   </hgroup>
@@ -2109,7 +2251,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-91" style="background:;">
+<slide class="dark segue nobackground" id="slide-95" style="background:;">
   <hgroup>
     <h2>Ensemble Methods</h2>
   </hgroup>
@@ -2119,7 +2261,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-92" style="background:;">
+<slide class="" id="slide-96" style="background:;">
   <hgroup>
     <h2>Bagging, Boosting</h2>
   </hgroup>
@@ -2129,7 +2271,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-93" style="background:;">
+<slide class="" id="slide-97" style="background:;">
   <hgroup>
     <h2>Random Forest</h2>
   </hgroup>
@@ -2139,7 +2281,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue, dark, nobackground" id="slide-94" style="background:;">
+<slide class="segue, dark, nobackground" id="slide-98" style="background:;">
   <hgroup>
     <h2>Conclusions</h2>
   </hgroup>
@@ -2149,7 +2291,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-95" style="background:;">
+<slide class="" id="slide-99" style="background:;">
   <hgroup>
     <h2>Useful Resources</h2>
   </hgroup>
@@ -2636,104 +2778,128 @@ dt.irisProblem(printConfusion=True)
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=79 title='ROC Curve'>
+        data-slide=79 title='Logistic Regression'>
          79
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=80 title='Closest labeled point'>
+        data-slide=80 title='Logistic Regression'>
          80
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=81 title='Naive Bayes'>
+        data-slide=81 title='Logistic Regression'>
          81
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=82 title='Decision trees'>
+        data-slide=82 title='Logistic Regression'>
          82
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=83 title='Variable Selection'>
+        data-slide=83 title='Logistic Regression Hands on'>
          83
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=84 title='Try all combinations'>
+        data-slide=84 title='ROC Curve'>
          84
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=85 title='AIC, BIC, adjusted R<sup>2</sup>'>
+        data-slide=85 title='Naive Bayes'>
          85
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=86 title='PCA'>
+        data-slide=86 title='Classification Summary'>
          86
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=87 title='Lasso'>
+        data-slide=87 title='Variable Selection'>
          87
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=88 title='Clustering'>
+        data-slide=88 title='Try all combinations'>
          88
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=89 title='K-means'>
+        data-slide=89 title='AIC, BIC, adjusted R<sup>2</sup>'>
          89
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=90 title='Hierarchical Clustering'>
+        data-slide=90 title='PCA'>
          90
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=91 title='Ensemble Methods'>
+        data-slide=91 title='Lasso'>
          91
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=92 title='Bagging, Boosting'>
+        data-slide=92 title='Clustering'>
          92
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=93 title='Random Forest'>
+        data-slide=93 title='K-means'>
          93
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=94 title='Conclusions'>
+        data-slide=94 title='Hierarchical Clustering'>
          94
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=95 title='Useful Resources'>
+        data-slide=95 title='Ensemble Methods'>
          95
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=96 title='Bagging, Boosting'>
+         96
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=97 title='Random Forest'>
+         97
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=98 title='Conclusions'>
+         98
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=99 title='Useful Resources'>
+         99
       </a>
     </li>
   </ul>
