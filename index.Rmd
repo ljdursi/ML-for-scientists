@@ -1597,9 +1597,23 @@ the words as present/not present instead of counts - make a difference?).  Do th
 
 Or: how does Naive Bayes deal with the Iris data set (using GaussianNB?)
 
---
+---
 
 ## Classification Summary
+
+We've covered quite a bit of ground here:
+* Probabilistic methods (Naive, maybe Logistic Regression)
+* Regression method (LR)
+* Tree-based method (decision tree)
+* Geometric method (kNN)
+
+They each have benefits and drawbacks.  Decision Trees and LR both,
+in their way, require one or a series of linear separation surfaces;
+kNN requires a meaningful distance metric.  Decision Trees and
+especially NB can work quite well in high-dimensional spaces.
+
+There are guidelines you can use, but ultimately experience and
+experimentation is most important.
 
 --- .dark .segue .nobackground
 
@@ -1607,22 +1621,194 @@ Or: how does Naive Bayes deal with the Iris data set (using GaussianNB?)
 
 ---
 
-## Try all combinations
-http://xkcd.com/882/
-* Be wary of multiple comparisons!
-* Bonferroni, False Discovery Rate
+## Multivariate Linear Regression
+
+Let's take a look at linear regression again, using statsmodels and a wider data set:
+
+```{r, engine='python', eval=FALSE}
+import statsmodels.api as sm
+
+data = sm.datasets.star98.load()
+X = data.exog; Y = data.endog
+X = sm.add_constant(X)
+model=sm.OLS(Y[:,0],X)
+results = model.fit()
+print results.summary()
+```
+
+
+---
+
+## Multivariate Linear Regression
+
+```{r, engine='python', eval=FALSE}
+##Model:                            OLS   Adj. R-squared:                  0.507
+##[...]
+##Time:                        13:01:10   Log-Likelihood:                -2279.5
+##No. Observations:                 303   AIC:                             4601.
+##Df Residuals:                     282   BIC:                             4679.
+##[...]
+##==============================================================================
+##                 coef    std err          t      P>|t|      [95.0% Conf. Int.]
+##------------------------------------------------------------------------------
+##const      -1.014e+04   5209.878     -1.946      0.053     -2.04e+04   115.090
+##x1             0.2139      2.230      0.096      0.924        -4.175     4.603
+##x2            15.3423      3.505      4.377      0.000         8.443    22.242
+##x3             5.9944      4.140      1.448      0.149        -2.155    14.144
+##x4            -3.0512      2.138     -1.427      0.155        -7.261     1.158
+##x5          1597.6665    155.557     10.271      0.000      1291.467  1903.866
+##x6          1176.8157    249.155      4.723      0.000       686.377  1667.255
+```
+
+
+---
+
+## Multivariate Linear Regression
+
+```{r, engine='python', eval=TRUE}
+##x7           340.5269     62.086      5.485      0.000       218.317   462.737
+##x8         -1714.4834    904.058     -1.896      0.059     -3494.042    65.075
+##x9          -405.7498    195.183     -2.079      0.039      -789.951   -21.549
+##x10         -228.3569     99.588     -2.293      0.023      -424.388   -32.326
+##x11            7.1600      4.862      1.473      0.142        -2.411    16.731
+##x12            0.4313      1.333      0.324      0.747        -2.193     3.056
+##x13         -109.8054     10.718    -10.245      0.000      -130.903   -88.708
+##x14          -28.1694      2.587    -10.888      0.000       -33.262   -23.077
+##x15          -21.4271      4.318     -4.963      0.000       -29.926   -12.928
+##x16           84.6002     43.967      1.924      0.055        -1.945   171.146
+##x17           47.8686     20.668      2.316      0.021         7.185    88.552
+##x18           11.9591      4.679      2.556      0.011         2.750    21.168
+##x19            1.9302      0.175     11.049      0.000         1.586     2.274
+##x20           -2.5449      1.018     -2.499      0.013        -4.549    -0.540
+```
+
+---
+
+## Multivariate Linear Regression
+
+What to make of all of this?
+
+* Can compute a linear regression with all available variables.
+* Is this meaningful?
+* Naively, it looks like some of these variables aren't very important.
+* Can construct a better-motivated, more robust model if we reduce the number of variables / features.
+* Some regression/clustering/classification algorithms will have real difficulties on problems with many extraneous variables.
+* Sometimes variables are highly collinear and will break some algorithms.
+* The information "only these 5 (say) variables are really important" is itself worth having.
+
+We should strive to produce the simplest model that produces sufficiently good answers.
+* Feature selection.
+
+---
+
+## How Not to do Variable Selection
+
+"Variables 3,5,6,13,14,15, and 19 all have really low $p$ values - let's just use those."
+* No.
+
+A super-low $p$-value means, "in _this_ _model_, it's unlikely that this coefficient is zero".
+* Says nothing about its contribution to the hypothetical model in which you've removed other variables.
+* Says even less about how _important_ the contribution of the variable is.
+
+---
+
+## How (Maybe, but Hopefully Not) to do Variable Selection
+
+How have we done model selection in the past?
+* Cross-validation!
+
+Huge CV problem:
+* Try all $2^p$ combinations of variables.
+* Regress on them.
+* Of the possibilities, find best (adjusted) error.
+* Will work for modest $p$.
+* (But for modest $p$, don't need so badly to do variable selection.)
+
+---
+
+## Aside: Danger, Danger!
+### Multiple Hypothesis Testing
+
+In general, something inside you should shudder when facing the possibility of doing tens of thousands of tests on your data.
+
+For variable selection, this is ok, but for very small perturbations
+of this problem description things quickly go horribly, inexorably,
+off the rails.
+* "Let's look through all pairwise combinations of my 100 features, looking for statistically significant correlations!"
+* This comes up in cases where it's not necessarily obvious - looking for correlations between pixels in images.
+* If you are doing 10,000 hypothesis tests, using as your test for significance $p < 0.05$, you **expect** 500 significant results --- even if the data is just random noise.
+* Eternal torment, gnashing of teeth, etc.
+
+---
+
+## Aside: Danger, Danger!
+### Multiple Hypothesis Testing
+
+The canonical cautionary works on this subject:
+* http://xkcd.com/882/ (deals with the subject in XKCDs inimitable fashion)
+* http://www.wired.com/2009/09/fmrisalmon/ (finds statistically significant activation correlations in the brain of a salmon shown pictures of humans experiencing emotions.  The salmon "was not alive at the time of scanning").
+
+---
+
+## Multiple Hypothesis Testing Corrections
+
+There are a few methods of dealing with the situation of multiple
+testing.  They all involve stricter definitions of what is significant
+in this situation.  
+
+Which is appropriate depends on the nature of your tests. Are they all independent? Identically distributed?
+
+* **Bonferroni Correction**: Safest choice; works regardless of independence, distribution.  Bluntest instrument.
+    * If you otherwise would use a threshold $\alpha$ for significance, and are doing $k$ tests, use $\alpha / k$.
+* **Šidák correction**: If independent:
+    * use $(1 - (1-\alpha)^{(1/k)})$.
+* **Holm–Bonferroni method**: If independent, 
+    * Sort results by significance, apply strictest Bonferroni correction only to most significant (i=1); in descending order, use $\alpha/(k-i+1)$.
+
+---
+
+## Multiple Hypothesis Testing Corrections
+### End of Aside
+
+We won't cover this any further today, but it is vitally important to know
+that both this is an issue, and there are ways of correcting for it.
+
+Terms to look up if you find yourself in this situation:
+* Family wise error rate
+* False discovery rate
+
+---
+
+## Forward and Backward Selection
+### How else to do variable selection
+
+Exhaustive search is safe, but infeasible in the most urgent cases.
+($p = 100$ implies $10^{30}$ model tests, and 100 isn't a huge
+number of features.)
+
+Greedy methods often work relatively well, but can get caught in local minima.
+
+Nonetheless, two are in common use:
+
+* Forward selection: starting from nothing,
+    * For each remaining feature, include it, and calculate adjusted CV error.
+    * If for best feature, error drops enough, 
+        * Select it and continue
+    * Else terminate and report selected features.
+* Backward selection: same, but start with a model with all features, and drop until error rises too much.
 
 ---
 
 ## AIC, BIC, adjusted R^2
+### What is this "adjusted error" you speak of?
+
+---
+
+## Lasso/Ridge Regression
 
 ---
 
 ## PCA
-
----
-
-## Lasso
 
 --- .dark .segue .nobackground
 
