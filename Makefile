@@ -17,10 +17,16 @@ NPIMGS=$(addprefix ./outputs/nonparametric/,$(NPIMGNAMES))
 DTIMGNAMES=basic.png good-evil.png impurity-plots.png
 DTIMGS=$(addprefix ./outputs/classification/,$(DTIMGNAMES))
 
-IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS) $(DTIMGS)
+KNNIMGNAMES=knn-demo.png knn-vary-k.png knn-variance.png digits.png
+KNNIMGS=$(addprefix ./outputs/classification/,$(KNNIMGNAMES))
 
-%.md %.html: %.Rmd $(IMGS)
+IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS) $(DTIMGS) $(KNNIMGS)
+
+allimgs: $(IMGS)
+
+%.md %.html: %.Rmd allimgs
 	Rscript -e "library(slidify); slidify('$<',knit_deck=TRUE,save_payload=TRUE)"
+
 
 $(BVIMGS): scripts/regression/biasvariance.py
 	python $<
@@ -38,6 +44,10 @@ $(NPIMGS): scripts/regression/lowess.py scripts/regression/kernel.py
 $(DTIMGS): scripts/classification/decisiontree.py scripts/classification/impurityplot.py
 	python scripts/classification/decisiontree.py 
 	python scripts/classification/impurityplot.py
+
+$(KNNIMGS): scripts/classification/knndemo.py scripts/classification/knndigits.py
+	python scripts/classification/knndemo.py 
+	python scripts/classification/knndigits.py
 
 tidy:
 	rm -f *~
