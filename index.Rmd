@@ -141,7 +141,7 @@ And we will be working on two broad classes of variables:
      * Categorical: Item falls into category A, category B...
      * Ordinal: Discrete, but has an intrinsic order.  (Low, Med, High; S, M, L, XL).
 
-Others are possible too -- intervals, temporal or spatial continuous data -- but we won't be considering those here.
+Others are possible too -- intervals, temporal or spatial continuous data -- but we won't be considering those today.
 
 --- .segue .dark
 
@@ -471,7 +471,7 @@ Note that the data sets should be chosen randomly!
 ## Hands-On: Model Selection 
 
 Use this validation-hold-out approach to generate a noisy data set, and choose a degree polynomial to fit the 
-entire data set.  The routines `numpy.random.shuffle()` and `numpy.split()` may be helpful.
+entire data set.  The routines `numpy.random.shuffle()` and `numpy.array_split()` may be helpful.
 
 ```{r engine='python'}
 import scripts.regression.biasvariance as bv
@@ -483,7 +483,7 @@ import numpy.random
 a = numpy.arange(10)
 numpy.random.shuffle(a)
 print a
-print numpy.split(a, 2)
+print numpy.array_split(a, 2)
 ```
 
 ---
@@ -543,8 +543,9 @@ Let's look at `scripts/regression/crossvalidation.py`:
 *** =left
 Running gives:
 ```{r, engine='python', eval=FALSE}
-import scripts.regression.crossvalidation as cv
-cv.chooseDegree(50)
+from scripts.regression import crossvalidation 
+
+crossvalidation.chooseDegree(50)
 ```
 
 This chooses the degree to fit 50 data points using
@@ -1230,7 +1231,7 @@ better?  Worse?  Why?
 How you 'score' a classifier is different than a regression.
 
 You can count the number wrongly classified, and that is a useful
-metric - but it doesn't give you much information about how to _improve_ the result.
+way to keep score - but it doesn't give you much information you can use to improve the result.
 
 Confusion matrix tells you which misclassifications happened.  Traditionally, "true" classifications on the rows,
 model predictions on the columns.  
@@ -1241,17 +1242,130 @@ import scripts.classification.decisiontree as dt
 dt.irisProblem(printConfusion=True)
 ```
 
----
+
+--- &twocol
 
 ## Logistic Regression
+
+*** =left
+
+One way to consider binary classification is to go back to regression,
+and consider a linear regression to an integer 0/1 variable for classification.
+
+Get over 0.5, True, else False.
+
+Requires a linear seperation between the classes, but this is
+somewhat less of a problem for high-$p$ problems; can often be useful.
+
+However, naive linear regresion has a number of problems, which grow worse
+at high $p$, that mostly come down to the unbounded nature of the function.
+
+*** =right
+
+![](outputs/classification/logistic-demo.png)
+
+--- &twocol
+
+## Logistic Regression
+
+*** =left
+
+However, a surprisingly minor variation on this approach makes it very useful.
+
+A whole infrastructure exists for "generalized linear models", where the function
+being fit is not 
+$$
+y = \beta_0 + x_1 \beta_1 + x_2 \beta_2 + \dots = x \vec{\beta}
+$$
+
+but some power or exponential of $X \vec{\beta}$.
+
+Consider fitting not $p$, but the log-odds,
+$$
+\mu = \ln \frac{p}{1-p} = \beta_0 + \beta_1 x_1
+$$
+so now $p$ can remain between 0 and 1, and the linear function can remain unbounded.
+
+*** =right
+
+![](outputs/classification/logistic-demo.png)
+
+--- &twocol
+
+## Logistic Regression
+
+*** =left
+
+We can fit this log-odds equation, and derive
+$$
+p = \frac{e^{\beta_0 + x \beta_1}}{1 + e^{\beta_0 + x \beta_1}} = \frac{1}{1 - e^{-(\beta_0 + x \beta_1)}}
+$$
+
+This approach has a number of very nice properties:
+
+* We have a nice, bounded, well-behaved function and transformation to fit
+* We can directly calculate the inferred probability of membership.  
+* We're essentially fitting a Bernoulli process.
+
+*** =right
+
+![](outputs/classification/logistic-demo.png)
+
+--- &twocol
+
+## Logistic Regression
+
+*** =left
+
+One has to use somewhat different numerical algorithms to fit these
+curves; typical curve-fitting algorithms deal very poorly with
+exponentials.
+
+Often use techinques like expectation maximization (EM) or other
+well-conditioned iterative methods.  
+
+That's fine; they're all hidden beneath whatever logistic or GLM 
+packages you might want to use.
+
+
+*** =right
+
+![](outputs/classification/logistic-demo.png)
+
+--- &twocol
+
+## Logistic Regression
+
+*** =left
+
+Logistic regression can be fairly easily used in multiclassification problems; we have the probabilities in the binary case, so
+we can apply $c$ classification tests and take the best one.
+
+Note the linear class boundaries.  The results aren't as bad as they look here, as we're projecting out two dimensions.
+
+*** =right
+![](outputs/classification/logistic-iris-demo.png)
+
+--- 
+
+## Logistic Regression Hands on
+
+```{r engine='python'}
+import scripts.classification.logisticiris as logir
+import numpy.random
+
+numpy.random.seed(123)
+logir.irisProblem(printConfusion=True)
+```
+
+Because of the additional dimensions in the problem, logistic regression actually does quite well.  Can you tweak it to
+work still better?
 
 ---
 
 ## ROC Curve
 
----
-
-## Closest labeled point
+![](outputs/classification/roc.png)
 
 ---
 
@@ -1259,14 +1373,13 @@ dt.irisProblem(printConfusion=True)
 
 ---
 
-## Decision trees
+## Classification Summary
 
 --- .dark .segue .nobackground
 
 ## Variable Selection
 
 ---
-
 
 ## Try all combinations
 http://xkcd.com/882/

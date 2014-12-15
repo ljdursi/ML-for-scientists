@@ -31,7 +31,7 @@ def knnDemo(npts=100, nneigh=5, gridsize=0.03, filename=None, show=True, **kwarg
     minx = min(X[:,0]); maxx = max(X[:,0])
     miny = min(X[:,1]); maxy = max(X[:,1])
 
-    xx, yy = numpy.meshgrid(numpy.arange(minx, maxy, gridsize),
+    xx, yy = numpy.meshgrid(numpy.arange(minx, maxx, gridsize),
                             numpy.arange(miny, maxy, gridsize))
     Z = model.predict(numpy.c_[xx.ravel(), yy.ravel()])
 
