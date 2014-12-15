@@ -469,6 +469,21 @@ Note that the data sets should be chosen randomly!
 
 ---
 
+## Training and Validation Hold Out Data
+
+Once a model has "touched" a hold-out data set, it's done.
+
+If you iterate on models or model selection having touched all the
+data, you're doing exactly the same thing as fitting a 50th-order
+polynomial to 52 data points and saying "See? Hardly any error!"
+
+* Once a model (family of models) has seen the validation data set, it's done; can't tune it any more.
+    * Otherwise, risk eternal torment, gnashing of teeth, etc.
+* Once a set of models (set of family of models) have been compared to on the test data set, they're done; no more model selection.
+    * Eternal torment, gnashing of teeth, etc.
+
+---
+
 ## Hands-On: Model Selection 
 
 Use this validation-hold-out approach to generate a noisy data set, and choose a degree polynomial to fit the 
@@ -817,6 +832,17 @@ def lowessFit(x,y,**kwargs):
 
 Two-sample permutation test
 
+---
+
+## Final Notes on Regression ... For Now
+
+* Always consider nonparametric regression alongside any parametric regression you run.
+* It should go without saying (grandmother's knee again) that, whatever regression you run, you should investigate the residuals:
+    * Unbiased?
+    * Randomly (normally) distributed?
+    * Constant amplitude?
+* Otherwise, eternal torment, gnashing of teeth, etc.
+
 --- .segue .dark .nobackground
 
 ## Classification
@@ -866,9 +892,9 @@ Classification algorithms can be broken broadly into two categories;
 * Binary classification: answers yes/no questions about whether an item is in a particular class;
 * Multiclass classification: of $m$ classes, which one does this item belong to?
 
-One approach to multiclass classifiication is to deompose into $m$ binary classification problems, and
-for each item, choose the category in which the item is most securely assigned.  But more sophisticated
-methods exist.
+One approach to multiclass classification is to decompose into $m$ binary classification problems, and
+for each item, choose the category in which the item is most securely assigned.  (This is called "binarization", 
+and arises in other contexts).  But inherently multiclass methods also exist.
 
 ---
 
@@ -1289,8 +1315,9 @@ How you 'score' a classifier is different than a regression.
 You can count the number wrongly classified, and that is a useful
 way to keep score - but it doesn't give you much information you can use to improve the result.
 
-Confusion matrix tells you which misclassifications happened.  Traditionally, "true" classifications on the rows,
-model predictions on the columns.  
+Confusion matrix tells you which misclassifications happened.
+Traditionally, "true" classifications on the rows, model predictions
+on the columns.
 
 
 ```python
@@ -1306,6 +1333,82 @@ dt.irisProblem(printConfusion=True)
 ##  [ 0  2 13]]
 ```
 
+---
+
+## Evaluating Binary Classifiers
+
+Binary classification is a common and important enough special case
+that its confusion matrix elements have special names, and various quality measures are defined.
+
+
+|                    |  Classified Positive (CP)  |  Classified Negative (CN) |
+|--------------------|--------------|---------------|
+|  Actual Positive (P)  |  <span style="color:green; font-weight:bold">True Positive(TP)</span> | <span style="color:red; font-weight:bold">False Negative (FN)</span> | 
+|  Actual Negative (N)  |  <span style="color:red; font-weight:bold">False Positive (FP)</span> | <span style="color:green; font-weight:bold">True Negative (TN)</span> |
+
+One can always get exactly one of FN or FP zero - for instance, if
+my classifier just classifies everything as positive, there will
+never be a false negative, and vice versa.
+
+But there's usually some tradeoff between false negatives and false
+positives.
+
+---
+
+## Evaluating Binary Classifiers
+
+Several quality measures exist, but because of the FN/FP tradeoff, you normally need two, one from each category:
+
+* Something to do with how many of the actual positives you get
+    * Sensitivity = Recall = True Postive Rate (TPR)
+        * $\mathrm{TPR} = \mathrm{TP}/\mathrm{P} = \mathrm{TP}/\left(\mathrm{TP}+\mathrm{FN}\right)$.  
+        * Given an actual positive, what is the probability of it being classified positive?
+* Something to do with how strong evidence your positive classification is:
+    * Specificity (SPC) = 1 - False Positive Rate (FPR)
+        * $\mathrm{SPC} = \mathrm{TN}/\mathrm{N} = \mathrm{TN}/\left (\mathrm{FP}+\mathrm{TN}\right)$
+        * Given an actual negative, what is the probability of it being classified negative?
+    * Precision = Positive Predictive Value (PPV): $\mathrm{PPV} = \mathrm{TP}/\left(\mathrm{TP}+\mathrm{FP}\right)$.
+        * What fraction of your positive calls are true?
+
+--- &twocol
+
+## ROC Curve
+
+*** =left
+
+In most binary classifiers, there's some equivalent of a threshold you can set; 
+* Set it lower (to allow more true positives, but also false positives);
+* Or higher (to allow more true negatives, but also false negatives).
+
+Plotting one of the two quality measures on either axis, get a ROC curve.  
+* Diagonal line = random chance
+* Want to be as far away as possible.
+
+sklearn plots TPR vs FPR (= 1 - SPC).
+
+*** =right
+
+![](outputs/classification/roc.png)
+
+---
+
+## ROC Curve
+
+![](outputs/classification/roc.png)
+
+--- &twocol
+
+## Evaluating Binary Classifiers
+
+*** =left
+
+Where to set the threshold?
+
+* For applications where a false positive is just as bad as a false negative, try to balance the two error rates.
+* But some applications, a false positive is much worse than a false negative, or vice versa.
+* Correct choice is problem dependant.
+*** =right
+![](outputs/classification/roc.png)
 
 --- &twocol
 
@@ -1430,20 +1533,152 @@ logir.irisProblem(printConfusion=True)
 ##  [ 0  0 17]]
 ```
 
-Because of the additional dimensions in the problem, logistic regression actually does quite well.  Can you tweak it to
-work still better?
-
----
-
-## ROC Curve
-
-![](outputs/classification/roc.png)
+Because of the additional dimensions in the problem, logistic
+regression actually does quite well on this problem.  Can you tweak
+it to work still better?  Useful parameters to play with are the
+penalty parameter (using L1 or L2 distances), a regularization parameter
+C, a tolerance (when to stop iterating).
 
 ---
 
 ## Naive Bayes
 
+Naive Bayes might be better called "Naive Application of Conditional Probability", but you can see where
+that might not have caught on.
+
+A classifier that calculates an assignment probability given data $\vec{x}$ calculates, implicitly or explicitly, a probability
+$$
+P(C=c | \vec{x}) = P(C=c | x_1, x_2, \cdots, x_p )
+$$
+
+By Bayes's Theorem (conditional probability), this is
+
+$$
+\mathrm{P}(C=c | x_1, x_2, \cdots, x_p ) = \frac{\mathrm{P}(C=c) \mathrm{P}(x_1, x_2, \cdots, x_p | C=c)}{\mathrm{P}(x_1, x_2, \cdots, x_n)}
+$$
+
+The bottom is just a normalization we're not interested in, so we consider
+$$
+\mathrm{P}(C=c | x_1, x_2, \cdots, x_p ) \propto \mathrm{P}(C=c) \mathrm{P}(x_1, x_2, \cdots, x_p | C=c)
+$$
+
+
 ---
+
+## Naive Indeed
+
+$$
+\mathrm{P}(C=c | x_1, x_2, \cdots, x_p ) \propto \mathrm{P}(C=c) \mathrm{P}(x_1, x_2, \cdots, x_p | C=c)
+$$
+
+Here's where the "Naive" comes in.  We're going to assume that the different features of the data are *independent*
+of each other, conditional on $C=c$.  Madness!  But, recklessly tossing caution to the wind,
+
+$$
+\mathrm{P}(C=c | x_1, x_2, \cdots, x_p ) \propto \mathrm{P}(C=c) \prod_{i=1}^p \mathrm{P}(x_i | C=c)
+$$
+
+By making the decision to completely ignore the correlations between features, this method is blissfully unaware
+of the primary difficulty of high-dimensional (high-$p$) datasets, and training Naive Bayes classifiers becomes extremely easy.
+
+---
+
+## Training Naive Bayes
+
+Looking back at the Batman data set:
+
+|Name    |  cape |  ears |  male |  mask | smokes | tie  | Good/Bad
+|--------|-------|-------|-------|-------|--------|------|--------- 
+|Batman  |  True |  True | True  | True  | False  |False | Good
+|Robin   |  True | False | True  | True  | False  |False | Good
+|Alfred  | False | False | True  |False  | False  | True | Good
+|Pengin  | False | False | True  |False  |  True  | True | Bad
+|Catwoman| False |  True | False | True  | False  |False | Bad
+|Joker   | False | False | True  |False  | False  |False | Bad
+
+
+* $\mathrm{P}(C=\mathrm{Good}) = 1/2$; $\mathrm{P}(C=\mathrm{Bad}) = 1/2$; 
+* $\mathrm{P}(\mathrm{cape} | C=\mathrm{Good}) = 2/3$
+* $\mathrm{P}(\mathrm{ears} | C=\mathrm{Good}) = 1/3$
+* $\mathrm{P}(\mathrm{smokes} | C=\mathrm{Good}) = 0$
+
+etc.
+
+---
+
+## Training Naive Bayes
+
+In fact, what one would actually do is, rather than assume constants, is fit a distribution to the various conditional probabilities.
+* Continuous: Gaussian (typically)
+* True/False: Bernoulli
+* Integer: Binomial/Multinomial
+
+But the basic training method is the same, and crucially, is done on each dimension independently.
+
+Fast, requires quite modest amounts of data even in very high dimensional spaces.
+
+---
+
+## Naive Like a Fox
+
+In fact, Naive Bayes can do quite well in problems where there are so many variables that the correlations between random
+pairs of them are quite small.
+
+A classic example is text processing, in which sometimes documents are treated as "bags of words":
+
+* "twas brillig and the slithy toves did gyre and gimble in the wabe".
+* { and:2, brillig:1, did:1, gimble:1, gyre:1, in:1, slithy:1, the:2, tove:1, twas:1, wabe:1 }
+
+Obviously, this throws away a great deal of semantically important information, but works quite well for broad-brush applications
+like sentiment analysis, topic analysis, or spam filtering.
+
+Individual word choices _are_ most definitely correlated, but not incredibly strongly.  There are a lot of possible words out there.
+
+---
+
+## Usenet Newsgroups Classification
+
+Usenet newsgroups were basically prehistoric Reddit, back in the days before the September That Never Ended.
+
+Posts were broken up into various topic forums, and the "20 newsgroups dataset" ( http://qwone.com/~jason/20Newsgroups/ ) is 
+a set of ~20,000 posts between these groups.  The question is one of classification: could you correctly place a post in the
+right newsgroup?  
+
+Very similar to any of a number of other text classification problems.
+
+Scikit-Learn has a routine for loading this data set, and breaking it into bags of words (and further processing, such
+as stripping out english "stop words": the, and, etc.)
+
+---
+
+## Usenet Newsgroups Classification
+
+
+```python
+import scripts.classification.text as txt
+
+categories = ['comp.os.ms-windows.misc', 'misc.forsale', 'rec.motorcycles', 'talk.religion.misc']
+txt.newsgroupsProblem(categories, printConfusion=True)
+```
+
+```
+## f1-score:  0.877293802813
+## [[323  23  31  17]
+##  [ 12 347  25   6]
+##  [  3  13 370  12]
+##  [  5   4  25 217]]
+```
+
+---
+
+## Text Processing Hands On
+
+Using `scripts/classification/text.py` as a startingpoint, play further with Naive Bayes (does BernoulliNB - just treating
+the words as present/not present instead of counts - make a difference?).  Do the other classifiers work better?
+
+Or: how does Naive Bayes deal with the Iris data set (using GaussianNB?)
+
+--
 
 ## Classification Summary
 
