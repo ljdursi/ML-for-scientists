@@ -1,14 +1,20 @@
 #!/usr/bin/env python
 """Some demo examples for decision trees."""
 
+__havepydot__ = True
+
 import pandas
 import sklearn
 import sklearn.tree
 import sklearn.datasets
-import sklearn.externals.six
-import pydot
 import numpy
 import numpy.random
+import sklearn.externals.six
+try:
+    import pydot
+except ImportError, e:
+    print "Don't have pydot: will run, but won't be able to generate plots."
+    __havepydot__ = False
 
 def goodEvilData():
     """Returns the batman good/evil data set.
@@ -61,13 +67,16 @@ if __name__ == "__main__":
     model.fit(train, labels)
     predictions = model.predict(test)
 
-    dot_data = sklearn.externals.six.StringIO()
-    sklearn.tree.export_graphviz(model, out_file=dot_data)
-    graph = pydot.graph_from_dot_data(dot_data.getvalue())
-    graph.write_png(base+"basic.png")
-    dot_data2 = sklearn.externals.six.StringIO()
-    sklearn.tree.export_graphviz(model, out_file=dot_data2, feature_names=train.columns)
-    graph = pydot.graph_from_dot_data(dot_data2.getvalue())
-    graph.write_png(base+"good-evil.png")
-
+    if __havepydot__:
+        try:
+            dot_data = sklearn.externals.six.StringIO()
+            sklearn.tree.export_graphviz(model, out_file=dot_data)
+            graph = pydot.graph_from_dot_data(dot_data.getvalue())
+            graph.write_png(base+"basic.png")
+            dot_data2 = sklearn.externals.six.StringIO()
+            sklearn.tree.export_graphviz(model, out_file=dot_data2, feature_names=train.columns)
+            graph = pydot.graph_from_dot_data(dot_data2.getvalue())
+            graph.write_png(base+"good-evil.png")
+        except: 
+            print "Could not generate decision tree visualization."
 
