@@ -1712,6 +1712,19 @@ A super-low $p$-value means, "in _this_ _model_, it's unlikely that this coeffic
 
 ---
 
+## How to do a Little Variable Selection
+
+There are some filtering steps one can judiciously take to weed out some clearly irrelevant variables:
+
+* Low variance filtering (`sklearn.feature_selection.VarianceThreshold`).
+If the variable is essentially constant, it can't matter much to any model.
+* Univariate tests (`sklearn.feature_selection.SelectKBest`): for
+supervised learning, **if** your data is sampled densely enough,
+can do univariate tests on each parameter and remove ones that are sufficiently uncorrelated with label.
+
+
+---
+
 ## How (Maybe, but Hopefully Not) to do Variable Selection
 
 How have we done model selection in the past?
@@ -1786,21 +1799,54 @@ Exhaustive search is safe, but infeasible in the most urgent cases.
 ($p = 100$ implies $10^{30}$ model tests, and 100 isn't a huge
 number of features.)
 
-Greedy methods often work relatively well, but can get caught in local minima.
-
-Nonetheless, two are in common use:
+Two greedy methods are in common use, but can get caught in local minima:
 
 * Forward selection: starting from nothing,
     * For each remaining feature, include it, and calculate adjusted CV error.
-    * If for best feature, error drops enough, 
-        * Select it and continue
+    * If for best feature, error drops enough, select it and continue
     * Else terminate and report selected features.
 * Backward selection: same, but start with a model with all features, and drop until error rises too much.
+    * sklearn: `RFECV` (Recursive Feature Elimination w/ CV)
 
 ---
 
-## AIC, BIC, adjusted R^2
-### What is this "adjusted error" you speak of?
+## AIC, BIC, etc
+
+How do you decide if a model with an additional feature is "better" than a simpler one?
+* Always expect the more complex model to fit a little better.
+* Question is, is it better *enough* to justify the extra parameter?
+
+Two Information Criterion (AIC, BIC) consider the likelihood of the model, given the data, with a penalty for the number of
+parameters in the model.
+
+$$
+\mathrm{xIC} \approx -2 \log L + k \alpha
+$$
+
+where $L$ is the likelihood of the model, $k$ is the number of
+parameters, and $\alpha = 2(1 + (k+1)/(n-k+1))$ for AIC and $\log
+n$ for BIC.
+
+A decrease in AIC/BIC corresponds to a better model, taking into account the models' complexity.
+
+Correspond to different assumptions.  BIC is a little stricter,
+which has advantages and disadvantages.  Either is defensible if used consistently.
+
+---
+
+## Variable Selection as Part of the Model
+
+What we've described so far is treating variable selection as a
+general optimization problem, with the model construction as a
+separate black box.
+
+But in many cases, variable selection can be part of the model-building
+step.
+
+Decision trees: necessarily keep track of which features are most
+important for dividing up the data.  In `sklearn`, in the fitted
+decision tree model, the attribute `feature_importances_` is available
+for ranking the discovered importance of the dimensions.
 
 ---
 
@@ -1810,9 +1856,17 @@ Nonetheless, two are in common use:
 
 ## PCA
 
+---
+
+## Variable Selection Hands-On
+
 --- .dark .segue .nobackground
 
-## Clustering
+## Clustering 
+
+--- 
+
+## Clustering Overview
 
 --- 
 
@@ -1836,13 +1890,22 @@ Foo bar baz
 
 ## Random Forest
 
---- .segue, .dark, .nobackground
+--- .segue .dark .nobackground
 
 ## Conclusions
+
+---
+
+## Concluding Points
 
 ---
 
 ## Useful Resources
 
 * Cosma Shalizi, "Advanced Data Analysis from an Elementary Point of View", http://www.stat.cmu.edu/~cshalizi/ADAfaEPoV/, covers regression, hypothesis testing, PCA, and density estimation, amongst other things, and is extremely lucidly written.
-
+* Andrew Ng, CS229 ML course, http://cs229.stanford.edu/materials.html, and associated Coursera MOOC
+* Jure Leskovec, Anand Rajaraman, and Jeff Ullman, Mining of Massive Data Sets, pdf book online, http://www.mmds.org
+* Mohammed J. Zaki and Wagner Meira Jr., Data Mining and Analysis: Fundamental Concepts and Algorithms, http://www.cs.rpi.edu/~zaki/PaperDir/DMABOOK.pdf
+* Scikit-Learn tutorial, http://scikit-learn.org/stable/tutorial/
+* Your SciNet Team
+* + many others.  
