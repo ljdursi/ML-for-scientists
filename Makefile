@@ -61,7 +61,8 @@ $(LRIMGS): scripts/classification/logistic.py scripts/classification/logisticiri
 	python scripts/classification/roc.py
 
 $(FSIMGS): scripts/featureselect/lasso.py scripts/featureselect/pca.py
-	python $<
+	python scripts/featureselect/lasso.py 
+	python scripts/featureselect/pca.py
 
 tidy:
 	rm -f *~
