@@ -44,7 +44,7 @@ def goodEvilData():
 
 def irisProblem(trainfrac=0.66, printConfusion=False, **kwargs):
     iris = sklearn.datasets.load_iris()
-    traindata, testdata, trainlabels, testlabels = cv.ntrain_test_split(iris.data, iris.target, test_size=trainfrac)
+    traindata, testdata, trainlabels, testlabels = cv.train_test_split(iris.data, iris.target, test_size=trainfrac)
     
     # these are the defaults
     #model = sklearn.tree.DecisionTreeClassifier(criterion='gini',splitter='best',max_features=None,max_depth=None)

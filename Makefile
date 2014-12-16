@@ -23,7 +23,10 @@ KNNIMGS=$(addprefix ./outputs/classification/,$(KNNIMGNAMES))
 LRIMGNAMES=logistic-demo.png logistic-iris-demo.png roc.png
 LRIMGS=$(addprefix ./outputs/classification/,$(LRIMGNAMES))
 
-IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS) $(DTIMGS) $(KNNIMGS) $(LRIMGS)
+FSIMGNAMES=lasso-coeffs.png
+FSIMGS=$(addprefix ./outputs/featureselect/,$(FSIMGNAMES))
+
+IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS) $(DTIMGS) $(KNNIMGS) $(LRIMGS) $(FSIMGS)
 
 allimgs: $(IMGS)
 
@@ -57,12 +60,16 @@ $(LRIMGS): scripts/classification/logistic.py scripts/classification/logisticiri
 	python scripts/classification/logisticiris.py
 	python scripts/classification/roc.py
 
+$(FSIMGS): scripts/featureselect/lasso.py scripts/featureselect/pca.py
+	python $<
+
 tidy:
 	rm -f *~
 	rm -f scripts/*.pyc scripts/*~ scripts/.*.swp
 	rm -f scripts/regression/*.pyc scripts/regression/*~ scripts/regression/.*.swp
 	rm -f scripts/bootstrap/*.pyc scripts/bootstrap/*~ scripts/bootstrap/.*.swp
 	rm -f scripts/classification/*.pyc scripts/classification/*~ scripts/classification/.*.swp
+	rm -f scripts/featureselect/*.pyc scripts/featureselect/*~ scripts/featureselect/.*.swp
 
 clean:
 	rm -f $(PRES).html $(PRES).md $(IMGS)
