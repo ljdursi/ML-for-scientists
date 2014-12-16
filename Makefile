@@ -23,7 +23,7 @@ KNNIMGS=$(addprefix ./outputs/classification/,$(KNNIMGNAMES))
 LRIMGNAMES=logistic-demo.png logistic-iris-demo.png roc.png
 LRIMGS=$(addprefix ./outputs/classification/,$(LRIMGNAMES))
 
-FSIMGNAMES=lasso-coeffs.png
+FSIMGNAMES=lasso-coeffs.png pca-demo.png
 FSIMGS=$(addprefix ./outputs/featureselect/,$(FSIMGNAMES))
 
 IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS) $(DTIMGS) $(KNNIMGS) $(LRIMGS) $(FSIMGS)
