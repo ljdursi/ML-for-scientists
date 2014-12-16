@@ -26,7 +26,10 @@ LRIMGS=$(addprefix ./outputs/classification/,$(LRIMGNAMES))
 FSIMGNAMES=lasso-coeffs.png pca-demo.png
 FSIMGS=$(addprefix ./outputs/featureselect/,$(FSIMGNAMES))
 
-IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS) $(DTIMGS) $(KNNIMGS) $(LRIMGS) $(FSIMGS)
+CLIMGNAMES=kmeans-demo.png agglom-vs-kmeans.png
+CLIMGS=$(addprefix ./outputs/clustering/,$(CLIMGNAMES))
+
+IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS) $(DTIMGS) $(KNNIMGS) $(LRIMGS) $(FSIMGS) $(CLIMGS)
 
 allimgs: $(IMGS)
 
@@ -63,6 +66,10 @@ $(LRIMGS): scripts/classification/logistic.py scripts/classification/logisticiri
 $(FSIMGS): scripts/featureselect/lasso.py scripts/featureselect/pca.py
 	python scripts/featureselect/lasso.py 
 	python scripts/featureselect/pca.py
+
+$(CLIMGS): scripts/clustering/kmeansiris.py scripts/clustering/agglom_vs_kmeans.py
+	python scripts/clustering/kmeansiris.py 
+	python scripts/clustering/agglom_vs_kmeans.py
 
 tidy:
 	rm -f *~
