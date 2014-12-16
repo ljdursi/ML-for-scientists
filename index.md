@@ -20,6 +20,12 @@ github      :
 .title-slide {
   background-color: #EDEDED; 
 }
+article p {
+  text-align:left;
+}
+p {
+  text-align:left;
+}
 img {     
   max-width: 90%
 }
@@ -45,7 +51,7 @@ We'll cover, and you'll use, most or all of the following methods:
 
 |                |  Supervised   |  Unsupervised|
 |---------------:|:--------------|:---------------|
-|  CONTINUOUS    |  **Regression**:  OLS, Lowess, Lasso |   **Density Estimation**: Kernel Methods; **Variable Selection**: PCA |
+|  CONTINUOUS    |  **Regression**:  OLS, Lowess, Lasso |   **Variable Selection**: PCA |
 |  DISCRETE      |  **Classification**:  Logistic Regression, kNN, Decision Trees, Naive Bayes, Random Forest |   **Clustering**: k-Means, Hierarchical Clustering |
 
 --- &twocol
@@ -138,6 +144,7 @@ And we will be working on two broad classes of variables:
 
 * **Continuous**: real numbers.
 * **Discrete**: 
+     * Binary: True/False, On/Off.
      * Categorical: Item falls into category A, category B...
      * Ordinal: Discrete, but has an intrinsic order.  (Low, Med, High; S, M, L, XL).
 
@@ -827,13 +834,6 @@ def lowessFit(x,y,**kwargs):
 
 ---
 
-## Resampling Aside #2 
-### Nonparametric Hypothesis Testing
-
-Two-sample permutation test
-
----
-
 ## Final Notes on Regression ... For Now
 
 * Always consider nonparametric regression alongside any parametric regression you run.
@@ -862,7 +862,7 @@ But it is greatly complicated by the fact that the labels are discrete:
 * You don't get partial points for being close; there's no category A$\frac{1}{2}$.
 
 So classification algorithms spend a great deal of time looking for methods to as cleanly
-distringuish various categories as possible.
+distinguish various categories as possible.
 
 In some cases, it may be useful to have not only a "best guess" classification, but a quantitative
 measure of how much evidence there is in that assignment.
@@ -893,8 +893,10 @@ Classification algorithms can be broken broadly into two categories;
 * Multiclass classification: of $m$ classes, which one does this item belong to?
 
 One approach to multiclass classification is to decompose into $m$ binary classification problems, and
-for each item, choose the category in which the item is most securely assigned.  (This is called "binarization", 
-and arises in other contexts).  But inherently multiclass methods also exist.
+for each item, choose the category in which the item is most securely assigned.  (This turning a discrete variable 
+into a series of binary variables is called "binarization", and arises in other contexts).  
+
+But inherently multiclass methods also exist.
 
 ---
 
@@ -1638,16 +1640,21 @@ Individual word choices _are_ most definitely correlated, but not incredibly str
 
 ## Usenet Newsgroups Classification
 
-Usenet newsgroups were basically prehistoric Reddit, back in the days before the September That Never Ended.
+Usenet newsgroups were basically prehistoric Reddit, back in the
+day.
 
-Posts were broken up into various topic forums, and the "20 newsgroups dataset" ( http://qwone.com/~jason/20Newsgroups/ ) is 
-a set of ~20,000 posts between these groups.  The question is one of classification: could you correctly place a post in the
-right newsgroup?  
+Posts occurred in various topic forums, and the "20 newsgroups
+dataset" ( http://qwone.com/~jason/20Newsgroups/ ) is a set of
+~20,000 posts across these groups.  The question is one of
+classification: could you correctly place a post in the right
+newsgroup?
 
 Very similar to any of a number of other text classification problems.
 
-Scikit-Learn has a routine for loading this data set, and breaking it into bags of words (and further processing, such
-as stripping out english "stop words": the, and, etc.)
+Scikit-Learn has a routine for loading this data set, and breaking
+it into bags of words (and further processing, such as stripping
+out relatively meaning-free English "stop words" that would otherwise 
+flood the statistics: the, an, one, and, but, etc.)
 
 ---
 
@@ -1796,6 +1803,19 @@ A super-low $p$-value means, "in _this_ _model_, it's unlikely that this coeffic
 
 ---
 
+## How to do a Little Variable Selection
+
+There are some filtering steps one can judiciously take to weed out some clearly irrelevant variables:
+
+* Low variance filtering (`sklearn.feature_selection.VarianceThreshold`).
+If the variable is essentially constant, it can't matter much to any model.
+* Univariate tests (`sklearn.feature_selection.SelectKBest`): for
+supervised learning, **if** your data is sampled densely enough,
+can do univariate tests on each parameter and remove ones that are sufficiently uncorrelated with label.
+
+
+---
+
 ## How (Maybe, but Hopefully Not) to do Variable Selection
 
 How have we done model selection in the past?
@@ -1870,33 +1890,203 @@ Exhaustive search is safe, but infeasible in the most urgent cases.
 ($p = 100$ implies $10^{30}$ model tests, and 100 isn't a huge
 number of features.)
 
-Greedy methods often work relatively well, but can get caught in local minima.
-
-Nonetheless, two are in common use:
+Two greedy methods are in common use, but can get caught in local minima:
 
 * Forward selection: starting from nothing,
     * For each remaining feature, include it, and calculate adjusted CV error.
-    * If for best feature, error drops enough, 
-        * Select it and continue
+    * If for best feature, error drops enough, select it and continue
     * Else terminate and report selected features.
 * Backward selection: same, but start with a model with all features, and drop until error rises too much.
+    * sklearn: `RFECV` (Recursive Feature Elimination w/ CV)
 
 ---
 
-## AIC, BIC, adjusted R^2
-### What is this "adjusted error" you speak of?
+## AIC, BIC, etc
+
+How do you decide if a model with an additional feature is "better" than a simpler one?
+* Always expect the more complex model to fit a little better.
+* Question is, is it better *enough* to justify the extra parameter?
+
+Two Information Criterion (AIC, BIC) consider the likelihood of the model, given the data, with a penalty for the number of
+parameters in the model.
+
+$$
+\mathrm{xIC} \approx -2 \log L + k \alpha
+$$
+
+where $L$ is the likelihood of the model, $k$ is the number of
+parameters, and $\alpha = 2(1 + (k+1)/(n-k+1))$ for AIC and $\log
+n$ for BIC.
+
+A decrease in AIC/BIC corresponds to a better model, taking into account the models' complexity.
+
+Correspond to different assumptions.  BIC is a little stricter,
+which has advantages and disadvantages.  Either is defensible if used consistently.
+
+---
+
+## Variable Selection as Part of the Model
+
+What we've described so far is treating variable selection as a
+general optimization problem, with the model construction as a
+separate black box.
+
+But in many cases, variable selection can be part of the model-building
+step.
+
+Decision trees: necessarily keep track of which features are most
+important for dividing up the data.  In `sklearn`, in the fitted
+decision tree model, the attribute `feature_importances_` is available
+for ranking the discovered importance of the dimensions.
 
 ---
 
 ## Lasso/Ridge Regression
 
+There are *regularization* methods in regression which tamp down the coefficients of "unimportant" variables, or eliminate
+them together, based on a fairly modest-looking change to how we specify the problem. 
+
+Recall that for generic least-squares regression, we are minimizing the MSE:
+$$
+\mathrm{MSE} = \left ( y - X_0 \beta_0 - X_1 \beta_1 - \dots - X_p \beta_p \right )^2 = \left ( y - X \beta \right )^2
+$$
+resulting in
+$$
+\hat{\beta} = \mathrm{argmin}_\beta \left ( y - X \beta \right )^2
+$$
+
+What we'd like to do is keep the problem as simple as possible - one way of thinking of that in regression is forcing
+the fit parameters to stay small; to constrain $|\beta|$ in some way.
+
+---
+
+## Lasso/Ridge Regression
+
+Ridge and Lasso regression do a similar minimization, but with a penalty term for the coefficients:
+
+Ridge:
+$$
+\hat{\beta} = \mathrm{argmin}_\beta \left ( y - X \beta \right )^2 + \lambda || \beta ||_2^2
+$$
+
+Lasso:
+$$
+\hat{\beta} = \mathrm{argmin}_\beta \left ( y - X \beta \right )^2 + \lambda || \beta ||_1
+$$
+
+In scikit-learn, these are available through `sklearn.linear_model.Lasso` and `.Ridge`.
+
+---
+
+## Lasso/Ridge Regression
+
+Both of these methods incur a penalty - the resulting regressions have a bias, as what we are optimizing for
+is no longer solely to zero out mean squared error.
+
+The reason to use Lasso/Ridge is when we are explicitly willing to trade some bias for more variance, and to 
+simplify a model.  For the smoother penalty of ridge, this tradeoff can be written down explicitly for Ridge;
+can only be numerically calculated for Lasso.
+
+Because of the smoother penalty term in Ridge, cannot zero out variables $\beta_i = 0$; thus it simplifies the model
+in some sense, but doesn't properly do variable selection.  Lasso, however, will zero out coefficients.
+
+--- &twocol
+
+## Lasso Regression
+
+*** =left
+
+In either case, with Lasso or Ridge, coefficients decrease (usually smoothly) with increase in the regularization
+parameter (in Lasso, $\alpha$).  
+
+Ridge coefficients can pass through zero and change sign; not with Lasso.
+
+An example can be seen in `scripts/regression/lasso.py`
+
+*** =right
+
+![](outputs/featureselect/lasso-coeffs.png)
+
+--- 
+
+## Lasso Regression
+
+Bias-Variance tradeoff; as we slowly bring down $\alpha$, bias increases, but for quite a while it's more than balanced by
+reduction in variance:
+
+
+```python
+import scripts.regression.lasso as lasso
+import numpy
+
+X,y = lasso.getDiabetesData()
+alphas = numpy.logspace(0.5,-3.5,20)
+mses=[]
+for alpha in alphas:
+    mses.append(lasso.lassoFit(X,y,alpha=alpha))
+print numpy.round(mses,2)
+```
+
+```
+## [ 3167.42  2979.89  3118.9   3000.94  3095.79  3427.5   3022.48  3152.64
+##   3289.54  2907.83  2935.09  3105.    3138.35  3056.27  3230.43  3203.78
+##   3316.99  3184.72  3030.19  3237.38]
+```
+
 ---
 
 ## PCA
 
+Properly speaking, PCA isn't variable selection - it's a technique
+that allows dimension reduction in problems with purely continuous variables.
+
+Doesn't look at the labels of the data; just imagines the data as points
+in a $p$-dimensional space.
+
+PCA is a transformation which rotates and scales the space into directions
+defined by the variance in the data.  The direction in which the variance is 
+highest is rotated to point along the first axes (the first principal component).
+Next along the second axis, etc.
+
+Increasingly higher dimensions are flatter and flatter, as they have less
+variance.  The least significant principal components can often be profitably
+ignored, as there is very little variation in those directions.
+
+
+--- &twocol
+
+## PCA
+
+*** =left
+
+Note that PCA doesn't drop variables; rather, it generates combinations of all variables
+in order of how significantly they vary.
+
+One generally keeps most of the information from all variables, but expressed in a number
+of combinations $k$ < $p$.  Potentially best of both worlds - model simplicity without
+throwing away information.
+
+*** =right
+
+![](outputs/featureselect/pca-demo.png)
+
+---
+
+## Variable Selection Hands-On
+
+Take star98 demo from the beginning of this section, or the diabetes dataset from the lasso 
+example, and play with lasso and ridge regression, or use a decision tree on the data and
+examine important variables via the tree.  
+
+Which variables are the most important?  Least?
+
 --- .dark .segue .nobackground
 
-## Clustering
+## Clustering 
+
+--- 
+
+## Clustering Overview
 
 --- 
 
@@ -1920,13 +2110,22 @@ Foo bar baz
 
 ## Random Forest
 
---- .segue, .dark, .nobackground
+--- .segue .dark .nobackground
 
 ## Conclusions
+
+---
+
+## Concluding Points
 
 ---
 
 ## Useful Resources
 
 * Cosma Shalizi, "Advanced Data Analysis from an Elementary Point of View", http://www.stat.cmu.edu/~cshalizi/ADAfaEPoV/, covers regression, hypothesis testing, PCA, and density estimation, amongst other things, and is extremely lucidly written.
-
+* Andrew Ng, CS229 ML course, http://cs229.stanford.edu/materials.html, and associated Coursera MOOC
+* Jure Leskovec, Anand Rajaraman, and Jeff Ullman, Mining of Massive Data Sets, pdf book online, http://www.mmds.org
+* Mohammed J. Zaki and Wagner Meira Jr., Data Mining and Analysis: Fundamental Concepts and Algorithms, http://www.cs.rpi.edu/~zaki/PaperDir/DMABOOK.pdf
+* Scikit-Learn tutorial, http://scikit-learn.org/stable/tutorial/
+* Your SciNet Team
+* + many others.  

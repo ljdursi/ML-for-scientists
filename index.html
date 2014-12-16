@@ -57,6 +57,12 @@
 .title-slide {
   background-color: #EDEDED; 
 }
+article p {
+  text-align:left;
+}
+p {
+  text-align:left;
+}
 img {     
   max-width: 90%
 }
@@ -94,7 +100,7 @@ $(function() {
 <tr>
 <td align="right">CONTINUOUS</td>
 <td align="left"><strong>Regression</strong>:  OLS, Lowess, Lasso</td>
-<td align="left"><strong>Density Estimation</strong>: Kernel Methods; <strong>Variable Selection</strong>: PCA</td>
+<td align="left"><strong>Variable Selection</strong>: PCA</td>
 </tr>
 <tr>
 <td align="right">DISCRETE</td>
@@ -257,6 +263,7 @@ $(function() {
 <li><strong>Discrete</strong>: 
 
 <ul>
+<li>Binary: True/False, On/Off.</li>
 <li>Categorical: Item falls into category A, category B...</li>
 <li>Ordinal: Discrete, but has an intrinsic order.  (Low, Med, High; S, M, L, XL).</li>
 </ul></li>
@@ -1232,19 +1239,6 @@ We can rewrite this as
 
 <slide class="" id="slide-50" style="background:;">
   <hgroup>
-    <h2>Resampling Aside #2</h2>
-  </hgroup>
-  <article data-timings="">
-    <h3>Nonparametric Hypothesis Testing</h3>
-
-<p>Two-sample permutation test</p>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-51" style="background:;">
-  <hgroup>
     <h2>Final Notes on Regression ... For Now</h2>
   </hgroup>
   <article data-timings="">
@@ -1264,7 +1258,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark nobackground" id="slide-52" style="background:;">
+<slide class="segue dark nobackground" id="slide-51" style="background:;">
   <hgroup>
     <h2>Classification</h2>
   </hgroup>
@@ -1274,7 +1268,7 @@ We can rewrite this as
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-53" style="background:;">
+<slide class="" id="slide-52" style="background:;">
   <hgroup>
     <h2>Classification</h2>
   </hgroup>
@@ -1294,7 +1288,7 @@ We can rewrite this as
 </ul>
 
 <p>So classification algorithms spend a great deal of time looking for methods to as cleanly
-distringuish various categories as possible.</p>
+distinguish various categories as possible.</p>
 
 <p>In some cases, it may be useful to have not only a &quot;best guess&quot; classification, but a quantitative
 measure of how much evidence there is in that assignment.</p>
@@ -1303,7 +1297,7 @@ measure of how much evidence there is in that assignment.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-54" style="background:;">
+<slide class="" id="slide-53" style="background:;">
   <hgroup>
     <h2>Classification Problems</h2>
   </hgroup>
@@ -1329,7 +1323,7 @@ measure of how much evidence there is in that assignment.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-55" style="background:;">
+<slide class="" id="slide-54" style="background:;">
   <hgroup>
     <h2>Binary vs Multiclass Classification</h2>
   </hgroup>
@@ -1342,14 +1336,16 @@ measure of how much evidence there is in that assignment.</p>
 </ul>
 
 <p>One approach to multiclass classification is to decompose into \(m\) binary classification problems, and
-for each item, choose the category in which the item is most securely assigned.  (This is called &quot;binarization&quot;, 
-and arises in other contexts).  But inherently multiclass methods also exist.</p>
+for each item, choose the category in which the item is most securely assigned.  (This turning a discrete variable 
+into a series of binary variables is called &quot;binarization&quot;, and arises in other contexts).  </p>
+
+<p>But inherently multiclass methods also exist.</p>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-56" style="background:;">
+<slide class="" id="slide-55" style="background:;">
   <hgroup>
     <h2>Outline</h2>
   </hgroup>
@@ -1374,7 +1370,7 @@ and arises in other contexts).  But inherently multiclass methods also exist.</p
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-57" style="background:;">
+<slide class="" id="slide-56" style="background:;">
   <hgroup>
     <h2>Decision Trees</h2>
   </hgroup>
@@ -1398,7 +1394,7 @@ it, which classifies an input based on a number of binary decisions.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-58" style="background:;">
+<slide class="" id="slide-57" style="background:;">
   <hgroup>
     <h2>Batman Decision Tree</h2>
   </hgroup>
@@ -1521,7 +1517,7 @@ it, which classifies an input based on a number of binary decisions.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-59" style="background:;">
+<slide class="" id="slide-58" style="background:;">
   <hgroup>
     <h2>Splitting Algorithms</h2>
   </hgroup>
@@ -1552,7 +1548,7 @@ other which is almost purely bad.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-60" style="background:;">
+<slide class="" id="slide-59" style="background:;">
   <hgroup>
     <h2>Splitting Algorithms</h2>
   </hgroup>
@@ -1579,7 +1575,7 @@ for the &quot;impurity&quot; of the groups generated (higher is worse):</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-61" style="background:;">
+<slide class="" id="slide-60" style="background:;">
   <hgroup>
     <h2>Splitting Algorithms</h2>
   </hgroup>
@@ -1610,7 +1606,7 @@ particular strengths and weaknesses.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-62" style="background:;">
+<slide class="" id="slide-61" style="background:;">
   <hgroup>
     <h2>Scikit-learn</h2>
   </hgroup>
@@ -1639,7 +1635,7 @@ learning algorithms each of which are implemented with a consistent API.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-63" style="background:;">
+<slide class="" id="slide-62" style="background:;">
   <hgroup>
     <h2><code>sklearn</code></h2>
   </hgroup>
@@ -1663,7 +1659,7 @@ import sklearn.tree
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-64" style="background:;">
+<slide class="" id="slide-63" style="background:;">
   <hgroup>
     <h2><code>pandas</code></h2>
   </hgroup>
@@ -1683,7 +1679,7 @@ using continuous values), but is generally pretty useful for classification prob
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-65" style="background:;">
+<slide class="" id="slide-64" style="background:;">
   <hgroup>
     <h2><code>pandas</code></h2>
   </hgroup>
@@ -1708,7 +1704,7 @@ print df
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-66" style="background:;">
+<slide class="" id="slide-65" style="background:;">
   <hgroup>
     <h2>Trees and Overfitting</h2>
   </hgroup>
@@ -1725,7 +1721,7 @@ correctly classify the input data set.   </p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-67" style="background:;">
+<slide class="" id="slide-66" style="background:;">
   <hgroup>
     <h2>Tree-pruning</h2>
   </hgroup>
@@ -1744,7 +1740,7 @@ while the model is not &quot;too complex&quot;.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-68" style="background:;">
+<slide class="" id="slide-67" style="background:;">
   <hgroup>
     <h2>Hands on - Iris Data Set</h2>
   </hgroup>
@@ -1770,7 +1766,7 @@ b = dt.irisProblem(splitter=&#39;random&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-69" style="background:;">
+<slide class="" id="slide-68" style="background:;">
   <hgroup>
     <h2>Nearest Neighbours - $k$NN</h2>
   </hgroup>
@@ -1795,7 +1791,7 @@ points has.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-70" style="background:;">
+<slide class="" id="slide-69" style="background:;">
   <hgroup>
     <h2>Bias-Variance in $k$NN</h2>
   </hgroup>
@@ -1806,7 +1802,7 @@ points has.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-71" style="background:;">
+<slide class="" id="slide-70" style="background:;">
   <hgroup>
     <h2>Bias-Variance in $k$NN</h2>
   </hgroup>
@@ -1831,7 +1827,7 @@ points has.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-72" style="background:;">
+<slide class="" id="slide-71" style="background:;">
   <hgroup>
     <h2>Bias-Variance in $k$NN</h2>
   </hgroup>
@@ -1852,7 +1848,7 @@ the data set.  </p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-73" style="background:;">
+<slide class="" id="slide-72" style="background:;">
   <hgroup>
     <h2>$k$NN and Geometry</h2>
   </hgroup>
@@ -1873,7 +1869,7 @@ made to work, but not all)</li>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-74" style="background:;">
+<slide class="" id="slide-73" style="background:;">
   <hgroup>
     <h2>$k$NN and Geometry</h2>
   </hgroup>
@@ -1898,7 +1894,7 @@ for i in range(4):
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-75" style="background:;">
+<slide class="" id="slide-74" style="background:;">
   <hgroup>
     <h2>Scaling continuous features</h2>
   </hgroup>
@@ -1924,7 +1920,7 @@ check the documentation!</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-76" style="background:;">
+<slide class="" id="slide-75" style="background:;">
   <hgroup>
     <h2>Digits data set</h2>
   </hgroup>
@@ -1949,7 +1945,7 @@ each digit, used to train OCR systems (originally, for US zip codes).</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-77" style="background:;">
+<slide class="" id="slide-76" style="background:;">
   <hgroup>
     <h2>Hands-on: kNN digits</h2>
   </hgroup>
@@ -1976,7 +1972,7 @@ knnd.digitsProblem(weights=&#39;distance&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-78" style="background:;">
+<slide class="" id="slide-77" style="background:;">
   <hgroup>
     <h2>Hands-on: kNN digits</h2>
   </hgroup>
@@ -1994,7 +1990,7 @@ better?  Worse?  Why?</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-79" style="background:;">
+<slide class="" id="slide-78" style="background:;">
   <hgroup>
     <h2>Confusion matrix</h2>
   </hgroup>
@@ -2023,7 +2019,7 @@ dt.irisProblem(printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-80" style="background:;">
+<slide class="" id="slide-79" style="background:;">
   <hgroup>
     <h2>Evaluating Binary Classifiers</h2>
   </hgroup>
@@ -2061,7 +2057,7 @@ positives.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-81" style="background:;">
+<slide class="" id="slide-80" style="background:;">
   <hgroup>
     <h2>Evaluating Binary Classifiers</h2>
   </hgroup>
@@ -2100,7 +2096,7 @@ positives.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-82" style="background:;">
+<slide class="" id="slide-81" style="background:;">
   <hgroup>
     <h2>ROC Curve</h2>
   </hgroup>
@@ -2132,7 +2128,7 @@ positives.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-83" style="background:;">
+<slide class="" id="slide-82" style="background:;">
   <hgroup>
     <h2>ROC Curve</h2>
   </hgroup>
@@ -2143,7 +2139,7 @@ positives.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-84" style="background:;">
+<slide class="" id="slide-83" style="background:;">
   <hgroup>
     <h2>Evaluating Binary Classifiers</h2>
   </hgroup>
@@ -2167,7 +2163,7 @@ positives.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-85" style="background:;">
+<slide class="" id="slide-84" style="background:;">
   <hgroup>
     <h2>Logistic Regression</h2>
   </hgroup>
@@ -2194,7 +2190,7 @@ at high \(p\), that mostly come down to the unbounded nature of the function.</p
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-86" style="background:;">
+<slide class="" id="slide-85" style="background:;">
   <hgroup>
     <h2>Logistic Regression</h2>
   </hgroup>
@@ -2226,7 +2222,7 @@ so now \(p\) can remain between 0 and 1, and the linear function can remain unbo
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-87" style="background:;">
+<slide class="" id="slide-86" style="background:;">
   <hgroup>
     <h2>Logistic Regression</h2>
   </hgroup>
@@ -2255,7 +2251,7 @@ p = \frac{e^{\beta_0 + x \beta_1}}{1 + e^{\beta_0 + x \beta_1}} = \frac{1}{1 - e
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-88" style="background:;">
+<slide class="" id="slide-87" style="background:;">
   <hgroup>
     <h2>Logistic Regression</h2>
   </hgroup>
@@ -2281,7 +2277,7 @@ packages you might want to use.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-89" style="background:;">
+<slide class="" id="slide-88" style="background:;">
   <hgroup>
     <h2>Logistic Regression</h2>
   </hgroup>
@@ -2302,7 +2298,7 @@ we can apply \(c\) classification tests and take the best one.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-90" style="background:;">
+<slide class="" id="slide-89" style="background:;">
   <hgroup>
     <h2>Logistic Regression Hands on</h2>
   </hgroup>
@@ -2330,7 +2326,7 @@ C, a tolerance (when to stop iterating).</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-91" style="background:;">
+<slide class="" id="slide-90" style="background:;">
   <hgroup>
     <h2>Naive Bayes</h2>
   </hgroup>
@@ -2358,7 +2354,7 @@ P(C=c | \vec{x}) = P(C=c | x_1, x_2, \cdots, x_p )
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-92" style="background:;">
+<slide class="" id="slide-91" style="background:;">
   <hgroup>
     <h2>Naive Indeed</h2>
   </hgroup>
@@ -2381,7 +2377,7 @@ of the primary difficulty of high-dimensional (high-\(p\)) datasets, and trainin
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-93" style="background:;">
+<slide class="" id="slide-92" style="background:;">
   <hgroup>
     <h2>Training Naive Bayes</h2>
   </hgroup>
@@ -2475,7 +2471,7 @@ of the primary difficulty of high-dimensional (high-\(p\)) datasets, and trainin
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-94" style="background:;">
+<slide class="" id="slide-93" style="background:;">
   <hgroup>
     <h2>Training Naive Bayes</h2>
   </hgroup>
@@ -2496,7 +2492,7 @@ of the primary difficulty of high-dimensional (high-\(p\)) datasets, and trainin
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-95" style="background:;">
+<slide class="" id="slide-94" style="background:;">
   <hgroup>
     <h2>Naive Like a Fox</h2>
   </hgroup>
@@ -2520,27 +2516,32 @@ like sentiment analysis, topic analysis, or spam filtering.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-96" style="background:;">
+<slide class="" id="slide-95" style="background:;">
   <hgroup>
     <h2>Usenet Newsgroups Classification</h2>
   </hgroup>
   <article data-timings="">
-    <p>Usenet newsgroups were basically prehistoric Reddit, back in the days before the September That Never Ended.</p>
+    <p>Usenet newsgroups were basically prehistoric Reddit, back in the
+day.</p>
 
-<p>Posts were broken up into various topic forums, and the &quot;20 newsgroups dataset&quot; ( <a href="http://qwone.com/%7Ejason/20Newsgroups/">http://qwone.com/~jason/20Newsgroups/</a> ) is 
-a set of ~20,000 posts between these groups.  The question is one of classification: could you correctly place a post in the
-right newsgroup?  </p>
+<p>Posts occurred in various topic forums, and the &quot;20 newsgroups
+dataset&quot; ( <a href="http://qwone.com/%7Ejason/20Newsgroups/">http://qwone.com/~jason/20Newsgroups/</a> ) is a set of
+~20,000 posts across these groups.  The question is one of
+classification: could you correctly place a post in the right
+newsgroup?</p>
 
 <p>Very similar to any of a number of other text classification problems.</p>
 
-<p>Scikit-Learn has a routine for loading this data set, and breaking it into bags of words (and further processing, such
-as stripping out english &quot;stop words&quot;: the, and, etc.)</p>
+<p>Scikit-Learn has a routine for loading this data set, and breaking
+it into bags of words (and further processing, such as stripping
+out relatively meaning-free English &quot;stop words&quot; that would otherwise 
+flood the statistics: the, an, one, and, but, etc.)</p>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-97" style="background:;">
+<slide class="" id="slide-96" style="background:;">
   <hgroup>
     <h2>Usenet Newsgroups Classification</h2>
   </hgroup>
@@ -2562,7 +2563,7 @@ txt.newsgroupsProblem(categories, printConfusion=True)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-98" style="background:;">
+<slide class="" id="slide-97" style="background:;">
   <hgroup>
     <h2>Text Processing Hands On</h2>
   </hgroup>
@@ -2576,7 +2577,7 @@ the words as present/not present instead of counts - make a difference?).  Do th
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-99" style="background:;">
+<slide class="" id="slide-98" style="background:;">
   <hgroup>
     <h2>Classification Summary</h2>
   </hgroup>
@@ -2602,7 +2603,7 @@ experimentation is most important.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-100" style="background:;">
+<slide class="dark segue nobackground" id="slide-99" style="background:;">
   <hgroup>
     <h2>Variable Selection</h2>
   </hgroup>
@@ -2612,7 +2613,7 @@ experimentation is most important.</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-101" style="background:;">
+<slide class="" id="slide-100" style="background:;">
   <hgroup>
     <h2>Multivariate Linear Regression</h2>
   </hgroup>
@@ -2633,7 +2634,7 @@ print results.summary()
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-102" style="background:;">
+<slide class="" id="slide-101" style="background:;">
   <hgroup>
     <h2>Multivariate Linear Regression</h2>
   </hgroup>
@@ -2660,7 +2661,7 @@ print results.summary()
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-103" style="background:;">
+<slide class="" id="slide-102" style="background:;">
   <hgroup>
     <h2>Multivariate Linear Regression</h2>
   </hgroup>
@@ -2685,7 +2686,7 @@ print results.summary()
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-104" style="background:;">
+<slide class="" id="slide-103" style="background:;">
   <hgroup>
     <h2>Multivariate Linear Regression</h2>
   </hgroup>
@@ -2712,7 +2713,7 @@ print results.summary()
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-105" style="background:;">
+<slide class="" id="slide-104" style="background:;">
   <hgroup>
     <h2>How Not to do Variable Selection</h2>
   </hgroup>
@@ -2728,6 +2729,25 @@ print results.summary()
 <ul>
 <li>Says nothing about its contribution to the hypothetical model in which you&#39;ve removed other variables.</li>
 <li>Says even less about how <em>important</em> the contribution of the variable is.</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-105" style="background:;">
+  <hgroup>
+    <h2>How to do a Little Variable Selection</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>There are some filtering steps one can judiciously take to weed out some clearly irrelevant variables:</p>
+
+<ul>
+<li>Low variance filtering (<code>sklearn.feature_selection.VarianceThreshold</code>).
+If the variable is essentially constant, it can&#39;t matter much to any model.</li>
+<li>Univariate tests (<code>sklearn.feature_selection.SelectKBest</code>): for
+supervised learning, <strong>if</strong> your data is sampled densely enough,
+can do univariate tests on each parameter and remove ones that are sufficiently uncorrelated with label.</li>
 </ul>
 
   </article>
@@ -2866,23 +2886,21 @@ that both this is an issue, and there are ways of correcting for it.</p>
 (\(p = 100\) implies \(10^{30}\) model tests, and 100 isn&#39;t a huge
 number of features.)</p>
 
-<p>Greedy methods often work relatively well, but can get caught in local minima.</p>
-
-<p>Nonetheless, two are in common use:</p>
+<p>Two greedy methods are in common use, but can get caught in local minima:</p>
 
 <ul>
 <li>Forward selection: starting from nothing,
 
 <ul>
 <li>For each remaining feature, include it, and calculate adjusted CV error.</li>
-<li>If for best feature, error drops enough, 
-
-<ul>
-<li>Select it and continue</li>
-</ul></li>
+<li>If for best feature, error drops enough, select it and continue</li>
 <li>Else terminate and report selected features.</li>
 </ul></li>
-<li>Backward selection: same, but start with a model with all features, and drop until error rises too much.</li>
+<li>Backward selection: same, but start with a model with all features, and drop until error rises too much.
+
+<ul>
+<li>sklearn: <code>RFECV</code> (Recursive Feature Elimination w/ CV)</li>
+</ul></li>
 </ul>
 
   </article>
@@ -2891,10 +2909,31 @@ number of features.)</p>
 
 <slide class="" id="slide-112" style="background:;">
   <hgroup>
-    <h2>AIC, BIC, adjusted R<sup>2</sup></h2>
+    <h2>AIC, BIC, etc</h2>
   </hgroup>
   <article data-timings="">
-    <h3>What is this &quot;adjusted error&quot; you speak of?</h3>
+    <p>How do you decide if a model with an additional feature is &quot;better&quot; than a simpler one?</p>
+
+<ul>
+<li>Always expect the more complex model to fit a little better.</li>
+<li>Question is, is it better <em>enough</em> to justify the extra parameter?</li>
+</ul>
+
+<p>Two Information Criterion (AIC, BIC) consider the likelihood of the model, given the data, with a penalty for the number of
+parameters in the model.</p>
+
+<p>\[
+\mathrm{xIC} \approx -2 \log L + k \alpha
+\]</p>
+
+<p>where \(L\) is the likelihood of the model, \(k\) is the number of
+parameters, and \(\alpha = 2(1 + (k+1)/(n-k+1))\) for AIC and \(\log
+n\) for BIC.</p>
+
+<p>A decrease in AIC/BIC corresponds to a better model, taking into account the models&#39; complexity.</p>
+
+<p>Correspond to different assumptions.  BIC is a little stricter,
+which has advantages and disadvantages.  Either is defensible if used consistently.</p>
 
   </article>
   <!-- Presenter Notes -->
@@ -2902,25 +2941,205 @@ number of features.)</p>
 
 <slide class="" id="slide-113" style="background:;">
   <hgroup>
-    <h2>Lasso/Ridge Regression</h2>
+    <h2>Variable Selection as Part of the Model</h2>
   </hgroup>
   <article data-timings="">
-    
+    <p>What we&#39;ve described so far is treating variable selection as a
+general optimization problem, with the model construction as a
+separate black box.</p>
+
+<p>But in many cases, variable selection can be part of the model-building
+step.</p>
+
+<p>Decision trees: necessarily keep track of which features are most
+important for dividing up the data.  In <code>sklearn</code>, in the fitted
+decision tree model, the attribute <code>feature_importances_</code> is available
+for ranking the discovered importance of the dimensions.</p>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-114" style="background:;">
   <hgroup>
-    <h2>PCA</h2>
+    <h2>Lasso/Ridge Regression</h2>
   </hgroup>
   <article data-timings="">
-    
+    <p>There are <em>regularization</em> methods in regression which tamp down the coefficients of &quot;unimportant&quot; variables, or eliminate
+them together, based on a fairly modest-looking change to how we specify the problem. </p>
+
+<p>Recall that for generic least-squares regression, we are minimizing the MSE:
+\[
+\mathrm{MSE} = \left ( y - X_0 \beta_0 - X_1 \beta_1 - \dots - X_p \beta_p \right )^2 = \left ( y - X \beta \right )^2
+\]
+resulting in
+\[
+\hat{\beta} = \mathrm{argmin}_\beta \left ( y - X \beta \right )^2
+\]</p>
+
+<p>What we&#39;d like to do is keep the problem as simple as possible - one way of thinking of that in regression is forcing
+the fit parameters to stay small; to constrain \(|\beta|\) in some way.</p>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-115" style="background:;">
+<slide class="" id="slide-115" style="background:;">
+  <hgroup>
+    <h2>Lasso/Ridge Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Ridge and Lasso regression do a similar minimization, but with a penalty term for the coefficients:</p>
+
+<p>Ridge:
+\[
+\hat{\beta} = \mathrm{argmin}_\beta \left ( y - X \beta \right )^2 + \lambda || \beta ||_2^2
+\]</p>
+
+<p>Lasso:
+\[
+\hat{\beta} = \mathrm{argmin}_\beta \left ( y - X \beta \right )^2 + \lambda || \beta ||_1
+\]</p>
+
+<p>In scikit-learn, these are available through <code>sklearn.linear_model.Lasso</code> and <code>.Ridge</code>.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-116" style="background:;">
+  <hgroup>
+    <h2>Lasso/Ridge Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Both of these methods incur a penalty - the resulting regressions have a bias, as what we are optimizing for
+is no longer solely to zero out mean squared error.</p>
+
+<p>The reason to use Lasso/Ridge is when we are explicitly willing to trade some bias for more variance, and to 
+simplify a model.  For the smoother penalty of ridge, this tradeoff can be written down explicitly for Ridge;
+can only be numerically calculated for Lasso.</p>
+
+<p>Because of the smoother penalty term in Ridge, cannot zero out variables \(\beta_i = 0\); thus it simplifies the model
+in some sense, but doesn&#39;t properly do variable selection.  Lasso, however, will zero out coefficients.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-117" style="background:;">
+  <hgroup>
+    <h2>Lasso Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>In either case, with Lasso or Ridge, coefficients decrease (usually smoothly) with increase in the regularization
+parameter (in Lasso, \(\alpha\)).  </p>
+
+<p>Ridge coefficients can pass through zero and change sign; not with Lasso.</p>
+
+<p>An example can be seen in <code>scripts/regression/lasso.py</code></p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/featureselect/lasso-coeffs.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-118" style="background:;">
+  <hgroup>
+    <h2>Lasso Regression</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Bias-Variance tradeoff; as we slowly bring down \(\alpha\), bias increases, but for quite a while it&#39;s more than balanced by
+reduction in variance:</p>
+
+<pre><code class="python">import scripts.regression.lasso as lasso
+import numpy
+
+X,y = lasso.getDiabetesData()
+alphas = numpy.logspace(0.5,-3.5,20)
+mses=[]
+for alpha in alphas:
+    mses.append(lasso.lassoFit(X,y,alpha=alpha))
+print numpy.round(mses,2)
+</code></pre>
+
+<pre><code>## [ 3167.42  2979.89  3118.9   3000.94  3095.79  3427.5   3022.48  3152.64
+##   3289.54  2907.83  2935.09  3105.    3138.35  3056.27  3230.43  3203.78
+##   3316.99  3184.72  3030.19  3237.38]
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-119" style="background:;">
+  <hgroup>
+    <h2>PCA</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Properly speaking, PCA isn&#39;t variable selection - it&#39;s a technique
+that allows dimension reduction in problems with purely continuous variables.</p>
+
+<p>Doesn&#39;t look at the labels of the data; just imagines the data as points
+in a \(p\)-dimensional space.</p>
+
+<p>PCA is a transformation which rotates and scales the space into directions
+defined by the variance in the data.  The direction in which the variance is 
+highest is rotated to point along the first axes (the first principal component).
+Next along the second axis, etc.</p>
+
+<p>Increasingly higher dimensions are flatter and flatter, as they have less
+variance.  The least significant principal components can often be profitably
+ignored, as there is very little variation in those directions.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-120" style="background:;">
+  <hgroup>
+    <h2>PCA</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>Note that PCA doesn&#39;t drop variables; rather, it generates combinations of all variables
+in order of how significantly they vary.</p>
+
+<p>One generally keeps most of the information from all variables, but expressed in a number
+of combinations \(k\) &lt; \(p\).  Potentially best of both worlds - model simplicity without
+throwing away information.</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/featureselect/pca-demo.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-121" style="background:;">
+  <hgroup>
+    <h2>Variable Selection Hands-On</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Take star98 demo from the beginning of this section, or the diabetes dataset from the lasso 
+example, and play with lasso and ridge regression, or use a decision tree on the data and
+examine important variables via the tree.  </p>
+
+<p>Which variables are the most important?  Least?</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="dark segue nobackground" id="slide-122" style="background:;">
   <hgroup>
     <h2>Clustering</h2>
   </hgroup>
@@ -2930,7 +3149,17 @@ number of features.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-116" style="background:;">
+<slide class="" id="slide-123" style="background:;">
+  <hgroup>
+    <h2>Clustering Overview</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-124" style="background:;">
   <hgroup>
     <h2>K-means</h2>
   </hgroup>
@@ -2941,7 +3170,7 @@ number of features.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-117" style="background:;">
+<slide class="" id="slide-125" style="background:;">
   <hgroup>
     <h2>Hierarchical Clustering</h2>
   </hgroup>
@@ -2951,7 +3180,7 @@ number of features.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-118" style="background:;">
+<slide class="dark segue nobackground" id="slide-126" style="background:;">
   <hgroup>
     <h2>Ensemble Methods</h2>
   </hgroup>
@@ -2961,7 +3190,7 @@ number of features.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-119" style="background:;">
+<slide class="" id="slide-127" style="background:;">
   <hgroup>
     <h2>Bagging, Boosting</h2>
   </hgroup>
@@ -2971,7 +3200,7 @@ number of features.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-120" style="background:;">
+<slide class="" id="slide-128" style="background:;">
   <hgroup>
     <h2>Random Forest</h2>
   </hgroup>
@@ -2981,7 +3210,7 @@ number of features.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue, dark, nobackground" id="slide-121" style="background:;">
+<slide class="segue dark nobackground" id="slide-129" style="background:;">
   <hgroup>
     <h2>Conclusions</h2>
   </hgroup>
@@ -2991,13 +3220,29 @@ number of features.)</p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-122" style="background:;">
+<slide class="" id="slide-130" style="background:;">
+  <hgroup>
+    <h2>Concluding Points</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-131" style="background:;">
   <hgroup>
     <h2>Useful Resources</h2>
   </hgroup>
   <article data-timings="">
     <ul>
 <li>Cosma Shalizi, &quot;Advanced Data Analysis from an Elementary Point of View&quot;, <a href="http://www.stat.cmu.edu/%7Ecshalizi/ADAfaEPoV/">http://www.stat.cmu.edu/~cshalizi/ADAfaEPoV/</a>, covers regression, hypothesis testing, PCA, and density estimation, amongst other things, and is extremely lucidly written.</li>
+<li>Andrew Ng, CS229 ML course, <a href="http://cs229.stanford.edu/materials.html">http://cs229.stanford.edu/materials.html</a>, and associated Coursera MOOC</li>
+<li>Jure Leskovec, Anand Rajaraman, and Jeff Ullman, Mining of Massive Data Sets, pdf book online, <a href="http://www.mmds.org">http://www.mmds.org</a></li>
+<li>Mohammed J. Zaki and Wagner Meira Jr., Data Mining and Analysis: Fundamental Concepts and Algorithms, <a href="http://www.cs.rpi.edu/%7Ezaki/PaperDir/DMABOOK.pdf">http://www.cs.rpi.edu/~zaki/PaperDir/DMABOOK.pdf</a></li>
+<li>Scikit-Learn tutorial, <a href="http://scikit-learn.org/stable/tutorial/">http://scikit-learn.org/stable/tutorial/</a></li>
+<li>Your SciNet Team</li>
+<li>+ many others.<br></li>
 </ul>
 
   </article>
@@ -3304,13 +3549,13 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=50 title='Resampling Aside #2'>
+        data-slide=50 title='Final Notes on Regression ... For Now'>
          50
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=51 title='Final Notes on Regression ... For Now'>
+        data-slide=51 title='Classification'>
          51
       </a>
     </li>
@@ -3322,37 +3567,37 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=53 title='Classification'>
+        data-slide=53 title='Classification Problems'>
          53
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=54 title='Classification Problems'>
+        data-slide=54 title='Binary vs Multiclass Classification'>
          54
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=55 title='Binary vs Multiclass Classification'>
+        data-slide=55 title='Outline'>
          55
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=56 title='Outline'>
+        data-slide=56 title='Decision Trees'>
          56
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=57 title='Decision Trees'>
+        data-slide=57 title='Batman Decision Tree'>
          57
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=58 title='Batman Decision Tree'>
+        data-slide=58 title='Splitting Algorithms'>
          58
       </a>
     </li>
@@ -3370,19 +3615,19 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=61 title='Splitting Algorithms'>
+        data-slide=61 title='Scikit-learn'>
          61
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=62 title='Scikit-learn'>
+        data-slide=62 title='<code>sklearn</code>'>
          62
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=63 title='<code>sklearn</code>'>
+        data-slide=63 title='<code>pandas</code>'>
          63
       </a>
     </li>
@@ -3394,31 +3639,31 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=65 title='<code>pandas</code>'>
+        data-slide=65 title='Trees and Overfitting'>
          65
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=66 title='Trees and Overfitting'>
+        data-slide=66 title='Tree-pruning'>
          66
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=67 title='Tree-pruning'>
+        data-slide=67 title='Hands on - Iris Data Set'>
          67
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=68 title='Hands on - Iris Data Set'>
+        data-slide=68 title='Nearest Neighbours - $k$NN'>
          68
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=69 title='Nearest Neighbours - $k$NN'>
+        data-slide=69 title='Bias-Variance in $k$NN'>
          69
       </a>
     </li>
@@ -3436,7 +3681,7 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=72 title='Bias-Variance in $k$NN'>
+        data-slide=72 title='$k$NN and Geometry'>
          72
       </a>
     </li>
@@ -3448,19 +3693,19 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=74 title='$k$NN and Geometry'>
+        data-slide=74 title='Scaling continuous features'>
          74
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=75 title='Scaling continuous features'>
+        data-slide=75 title='Digits data set'>
          75
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=76 title='Digits data set'>
+        data-slide=76 title='Hands-on: kNN digits'>
          76
       </a>
     </li>
@@ -3472,13 +3717,13 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=78 title='Hands-on: kNN digits'>
+        data-slide=78 title='Confusion matrix'>
          78
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=79 title='Confusion matrix'>
+        data-slide=79 title='Evaluating Binary Classifiers'>
          79
       </a>
     </li>
@@ -3490,7 +3735,7 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=81 title='Evaluating Binary Classifiers'>
+        data-slide=81 title='ROC Curve'>
          81
       </a>
     </li>
@@ -3502,13 +3747,13 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=83 title='ROC Curve'>
+        data-slide=83 title='Evaluating Binary Classifiers'>
          83
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=84 title='Evaluating Binary Classifiers'>
+        data-slide=84 title='Logistic Regression'>
          84
       </a>
     </li>
@@ -3538,25 +3783,25 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=89 title='Logistic Regression'>
+        data-slide=89 title='Logistic Regression Hands on'>
          89
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=90 title='Logistic Regression Hands on'>
+        data-slide=90 title='Naive Bayes'>
          90
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=91 title='Naive Bayes'>
+        data-slide=91 title='Naive Indeed'>
          91
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=92 title='Naive Indeed'>
+        data-slide=92 title='Training Naive Bayes'>
          92
       </a>
     </li>
@@ -3568,13 +3813,13 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=94 title='Training Naive Bayes'>
+        data-slide=94 title='Naive Like a Fox'>
          94
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=95 title='Naive Like a Fox'>
+        data-slide=95 title='Usenet Newsgroups Classification'>
          95
       </a>
     </li>
@@ -3586,25 +3831,25 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=97 title='Usenet Newsgroups Classification'>
+        data-slide=97 title='Text Processing Hands On'>
          97
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=98 title='Text Processing Hands On'>
+        data-slide=98 title='Classification Summary'>
          98
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=99 title='Classification Summary'>
+        data-slide=99 title='Variable Selection'>
          99
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=100 title='Variable Selection'>
+        data-slide=100 title='Multivariate Linear Regression'>
          100
       </a>
     </li>
@@ -3628,13 +3873,13 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=104 title='Multivariate Linear Regression'>
+        data-slide=104 title='How Not to do Variable Selection'>
          104
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=105 title='How Not to do Variable Selection'>
+        data-slide=105 title='How to do a Little Variable Selection'>
          105
       </a>
     </li>
@@ -3676,68 +3921,122 @@ number of features.)</p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=112 title='AIC, BIC, adjusted R<sup>2</sup>'>
+        data-slide=112 title='AIC, BIC, etc'>
          112
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=113 title='Lasso/Ridge Regression'>
+        data-slide=113 title='Variable Selection as Part of the Model'>
          113
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=114 title='PCA'>
+        data-slide=114 title='Lasso/Ridge Regression'>
          114
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=115 title='Clustering'>
+        data-slide=115 title='Lasso/Ridge Regression'>
          115
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=116 title='K-means'>
+        data-slide=116 title='Lasso/Ridge Regression'>
          116
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=117 title='Hierarchical Clustering'>
+        data-slide=117 title='Lasso Regression'>
          117
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=118 title='Ensemble Methods'>
+        data-slide=118 title='Lasso Regression'>
          118
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=119 title='Bagging, Boosting'>
+        data-slide=119 title='PCA'>
          119
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=120 title='Random Forest'>
+        data-slide=120 title='PCA'>
          120
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=121 title='Conclusions'>
+        data-slide=121 title='Variable Selection Hands-On'>
          121
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=122 title='Useful Resources'>
+        data-slide=122 title='Clustering'>
          122
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=123 title='Clustering Overview'>
+         123
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=124 title='K-means'>
+         124
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=125 title='Hierarchical Clustering'>
+         125
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=126 title='Ensemble Methods'>
+         126
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=127 title='Bagging, Boosting'>
+         127
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=128 title='Random Forest'>
+         128
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=129 title='Conclusions'>
+         129
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=130 title='Concluding Points'>
+         130
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=131 title='Useful Resources'>
+         131
       </a>
     </li>
   </ul>
