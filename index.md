@@ -2204,7 +2204,7 @@ How do we choose $k$?
 ## Hierarchical Clustering
 
 Where kmeans clustering imposes a geometric clustering criterion
-based on distances of all points from a a centre, Hierarchical clustering works item by item.
+based on distances of all points from a centre, Hierarchical clustering works item by item.
 
 Agglomerative clustering (bottom-up):
 * All items start in their own cluster.
@@ -2212,6 +2212,9 @@ Agglomerative clustering (bottom-up):
     * The two "best matching" clusters are linked together
 * Until there's one cluster left.
 
+---
+
+## Hierarchical Clustering
 Still need some sort of distance metric.
 
 Several best matching linkage criterion are available, depending on what makes most sense for the problem:
@@ -2225,7 +2228,12 @@ Several best matching linkage criterion are available, depending on what makes m
 
 *** =left
 
+kMeans and Hierarchical clustering approaches have very different behaviours.
 
+* kMeans _only_ cares about distances "as the crow flies".
+* Hierarchical cares about distances between individual items.
+* kMeans requires the knowledge of the number of clusters "up front", and restarting.
+* Hierarchical approaches give you an entire tree - but you still have to decide where to prune.
 
 *** =right
 
@@ -2239,19 +2247,16 @@ Can cluster text, or images:
 
 ```python
 import scripts.clustering.text as txt
-
 txt.newsgroupsProblem(k=20)
 ```
 
 ```
-## Traceback (most recent call last):
-##   File "<string>", line 1, in <module>
-## ImportError: No module named clustering.text
+## Homogeneity:  0.348560612392
+## Completeness:  0.400258532476
 ```
 
---- 
-
-## Other clustering algorithms
+Currently using kmeans.  What does hierarchical look like?  Print
+the text items corresponding to the clusters.
 
 --- .dark .segue .nobackground
 
@@ -2259,19 +2264,66 @@ txt.newsgroupsProblem(k=20)
 
 --- 
 
-## Bagging, Boosting
+## Ensemble Methods
+
+There's often no one method which works perfectly "out of the box".  
+
+A very powerful technique is to combine a set of models which have different
+strengths and weaknesses, and combine the results.
+
+* Regression (or other continuous output): average (possibly weighted average) of the results.
+* Classification (or other discrete output): plurality (possibly weighted) voting.
+
+Any approach which trains multiple models and combines the results
+are referred to as ensemble methods.
+
+--- 
+
+## Bagging, Boosting, and Random Subspace
+
+There are three classes of ensemble methods which are very widely known, so worth knowing about:
+
+* Bagging: Train various instances of the same model on bootstrap resamples of the data, combine results.
+    * Extremely good at removing outliers.  
+* Boosting: Train a model on the full data set
+    * Find examples that this model does *not* work well on.
+    * Train a new model only on those examples.
+    * Continue until most things are well classified.
+    * Final predictor: weighted average of these models.
+* Random subspace models
+    * Like bagging, but randomly drop features as well as selecting rows.
 
 --- 
 
 ## Random Forest
 
+A particularly important example of an ensemble method is random forest for classification.
+
+* Bagging + Random subspace model
+* For some number of trees (20? 100?):
+   * Take a random subsample of rows
+   * ...and columns
+   * and fit a decision tree
+
+Then combine the tree results.
+
 --- .segue .dark .nobackground
 
-## Conclusions
+## Conclusion
 
----
+--- 
 
-## Concluding Points
+## Conclusion
+
+What we've covered here today are the basics, against which everything else is compared.
+
+Can easily go off now and learn whatever is best for your problems.
+
+* Not rocket science.
+* Many more sophisticated methods out there are just "mash-ups" of things you already know:
+    * Regression Trees
+    * Nearest-neighbour joining
+    * Flame clustering
 
 ---
 

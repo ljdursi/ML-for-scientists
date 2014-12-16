@@ -3329,7 +3329,7 @@ spherical blobs of clusters amongst the data items.  The algorithm is very simpl
   </hgroup>
   <article data-timings="">
     <p>Where kmeans clustering imposes a geometric clustering criterion
-based on distances of all points from a a centre, Hierarchical clustering works item by item.</p>
+based on distances of all points from a centre, Hierarchical clustering works item by item.</p>
 
 <p>Agglomerative clustering (bottom-up):</p>
 
@@ -3343,7 +3343,16 @@ based on distances of all points from a a centre, Hierarchical clustering works 
 <li>Until there&#39;s one cluster left.</li>
 </ul>
 
-<p>Still need some sort of distance metric.</p>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-130" style="background:;">
+  <hgroup>
+    <h2>Hierarchical Clustering</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Still need some sort of distance metric.</p>
 
 <p>Several best matching linkage criterion are available, depending on what makes most sense for the problem:</p>
 
@@ -3357,14 +3366,22 @@ based on distances of all points from a a centre, Hierarchical clustering works 
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-130" style="background:;">
+<slide class="" id="slide-131" style="background:;">
   <hgroup>
     <h2>kMeans vs Hierarchical Clustering</h2>
   </hgroup>
   <article data-timings="">
     
 <div style='float:left;width:48%;' class='centered'>
-  
+  <p>kMeans and Hierarchical clustering approaches have very different behaviours.</p>
+
+<ul>
+<li>kMeans <em>only</em> cares about distances &quot;as the crow flies&quot;.</li>
+<li>Hierarchical cares about distances between individual items.</li>
+<li>kMeans requires the knowledge of the number of clusters &quot;up front&quot;, and restarting.</li>
+<li>Hierarchical approaches give you an entire tree - but you still have to decide where to prune.</li>
+</ul>
+
 </div>
 <div style='float:right;width:48%;'>
   <p><img src="outputs/clustering/agglom-vs-kmeans.png" alt=""></p>
@@ -3374,7 +3391,7 @@ based on distances of all points from a a centre, Hierarchical clustering works 
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-131" style="background:;">
+<slide class="" id="slide-132" style="background:;">
   <hgroup>
     <h2>Clustering hands-on</h2>
   </hgroup>
@@ -3382,14 +3399,15 @@ based on distances of all points from a a centre, Hierarchical clustering works 
     <p>Can cluster text, or images:</p>
 
 <pre><code class="python">import scripts.clustering.text as txt
-
 txt.newsgroupsProblem(k=20)
 </code></pre>
 
-<pre><code>## Traceback (most recent call last):
-##   File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;
-## ImportError: No module named clustering.text
+<pre><code>## Homogeneity:  0.348560612392
+## Completeness:  0.400258532476
 </code></pre>
+
+<p>Currently using kmeans.  What does hierarchical look like?  Print
+the text items corresponding to the clusters.</p>
 
 <div style='float:left;width:48%;' class='centered'>
   
@@ -3397,16 +3415,6 @@ txt.newsgroupsProblem(k=20)
 <div style='float:right;width:48%;'>
   
 </div>
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-132" style="background:;">
-  <hgroup>
-    <h2>Other clustering algorithms</h2>
-  </hgroup>
-  <article data-timings="">
-    
   </article>
   <!-- Presenter Notes -->
 </slide>
@@ -3423,37 +3431,85 @@ txt.newsgroupsProblem(k=20)
 
 <slide class="" id="slide-134" style="background:;">
   <hgroup>
-    <h2>Bagging, Boosting</h2>
+    <h2>Ensemble Methods</h2>
   </hgroup>
   <article data-timings="">
-    
+    <p>There&#39;s often no one method which works perfectly &quot;out of the box&quot;.  </p>
+
+<p>A very powerful technique is to combine a set of models which have different
+strengths and weaknesses, and combine the results.</p>
+
+<ul>
+<li>Regression (or other continuous output): average (possibly weighted average) of the results.</li>
+<li>Classification (or other discrete output): plurality (possibly weighted) voting.</li>
+</ul>
+
+<p>Any approach which trains multiple models and combines the results
+are referred to as ensemble methods.</p>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-135" style="background:;">
   <hgroup>
+    <h2>Bagging, Boosting, and Random Subspace</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>There are three classes of ensemble methods which are very widely known, so worth knowing about:</p>
+
+<ul>
+<li>Bagging: Train various instances of the same model on bootstrap resamples of the data, combine results.
+
+<ul>
+<li>Extremely good at removing outliers.<br></li>
+</ul></li>
+<li>Boosting: Train a model on the full data set
+
+<ul>
+<li>Find examples that this model does <em>not</em> work well on.</li>
+<li>Train a new model only on those examples.</li>
+<li>Continue until most things are well classified.</li>
+<li>Final predictor: weighted average of these models.</li>
+</ul></li>
+<li>Random subspace models
+
+<ul>
+<li>Like bagging, but randomly drop features as well as selecting rows.</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-136" style="background:;">
+  <hgroup>
     <h2>Random Forest</h2>
   </hgroup>
   <article data-timings="">
-    
+    <p>A particularly important example of an ensemble method is random forest for classification.</p>
+
+<ul>
+<li>Bagging + Random subspace model</li>
+<li>For some number of trees (20? 100?):
+
+<ul>
+<li>Take a random subsample of rows</li>
+<li class='..and'>columns</li>
+<li>and fit a decision tree</li>
+</ul></li>
+</ul>
+
+<p>Then combine the tree results.</p>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark nobackground" id="slide-136" style="background:;">
+<slide class="segue dark nobackground" id="slide-137" style="background:;">
   <hgroup>
-    <h2>Conclusions</h2>
-  </hgroup>
-  <article data-timings="">
-    
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-137" style="background:;">
-  <hgroup>
-    <h2>Concluding Points</h2>
+    <h2>Conclusion</h2>
   </hgroup>
   <article data-timings="">
     
@@ -3462,6 +3518,30 @@ txt.newsgroupsProblem(k=20)
 </slide>
 
 <slide class="" id="slide-138" style="background:;">
+  <hgroup>
+    <h2>Conclusion</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>What we&#39;ve covered here today are the basics, against which everything else is compared.</p>
+
+<p>Can easily go off now and learn whatever is best for your problems.</p>
+
+<ul>
+<li>Not rocket science.</li>
+<li>Many more sophisticated methods out there are just &quot;mash-ups&quot; of things you already know:
+
+<ul>
+<li>Regression Trees</li>
+<li>Nearest-neighbour joining</li>
+<li>Flame clustering</li>
+</ul></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-139" style="background:;">
   <hgroup>
     <h2>Useful Resources</h2>
   </hgroup>
@@ -4260,19 +4340,19 @@ txt.newsgroupsProblem(k=20)
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=130 title='kMeans vs Hierarchical Clustering'>
+        data-slide=130 title='Hierarchical Clustering'>
          130
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=131 title='Clustering hands-on'>
+        data-slide=131 title='kMeans vs Hierarchical Clustering'>
          131
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=132 title='Other clustering algorithms'>
+        data-slide=132 title='Clustering hands-on'>
          132
       </a>
     </li>
@@ -4284,32 +4364,38 @@ txt.newsgroupsProblem(k=20)
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=134 title='Bagging, Boosting'>
+        data-slide=134 title='Ensemble Methods'>
          134
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=135 title='Random Forest'>
+        data-slide=135 title='Bagging, Boosting, and Random Subspace'>
          135
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=136 title='Conclusions'>
+        data-slide=136 title='Random Forest'>
          136
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=137 title='Concluding Points'>
+        data-slide=137 title='Conclusion'>
          137
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=138 title='Useful Resources'>
+        data-slide=138 title='Conclusion'>
          138
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=139 title='Useful Resources'>
+         139
       </a>
     </li>
   </ul>
