@@ -26,7 +26,7 @@ LRIMGS=$(addprefix ./outputs/classification/,$(LRIMGNAMES))
 FSIMGNAMES=lasso-coeffs.png pca-demo.png
 FSIMGS=$(addprefix ./outputs/featureselect/,$(FSIMGNAMES))
 
-CLIMGNAMES=kmeans-demo.png agglom-vs-kmeans.png
+CLIMGNAMES=kmeans-demo.png kmeans-knee.png agglom-vs-kmeans.png
 CLIMGS=$(addprefix ./outputs/clustering/,$(CLIMGNAMES))
 
 IMGS=$(BVIMGS) $(CVIMGS) $(BOOTIMGS) $(NPIMGS) $(DTIMGS) $(KNNIMGS) $(LRIMGS) $(FSIMGS) $(CLIMGS)
