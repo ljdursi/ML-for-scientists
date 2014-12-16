@@ -3154,17 +3154,55 @@ examine important variables via the tree.  </p>
     <h2>Clustering Overview</h2>
   </hgroup>
   <article data-timings="">
-    
+    <p>Clustering is classification without the classes.</p>
+
+<ul>
+<li>Unsupervised learning - no labels.</li>
+<li>Assign groups of &quot;similar&quot; observations to the same cluster.</li>
+</ul>
+
+<p>Scientific applications;</p>
+
+<ul>
+<li>Assign proteins with similar interactions to same group</li>
+<li>Find patterns in galaxy properties</li>
+<li>Determine topics in bodies of text</li>
+</ul>
+
+<p>Business applications</p>
+
+<ul>
+<li>Market segmentation</li>
+<li>&quot;People who buy X often buy...&quot;</li>
+</ul>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-124" style="background:;">
   <hgroup>
-    <h2>K-means</h2>
+    <h2>Clustering Overview</h2>
   </hgroup>
   <article data-timings="">
-    <p>Foo bar baz</p>
+    <p>Two primary reasons for clustering:</p>
+
+<ul>
+<li>Uncover undiscovered patterns in high-dimensional data</li>
+<li>Summarize large number of observations into fewer, homogeneous clusters.</li>
+</ul>
+
+<p>Definition of &quot;similar&quot;, &quot;cluster&quot; notably vague.</p>
+
+<p>Typically involve short &quot;distances&quot; between points in the \(p\)-dimensional
+space of features.</p>
+
+<p>Continuous spaces - a Euclidean or other distance metric.</p>
+
+<p>Ordinal spaces (e.g., bag-of-word counts): use a &#39;cosine similarity&#39;, 
+\[
+\mathrm{cos}(\theta) = \frac{A \cdot B}{||A||\cdot||B||}
+\]</p>
 
   </article>
   <!-- Presenter Notes -->
@@ -3172,15 +3210,75 @@ examine important variables via the tree.  </p>
 
 <slide class="" id="slide-125" style="background:;">
   <hgroup>
-    <h2>Hierarchical Clustering</h2>
+    <h2>K-means</h2>
   </hgroup>
   <article data-timings="">
     
+<div style='float:left;width:48%;' class='centered'>
+  <p>K-means clustering is a geometric clustering algorithm which uncovers roughly
+spherical blobs of clusters amongst the data items.  The algorithm is very simple:</p>
+
+<ul>
+<li>Starting with k initial cluster centers,
+
+<ul>
+<li>For each data point, assign to nearest centre,</li>
+<li>Calculate the centroid of each new cluster,</li>
+<li>Move cluster centers to new centre,</li>
+<li>Repeat until converged</li>
+</ul></li>
+</ul>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/clustering/kmeans-demo.png" alt=""></p>
+
+</div>
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-126" style="background:;">
+<slide class="" id="slide-126" style="background:;">
+  <hgroup>
+    <h2>K-means: pros and cons</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>K-means is extremely robust, but has some downsides:</p>
+
+<ul>
+<li>Have to know before hand how many (\(k\)) clusters you&#39;re looking for.</li>
+<li>Random initial positions can go badly wrong;
+
+<ul>
+<li>Need many initial tries; handled automatically by <code>kmeans</code></li>
+</ul></li>
+</ul>
+
+<p>How to measure quality of clusters?</p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/clustering/kmeans-demo.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-127" style="background:;">
+  <hgroup>
+    <h2>Hierarchical Clustering</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="outputs/clustering/agglom-vs-kmeans.png" alt=""></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="dark segue nobackground" id="slide-128" style="background:;">
   <hgroup>
     <h2>Ensemble Methods</h2>
   </hgroup>
@@ -3190,7 +3288,7 @@ examine important variables via the tree.  </p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-127" style="background:;">
+<slide class="" id="slide-129" style="background:;">
   <hgroup>
     <h2>Bagging, Boosting</h2>
   </hgroup>
@@ -3200,7 +3298,7 @@ examine important variables via the tree.  </p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-128" style="background:;">
+<slide class="" id="slide-130" style="background:;">
   <hgroup>
     <h2>Random Forest</h2>
   </hgroup>
@@ -3210,7 +3308,7 @@ examine important variables via the tree.  </p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark nobackground" id="slide-129" style="background:;">
+<slide class="segue dark nobackground" id="slide-131" style="background:;">
   <hgroup>
     <h2>Conclusions</h2>
   </hgroup>
@@ -3220,7 +3318,7 @@ examine important variables via the tree.  </p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-130" style="background:;">
+<slide class="" id="slide-132" style="background:;">
   <hgroup>
     <h2>Concluding Points</h2>
   </hgroup>
@@ -3230,7 +3328,7 @@ examine important variables via the tree.  </p>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-131" style="background:;">
+<slide class="" id="slide-133" style="background:;">
   <hgroup>
     <h2>Useful Resources</h2>
   </hgroup>
@@ -3993,50 +4091,62 @@ examine important variables via the tree.  </p>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=124 title='K-means'>
+        data-slide=124 title='Clustering Overview'>
          124
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=125 title='Hierarchical Clustering'>
+        data-slide=125 title='K-means'>
          125
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=126 title='Ensemble Methods'>
+        data-slide=126 title='K-means: pros and cons'>
          126
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=127 title='Bagging, Boosting'>
+        data-slide=127 title='Hierarchical Clustering'>
          127
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=128 title='Random Forest'>
+        data-slide=128 title='Ensemble Methods'>
          128
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=129 title='Conclusions'>
+        data-slide=129 title='Bagging, Boosting'>
          129
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=130 title='Concluding Points'>
+        data-slide=130 title='Random Forest'>
          130
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=131 title='Useful Resources'>
+        data-slide=131 title='Conclusions'>
          131
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=132 title='Concluding Points'>
+         132
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=133 title='Useful Resources'>
+         133
       </a>
     </li>
   </ul>

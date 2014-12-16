@@ -2088,15 +2088,81 @@ Which variables are the most important?  Least?
 
 ## Clustering Overview
 
+Clustering is classification without the classes.
+* Unsupervised learning - no labels.
+* Assign groups of "similar" observations to the same cluster.
+
+Scientific applications;
+* Assign proteins with similar interactions to same group
+* Find patterns in galaxy properties
+* Determine topics in bodies of text
+
+Business applications
+* Market segmentation
+* "People who buy X often buy..."
+
 --- 
+
+## Clustering Overview
+
+Two primary reasons for clustering:
+* Uncover undiscovered patterns in high-dimensional data
+* Summarize large number of observations into fewer, homogeneous clusters.
+
+Definition of "similar", "cluster" notably vague.
+
+Typically involve short "distances" between points in the $p$-dimensional
+space of features.
+
+Continuous spaces - a Euclidean or other distance metric.
+
+Ordinal spaces (e.g., bag-of-word counts): use a 'cosine similarity', 
+$$
+\mathrm{cos}(\theta) = \frac{A \cdot B}{||A||\cdot||B||}
+$$
+
+--- &twocol
 
 ## K-means
 
-Foo bar baz
+*** =left
+
+K-means clustering is a geometric clustering algorithm which uncovers roughly
+spherical blobs of clusters amongst the data items.  The algorithm is very simple:
+
+* Starting with k initial cluster centers,
+    * For each data point, assign to nearest centre,
+    * Calculate the centroid of each new cluster,
+    * Move cluster centers to new centre,
+    * Repeat until converged
+
+*** =right
+
+![](outputs/clustering/kmeans-demo.png)
+
+--- &twocol
+
+## K-means: pros and cons
+
+*** =left
+
+K-means is extremely robust, but has some downsides:
+
+* Have to know before hand how many ($k$) clusters you're looking for.
+* Random initial positions can go badly wrong;
+    * Need many initial tries; handled automatically by `kmeans`
+
+How to measure quality of clusters?
+
+*** =right
+
+![](outputs/clustering/kmeans-demo.png)
 
 ---
 
 ## Hierarchical Clustering
+
+![](outputs/clustering/agglom-vs-kmeans.png)
 
 --- .dark .segue .nobackground
 
