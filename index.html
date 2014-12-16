@@ -3269,16 +3269,149 @@ spherical blobs of clusters amongst the data items.  The algorithm is very simpl
 
 <slide class="" id="slide-127" style="background:;">
   <hgroup>
+    <h2>K-means: Error measures</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>A few error measures available for \(k\)-means:</p>
+
+<ul>
+<li>Minimizing the within-cluster sum of squares
+\[
+\mathrm{WCSS} = \sum_i^k \sum_{j \in S_k} || x - \mu_j ||^2
+\]</li>
+<li>Maximizing the between-cluster sum of squares
+\[
+\mathrm{ICSS} = \sum_i^n \sum_j^n \delta \left ( S_i, S_j \right ) || x_i - x_j ||^2
+\]</li>
+</ul>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p>How do we choose \(k\)?</p>
+
+<p><img src="outputs/clustering/kmeans-knee.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-128" style="background:;">
+  <hgroup>
+    <h2>K-means: Error measures</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p>In general, clustering scores look like one of:</p>
+
+<ul>
+<li>Homogenity: how similar are in-cluster items?</li>
+<li>Completeness: how different are items in one cluster from items in another?</li>
+</ul>
+
+</div>
+<div style='float:right;width:48%;'>
+  <p>How do we choose \(k\)?</p>
+
+<p><img src="outputs/clustering/kmeans-knee.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-129" style="background:;">
+  <hgroup>
     <h2>Hierarchical Clustering</h2>
   </hgroup>
   <article data-timings="">
-    <p><img src="outputs/clustering/agglom-vs-kmeans.png" alt=""></p>
+    <p>Where kmeans clustering imposes a geometric clustering criterion
+based on distances of all points from a a centre, Hierarchical clustering works item by item.</p>
+
+<p>Agglomerative clustering (bottom-up):</p>
+
+<ul>
+<li>All items start in their own cluster.</li>
+<li>At each step,
+
+<ul>
+<li>The two &quot;best matching&quot; clusters are linked together</li>
+</ul></li>
+<li>Until there&#39;s one cluster left.</li>
+</ul>
+
+<p>Still need some sort of distance metric.</p>
+
+<p>Several best matching linkage criterion are available, depending on what makes most sense for the problem:</p>
+
+<ul>
+<li>kMeans-like: what is distance between centres of clusters?</li>
+<li>single linkage: what what is the minimum distance between one point in each of the two clusters?</li>
+<li>complete linkage: what is the mean of all distances between the cluster elements?</li>
+</ul>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="dark segue nobackground" id="slide-128" style="background:;">
+<slide class="" id="slide-130" style="background:;">
+  <hgroup>
+    <h2>kMeans vs Hierarchical Clustering</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  
+</div>
+<div style='float:right;width:48%;'>
+  <p><img src="outputs/clustering/agglom-vs-kmeans.png" alt=""></p>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-131" style="background:;">
+  <hgroup>
+    <h2>Clustering hands-on</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Can cluster text, or images:</p>
+
+<pre><code class="python">import scripts.clustering.text as txt
+
+txt.newsgroupsProblem(k=20)
+</code></pre>
+
+<pre><code>## Traceback (most recent call last):
+##   File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;
+## ImportError: No module named clustering.text
+</code></pre>
+
+<div style='float:left;width:48%;' class='centered'>
+  
+</div>
+<div style='float:right;width:48%;'>
+  
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-132" style="background:;">
+  <hgroup>
+    <h2>Other clustering algorithms</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="dark segue nobackground" id="slide-133" style="background:;">
   <hgroup>
     <h2>Ensemble Methods</h2>
   </hgroup>
@@ -3288,7 +3421,7 @@ spherical blobs of clusters amongst the data items.  The algorithm is very simpl
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-129" style="background:;">
+<slide class="" id="slide-134" style="background:;">
   <hgroup>
     <h2>Bagging, Boosting</h2>
   </hgroup>
@@ -3298,7 +3431,7 @@ spherical blobs of clusters amongst the data items.  The algorithm is very simpl
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-130" style="background:;">
+<slide class="" id="slide-135" style="background:;">
   <hgroup>
     <h2>Random Forest</h2>
   </hgroup>
@@ -3308,7 +3441,7 @@ spherical blobs of clusters amongst the data items.  The algorithm is very simpl
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark nobackground" id="slide-131" style="background:;">
+<slide class="segue dark nobackground" id="slide-136" style="background:;">
   <hgroup>
     <h2>Conclusions</h2>
   </hgroup>
@@ -3318,7 +3451,7 @@ spherical blobs of clusters amongst the data items.  The algorithm is very simpl
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-132" style="background:;">
+<slide class="" id="slide-137" style="background:;">
   <hgroup>
     <h2>Concluding Points</h2>
   </hgroup>
@@ -3328,7 +3461,7 @@ spherical blobs of clusters amongst the data items.  The algorithm is very simpl
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-133" style="background:;">
+<slide class="" id="slide-138" style="background:;">
   <hgroup>
     <h2>Useful Resources</h2>
   </hgroup>
@@ -4109,44 +4242,74 @@ spherical blobs of clusters amongst the data items.  The algorithm is very simpl
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=127 title='Hierarchical Clustering'>
+        data-slide=127 title='K-means: Error measures'>
          127
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=128 title='Ensemble Methods'>
+        data-slide=128 title='K-means: Error measures'>
          128
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=129 title='Bagging, Boosting'>
+        data-slide=129 title='Hierarchical Clustering'>
          129
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=130 title='Random Forest'>
+        data-slide=130 title='kMeans vs Hierarchical Clustering'>
          130
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=131 title='Conclusions'>
+        data-slide=131 title='Clustering hands-on'>
          131
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=132 title='Concluding Points'>
+        data-slide=132 title='Other clustering algorithms'>
          132
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=133 title='Useful Resources'>
+        data-slide=133 title='Ensemble Methods'>
          133
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=134 title='Bagging, Boosting'>
+         134
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=135 title='Random Forest'>
+         135
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=136 title='Conclusions'>
+         136
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=137 title='Concluding Points'>
+         137
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=138 title='Useful Resources'>
+         138
       </a>
     </li>
   </ul>

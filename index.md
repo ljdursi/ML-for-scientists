@@ -2158,11 +2158,100 @@ How to measure quality of clusters?
 
 ![](outputs/clustering/kmeans-demo.png)
 
+--- &twocol
+
+## K-means: Error measures
+
+*** =left
+
+A few error measures available for $k$-means:
+
+* Minimizing the within-cluster sum of squares
+$$
+\mathrm{WCSS} = \sum_i^k \sum_{j \in S_k} || x - \mu_j ||^2
+$$
+* Maximizing the between-cluster sum of squares
+$$
+\mathrm{ICSS} = \sum_i^n \sum_j^n \delta \left ( S_i, S_j \right ) || x_i - x_j ||^2
+$$
+
+
+*** =right
+
+How do we choose $k$?
+
+![](outputs/clustering/kmeans-knee.png)
+
+--- &twocol
+
+## K-means: Error measures
+
+*** =left
+
+In general, clustering scores look like one of:
+* Homogenity: how similar are in-cluster items?
+* Completeness: how different are items in one cluster from items in another?
+
+*** =right
+
+How do we choose $k$?
+
+![](outputs/clustering/kmeans-knee.png)
+
+
 ---
 
 ## Hierarchical Clustering
 
+Where kmeans clustering imposes a geometric clustering criterion
+based on distances of all points from a a centre, Hierarchical clustering works item by item.
+
+Agglomerative clustering (bottom-up):
+* All items start in their own cluster.
+* At each step,
+    * The two "best matching" clusters are linked together
+* Until there's one cluster left.
+
+Still need some sort of distance metric.
+
+Several best matching linkage criterion are available, depending on what makes most sense for the problem:
+* kMeans-like: what is distance between centres of clusters?
+* single linkage: what what is the minimum distance between one point in each of the two clusters?
+* complete linkage: what is the mean of all distances between the cluster elements?
+
+--- &twocol
+
+## kMeans vs Hierarchical Clustering
+
+*** =left
+
+
+
+*** =right
+
 ![](outputs/clustering/agglom-vs-kmeans.png)
+
+--- &twocol
+
+## Clustering hands-on
+
+Can cluster text, or images:
+
+```python
+import scripts.clustering.text as txt
+
+txt.newsgroupsProblem(k=20)
+```
+
+```
+## Traceback (most recent call last):
+##   File "<string>", line 1, in <module>
+## ImportError: No module named clustering.text
+```
+
+--- 
+
+## Other clustering algorithms
 
 --- .dark .segue .nobackground
 
