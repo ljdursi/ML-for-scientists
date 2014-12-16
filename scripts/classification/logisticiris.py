@@ -13,7 +13,7 @@ import sklearn.cross_validation as cv
 
 def getIrisData(trainfrac=0.66):
     iris = sklearn.datasets.load_iris()
-    traindata, testdata, trainlabels, testlabels = cv.ntrain_test_split(iris.data, iris.target, test_size=trainfrac)
+    traindata, testdata, trainlabels, testlabels = cv.train_test_split(iris.data, iris.target, test_size=trainfrac)
     return traindata, trainlabels, testdata, testlabels
     
 
