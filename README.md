@@ -14,7 +14,7 @@ or R would, after working through this material:
 * Have used a few standard fundamental methods, and have a grounding in the underlying theory,
 * Understand some basic concepts with broad applicability.
 
-It covers, mostly in python (sklearn, but also some other packages), most or all of the following methods:
+It covers, in python (sklearn, but also some other packages), most or all of the following methods:
 
 * Regression:
    - OLS
@@ -40,8 +40,3 @@ It covers, mostly in python (sklearn, but also some other packages), most or all
 * Model Selection
 * Variable Selection
 * Multiple Hypothesis Testing
-
-We will use both R and Python in this class, and attendees are
-expected to be familiar with at least one, but extensive programming
-experience is not required - we will mainly be calling functions
-in existing packages, not writing large amounts of code.
