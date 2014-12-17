@@ -2001,7 +2001,7 @@ parameter (in Lasso, $\alpha$).
 
 Ridge coefficients can pass through zero and change sign; not with Lasso.
 
-An example can be seen in `scripts/regression/lasso.py`
+An example can be seen in `scripts/featureselect/lasso.py`
 
 *** =right
 
@@ -2016,9 +2016,8 @@ reduction in variance:
 
 
 ```python
-import scripts.regression.lasso as lasso
+import scripts.featureselect.lasso as lasso
 import numpy
-
 X,y = lasso.getDiabetesData()
 alphas = numpy.logspace(0.5,-3.5,20)
 mses=[]
@@ -2028,9 +2027,9 @@ print numpy.round(mses,2)
 ```
 
 ```
-## [ 3167.42  2979.89  3118.9   3000.94  3095.79  3427.5   3022.48  3152.64
-##   3289.54  2907.83  2935.09  3105.    3138.35  3056.27  3230.43  3203.78
-##   3316.99  3184.72  3030.19  3237.38]
+## [ 3327.16  3028.17  3178.68  2997.78  2834.89  2971.48  3209.38  3185.28
+##   3317.93  2918.43  3044.57  3063.89  3033.91  3139.13  3176.36  3452.65
+##   3318.82  2867.14  3387.72  3017.09]
 ```
 
 ---

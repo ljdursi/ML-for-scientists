@@ -1917,7 +1917,7 @@ parameter (in Lasso, $\alpha$).
 
 Ridge coefficients can pass through zero and change sign; not with Lasso.
 
-An example can be seen in `scripts/regression/lasso.py`
+An example can be seen in `scripts/featureselect/lasso.py`
 
 *** =right
 
@@ -1931,9 +1931,8 @@ Bias-Variance tradeoff; as we slowly bring down $\alpha$, bias increases, but fo
 reduction in variance:
 
 ```{r engine='python'}
-import scripts.regression.lasso as lasso
+import scripts.featureselect.lasso as lasso
 import numpy
-
 X,y = lasso.getDiabetesData()
 alphas = numpy.logspace(0.5,-3.5,20)
 mses=[]
